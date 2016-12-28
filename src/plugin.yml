@@ -1,5 +1,5 @@
 author: JustEli
-version: 0.3
+version: 0.4
 main: me.justeli.coins.main.Load
 name: Coins
 depend: [Vault]

@@ -7,8 +7,16 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import me.justeli.coins.api.Complete;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.List;
 
 class Cmds implements CommandExecutor {
 
@@ -39,7 +47,13 @@ class Cmds implements CommandExecutor {
                         break;
                     case "drop":
                         if (sender.hasPermission("coins.drop"))
-                            dropCoins(sender, args);
+                            dropCoins((Player)sender, args);
+                        else
+                            sender.sendMessage(ChatColor.RED + "You do not have access to that command.");
+                        break;
+                    case "remove":
+                        if (sender.hasPermission("coins.remove"))
+                            removeCoins((Player) sender, args);
                         else
                             sender.sendMessage(ChatColor.RED + "You do not have access to that command.");
                         break;
@@ -57,19 +71,35 @@ class Cmds implements CommandExecutor {
 		return false;
 	}
 
-	private void dropCoins (CommandSender sender, String[] args)
+	private void dropCoins (Player sender, String[] args)
     {
 
         if (args.length >= 3)
         {
             Player p = Complete.onlinePlayer(args[1]);
 
-            int amount = Integer.valueOf(args[2]);
+            int amount;
+            try {amount = Integer.valueOf(args[2]); }
+            catch (NumberFormatException e)
+            {
+                sender.sendMessage(ChatColor.DARK_RED + "That is an invalid number.");
+                return;
+            }
+
             int radius = amount/20;
             if (radius < 2)
                 radius = 2;
             if (args.length >= 4)
-                radius = Integer.valueOf(args[3]);
+
+            {
+                try {radius = Integer.valueOf(args[3]);}
+                catch (NumberFormatException e)
+                {
+                    sender.sendMessage(ChatColor.DARK_RED + "That is an invalid number.");
+                    return;
+                }
+            }
+
 
             if (p == null)
             {
@@ -84,13 +114,13 @@ class Cmds implements CommandExecutor {
                     return;
                 }
 
-            if (radius < 1 || radius > 50)
+            if (radius < 1 || radius > 80)
             {
                 sender.sendMessage(ChatColor.DARK_RED + "That is an invalid radius.");
                 return;
             }
 
-            if (amount < 1 || amount > 500)
+            if (amount < 1 || amount > 1000)
             {
                 sender.sendMessage(ChatColor.DARK_RED + "That is an invalid amount.");
                 return;
@@ -103,10 +133,64 @@ class Cmds implements CommandExecutor {
 
     }
 
+    private void removeCoins (Player sender, String[] args)
+    {
+        double r = 0;
+        if (args.length >= 2)
+        {
+            if (!args[1].equalsIgnoreCase("all"))
+            {
+                try {r = Integer.valueOf(args[1]);}
+                catch (NumberFormatException e) { sender.sendMessage(ChatColor.DARK_RED + "That is an invalid number."); return; }
+                if (r < 1 || r > 80)
+                {
+                    sender.sendMessage(ChatColor.DARK_RED + "That is an invalid radius.");
+                    return;
+                }
+            }
+        }
+
+        List<Entity> mobs = sender.getWorld().getEntities();
+        if (r != 0) mobs = new ArrayList<>(sender.getWorld().getNearbyEntities(sender.getLocation(), r, r, r));
+        long amount = 0;
+        for (Entity m : mobs)
+        {
+            if (m instanceof Item)
+            {
+                Item i = (Item) m;
+                if (i.getItemStack().getItemMeta().getDisplayName() != null)
+                    if (i.getItemStack().getItemMeta().getDisplayName().equals(
+                            ChatColor.translateAlternateColorCodes('&', LoadSettings.hS.get(Setting._String.nameOfCoin) ) ))
+                    {
+                        amount ++;
+                        double random = (Math.random()*3);
+                        long rand = (long) random * 5;
+                        i.setVelocity(new Vector(0, random, 0));
+                        new BukkitRunnable() {
+                            int a = 0;
+                            public void run() {
+                                a += 1;
+                                if (a >= 1) {
+                                    i.remove();
+                                    this.cancel();
+                                }
+                            }
+                        }.runTaskTimer(Load.main, rand, rand);
+                    }
+            }
+
+        }
+        if (r != 0)
+            sender.sendMessage(ChatColor.BLUE + "Removed " + amount + " coins in a radius of " + r + ".");
+        else
+            sender.sendMessage(ChatColor.BLUE + "Removed " + amount + " coins in this world.");
+    }
+
     private void sendHelp (CommandSender sender)
     {
         sender.sendMessage(ChatColor.DARK_RED + "                             * Help for Coins *");
         sender.sendMessage(ChatColor.RED + "/coins drop <player> <amount> [radius]" + ChatColor.GRAY + " - spawn coins");
+        sender.sendMessage(ChatColor.RED + "/coins remove [radius|all]" + ChatColor.GRAY + " - remove coins in a radius");
         sender.sendMessage(ChatColor.RED + "/coins settings" + ChatColor.GRAY + " - list the currently loaded settings");
         sender.sendMessage(ChatColor.RED + "/coins reload" + ChatColor.GRAY + " - reload the settings from config.yml");
     }
