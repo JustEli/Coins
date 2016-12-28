@@ -1,0 +1,60 @@
+# # # # # # # # # # # # # # # #
+#   Configuration for Coins   #
+# # # # # # # # # # # # # # # #
+
+# You aren't really going to notice this, but in hoppers you can see its name.
+nameOfCoin: "&6Coin"
+
+# Message sent as action bar, telling them how much money they have picked up.
+pickupMessage: "&2+ &a$%amount% &2+"
+
+# The amount of money a coin is worth. Creates a random number between
+# 'from' and 'to' which - as money - will be given to the player on pickup.
+moneyAmount:
+  from: 3.0
+  to: 8.0
+
+# Should coins be stacked? (Or should a coin be one on its own?)
+# Stacked coins don't act like one coin. The stack is counted and the worth is multiplied.
+# Not stacking coins is just for a cooler effect (but probably laggier).
+stackCoins: true
+
+# Should mobs from spawners drop a coin too?
+# Mobs from spawners won't drop a coin by default.
+spawnerDrop: false
+
+# Should passive mobs also drop a coin?
+# Passive mobs don't drop a coin by default.
+passiveDrop: false
+
+# Play a sound on pickup of a coin.
+# This sound is a 1.9+ sound, if you use 1.8, put another sound in there.
+# If the sound name remains untouched, and you use 1.8, it will do an 1.8 sound automaticly for you.
+pickupSound: true
+soundName: "BLOCK_LAVA_POP"
+
+# Chance of dropping a coin after a mob has been killed.
+# Value from 0.0 to 1.0: 0.0 meaning 0%, 1.0 meaning 100% (so 0.9 meaning 90%).
+dropChance: 0.9
+
+# List all worlds you want Coins to be disabled in here.
+# Example for disabling two worlds called 'creative' and 'plots':
+#    disabledWorlds:
+#    - plots
+#    - creative
+disabledWorlds:
+
+
+#
+#   From here kindof doesn't have to do with coins.
+#   But it was originally in my Coins package.
+#
+
+# Should players lose money on death?
+# It shows a title (in the middle of the screen) how much they lost on death.
+loseOnDeath: true
+
+# If so, how much will be taken?
+moneyTaken:
+  from: 100.0
+  to: 150.0

@@ -1,0 +1,9 @@
+author: JustEli
+version: 0.3
+main: me.justeli.coins.main.Load
+name: Coins
+depend: [Vault]
+
+commands:
+  coins:
+    aliases: [coin]
