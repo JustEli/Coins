@@ -59,12 +59,24 @@ public class CoinsPickup implements Listener {
 
 		if (LoadSettings.hB.get(Setting._Boolean.pickupSound))
 		{
-            String sound = LoadSettings.hS.get(Setting._String.soundName);
+			try
+			{
+				String sound = LoadSettings.hS.get(Setting._String.soundName);
 
-            if (LoadSettings.hB.get(Setting._Boolean.olderServer) && sound.equals("BLOCK_LAVA_POP"))
-                p.playSound(p.getEyeLocation(), Sound.valueOf("NOTE_STICKS"), 0.1f, 0.1f);
-            else
-                p.playSound(p.getEyeLocation(), Sound.valueOf( sound ), 0.3f, 0.3f);
+				Sound playsound;
+				if (LoadSettings.hB.get(Setting._Boolean.olderServer) && sound.equals("BLOCK_LAVA_POP"))
+					playsound = Sound.valueOf("NOTE_STICKS");
+				else
+					playsound = Sound.valueOf( sound.toUpperCase() );
+
+				p.playSound(p.getEyeLocation(), playsound, 0.3f, 0.3f);
+			}
+			catch ( IllegalArgumentException e )
+			{
+				Bukkit.getLogger().severe( e.getMessage() + ": the sound does not exist. Change it in the Coins config." );
+				Bukkit.getLogger().severe( "Please use a sound from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html" );
+			}
+
         }
 
 	}

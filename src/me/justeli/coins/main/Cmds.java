@@ -4,6 +4,7 @@ import me.justeli.coins.item.CoinParticles;
 import me.justeli.coins.settings.LoadSettings;
 import me.justeli.coins.settings.Setting;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -47,13 +48,13 @@ class Cmds implements CommandExecutor {
                         break;
                     case "drop":
                         if (sender.hasPermission("coins.drop"))
-                            dropCoins((Player)sender, args);
+                            dropCoins(sender, args);
                         else
                             sender.sendMessage(ChatColor.RED + "You do not have access to that command.");
                         break;
                     case "remove":
                         if (sender.hasPermission("coins.remove"))
-                            removeCoins((Player) sender, args);
+                            removeCoins(sender, args);
                         else
                             sender.sendMessage(ChatColor.RED + "You do not have access to that command.");
                         break;
@@ -71,7 +72,7 @@ class Cmds implements CommandExecutor {
 		return false;
 	}
 
-	private void dropCoins (Player sender, String[] args)
+	private void dropCoins (CommandSender sender, String[] args)
     {
 
         if (args.length >= 3)
@@ -133,11 +134,14 @@ class Cmds implements CommandExecutor {
 
     }
 
-    private void removeCoins (Player sender, String[] args)
+    private void removeCoins (CommandSender sender, String[] args)
     {
+
         double r = 0;
-        if (args.length >= 2)
+        List<Entity> mobs = Bukkit.getWorlds().get(0).getEntities();
+        if (args.length >= 2 && sender instanceof Player)
         {
+            Player p = (Player) sender;
             if (!args[1].equalsIgnoreCase("all"))
             {
                 try {r = Integer.valueOf(args[1]);}
@@ -148,10 +152,16 @@ class Cmds implements CommandExecutor {
                     return;
                 }
             }
+
         }
 
-        List<Entity> mobs = sender.getWorld().getEntities();
-        if (r != 0) mobs = new ArrayList<>(sender.getWorld().getNearbyEntities(sender.getLocation(), r, r, r));
+        if (sender instanceof Player)
+        {
+            Player p = (Player) sender;
+            mobs = p.getWorld().getEntities();
+            if (r != 0) mobs = new ArrayList<>(p.getWorld().getNearbyEntities(p.getLocation(), r, r, r));
+        }
+
         long amount = 0;
         for (Entity m : mobs)
         {
@@ -182,13 +192,18 @@ class Cmds implements CommandExecutor {
         }
         if (r != 0)
             sender.sendMessage(ChatColor.BLUE + "Removed " + amount + " coins in a radius of " + r + ".");
-        else
+        else if (sender instanceof Player)
             sender.sendMessage(ChatColor.BLUE + "Removed " + amount + " coins in this world.");
+        else
+            sender.sendMessage(ChatColor.BLUE + "Removed " + amount + " coins in the default world.");
     }
 
     private void sendHelp (CommandSender sender)
     {
-        sender.sendMessage(ChatColor.DARK_RED + "                             * Help for Coins *");
+        if (sender instanceof Player)
+            sender.sendMessage(ChatColor.DARK_RED + "                             * Help for Coins *");
+        else
+            sender.sendMessage(ChatColor.DARK_RED + "* Help for Coins *");
         sender.sendMessage(ChatColor.RED + "/coins drop <player> <amount> [radius]" + ChatColor.GRAY + " - spawn coins");
         sender.sendMessage(ChatColor.RED + "/coins remove [radius|all]" + ChatColor.GRAY + " - remove coins in a radius");
         sender.sendMessage(ChatColor.RED + "/coins settings" + ChatColor.GRAY + " - list the currently loaded settings");

@@ -30,6 +30,7 @@ passiveDrop: false
 # Play a sound on pickup of a coin.
 # This sound is a 1.9+ sound, if you use 1.8, put another sound in there.
 # If the sound name remains untouched, and you use 1.8, it will do an 1.8 sound automaticly for you.
+# Here is a list of 1.9+ sounds: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
 pickupSound: true
 soundName: "BLOCK_LAVA_POP"
 

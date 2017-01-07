@@ -10,7 +10,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/spigot-api-1.11.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../BuildTools/spigot-api-1.11.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -19,7 +19,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/vault-1.5.6.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../BuildTools/@plugins/vault-1.5.6.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
