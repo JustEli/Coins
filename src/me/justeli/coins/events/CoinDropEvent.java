@@ -1,8 +1,8 @@
 package me.justeli.coins.events;
 
 import me.justeli.coins.cancel.PreventSpawner;
-import me.justeli.coins.settings.LoadSettings;
-import me.justeli.coins.settings.Setting;
+import me.justeli.coins.settings.Settings;
+import me.justeli.coins.settings.Config;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -18,7 +18,7 @@ public class CoinDropEvent extends Event {
     private final Entity entity;
     private final Player player;
     private boolean cancelled = false;
-    private boolean stackable = LoadSettings.hB.get(Setting._Boolean.stackCoins);
+    private boolean stackable = Settings.hB.get(Config.BOOLEAN.stackCoins);
 
     CoinDropEvent (Entity entity, Player player) {
         this.entity = entity;

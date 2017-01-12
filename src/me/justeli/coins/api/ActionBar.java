@@ -5,18 +5,14 @@ import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 
 public class ActionBar {
-	
-    @SuppressWarnings("unchecked")
-    private static JSONObject convert(String text) {
-        JSONObject json = new JSONObject();
-        json.put("text", ChatColor.translateAlternateColorCodes('&', text));
-        return json;
-    }
 
     private JSONObject json;
 
+    @SuppressWarnings("unchecked")
     public ActionBar(String text) {
-        this.json = convert(text);
+        JSONObject json = new JSONObject();
+        json.put("text", ChatColor.translateAlternateColorCodes('&', text));
+        this.json = json;
     }
 
     public void send (Player player) {

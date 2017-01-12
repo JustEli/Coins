@@ -4,11 +4,11 @@ package me.justeli.coins.settings;
  * Created by Eli on 12/14/2016.
  */
 
-public enum Setting {
+public enum Config {
 
     ;
 
-    public enum _Boolean {
+    public enum BOOLEAN {
 
         stackCoins,
         spawnerDrop,
@@ -16,36 +16,37 @@ public enum Setting {
         pickupSound,
         loseOnDeath,
         olderServer,
-        ;
+        playerDrop,
+        preventAlts,
+        enableWithdraw,
 
     }
 
-    public enum _String {
+    public enum STRING {
 
         nameOfCoin,
         pickupMessage,
         soundName,
-        ;
+        mobMultiplier,
 
     }
 
-    public enum _Double {
+    public enum DOUBLE {
 
         dropChance,
+        maxWithdrawAmount,
 
         moneyAmount_from,
         moneyAmount_to,
 
         moneyTaken_from,
         moneyTaken_to,
-        ;
 
     }
 
-    public enum _Array {
+    public enum ARRAY {
 
         disabledWorlds,
-        ;
 
     }
 

@@ -6,7 +6,7 @@
 nameOfCoin: "&6Coin"
 
 # Message sent as action bar, telling them how much money they have picked up.
-pickupMessage: "&2+ &a$%amount% &2+"
+pickupMessage: "&2+ &a$%amount%"
 
 # The amount of money a coin is worth. Creates a random number between
 # 'from' and 'to' which - as money - will be given to the player on pickup.
@@ -17,7 +17,23 @@ moneyAmount:
 # Should coins be stacked? (Or should a coin be one on its own?)
 # Stacked coins don't act like one coin. The stack is counted and the worth is multiplied.
 # Not stacking coins is just for a cooler effect (but probably laggier).
-stackCoins: true
+stackCoins: false
+
+# Put the amount of coins dropped for a specific mob here, by default: mobs drop one coin.
+# ENDER_DRAGON is added by default, meaning that on kill of Ender Dragon, 64 coins drop.
+# You can find mob types via this URL (types that aren't creatures will be ignored):
+# https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
+mobMultiplier:
+  ENDER_DRAGON: 64
+  PLAYER: 3
+
+# When a player gets killed by another player, should (three; setting above) coins drop?
+playerDrop: true
+
+# And should coins NOT drop when both players have the same ip address?
+# This means that no coin(s) will be dropped if both players are from the same computer.
+# This prevents spam killing for unlimited money, unless you use this plugin for a local server.
+preventAlts: true
 
 # Should mobs from spawners drop a coin too?
 # Mobs from spawners won't drop a coin by default.
@@ -44,6 +60,12 @@ dropChance: 0.9
 #    - plots
 #    - creative
 disabledWorlds:
+
+# Lets players use /withdraw <amount> to get a coin "<amount> <coin name>s": for example "53 Coins".
+# This allows players to store the coins in chests, but won't be easier to give to others.
+# When the coin gets dropped, and picked up after, give the player the amount of money the coin was worth.
+enableWithdraw: true
+maxWithdrawAmount: 10000.0
 
 
 #

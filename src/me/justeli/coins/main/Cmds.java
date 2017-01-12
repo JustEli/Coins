@@ -1,9 +1,12 @@
 package me.justeli.coins.main;
 
+import me.justeli.coins.api.ActionBar;
 import me.justeli.coins.item.CoinParticles;
-import me.justeli.coins.settings.LoadSettings;
-import me.justeli.coins.settings.Setting;
+import me.justeli.coins.settings.Settings;
+import me.justeli.coins.settings.Config;
 import net.md_5.bungee.api.ChatColor;
+
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,7 +15,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import me.justeli.coins.api.Complete;
-import org.bukkit.inventory.ItemStack;
+import me.justeli.coins.item.Coin;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -20,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 class Cmds implements CommandExecutor {
+
+    private static RegisteredServiceProvider<Economy> rep = Bukkit.getServicesManager().getRegistration(Economy.class);
 
 	@Override
 	public boolean onCommand (CommandSender sender, Command cmd, String l, String[] args)
@@ -31,17 +37,23 @@ class Cmds implements CommandExecutor {
                     case "reload":
                         if (sender.hasPermission("coins.admin"))
                         {
-                            LoadSettings.remove();
-                            LoadSettings.enums();
-                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&eConfig of &6Coins &ehas been reloaded."));
-                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e&oYou can check the loaded settings with &f&o/coins settings&e&o."));
+                            long ms = System.currentTimeMillis();
+                            Settings.remove();
+                            Settings.remove();
+                            boolean success = Settings.enums();
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                                    "&eConfig of &6Coins &ehas been reloaded in &a" + (System.currentTimeMillis() - ms) + "ms&e."));
+                            if (!success) sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                                    "&c&oThere were some minor errors while reloading, check console."));
+                            else sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                                    "&e&oYou can check the loaded settings with &f&o/coins settings&e&o."));
                         }
                         else sender.sendMessage(ChatColor.RED + "You do not have access to that command.");
                         break;
                     case "settings":
                         if (sender.hasPermission("coins.admin"))
                         {
-                            String settings = LoadSettings.getSettings();
+                            String settings = Settings.getSettings();
                             sender.sendMessage( ChatColor.translateAlternateColorCodes('&', settings) );
                         }
                         else sender.sendMessage(ChatColor.RED + "You do not have access to that command.");
@@ -67,6 +79,45 @@ class Cmds implements CommandExecutor {
             } else sendHelp(sender);
 
             return true;
+        }
+
+        else if (l.equalsIgnoreCase("withdraw"))
+        {
+            if (!Settings.hB.get(Config.BOOLEAN.enableWithdraw))
+                return false;
+
+            if (!sender.hasPermission("coins.withdraw") || !(sender instanceof Player))
+            {
+                sender.sendMessage(ChatColor.DARK_RED + "You do not have access to that command.");
+                return true;
+            }
+
+            Player p = (Player) sender;
+
+            if (args.length >= 1)
+            {
+                long amount;
+
+                try { amount = Integer.valueOf(args[0]); }
+                catch (NumberFormatException e)
+                {
+                    sender.sendMessage(ChatColor.DARK_RED + "That is an invalid amount of coins.");
+                    return true;
+                }
+
+                if (amount > 0 && amount <= Settings.hD.get(Config.DOUBLE.maxWithdrawAmount) && rep.getProvider().getBalance(p) >= amount)
+                {
+                    p.getInventory().addItem( new Coin().withdraw(amount).item() );
+                    rep.getProvider().withdrawPlayer(p, amount);
+                    p.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                            "&e&oYou withdrawed &f&o$" + amount + " &e&oand received &f&o" + amount + " coins&e&o for it."));
+                    new ActionBar("&4- &c$" + amount).send(p);
+                }
+                else p.sendMessage(ChatColor.RED + "You are not allowed to withdraw that much.");
+            }
+
+            else p.sendMessage(ChatColor.RED + "Usage: /withdraw <coins>");
+
         }
 		
 		return false;
@@ -108,7 +159,7 @@ class Cmds implements CommandExecutor {
                 return;
             }
 
-            for (String world : LoadSettings.hA.get(Setting._Array.disabledWorlds) )
+            for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds) )
                 if (p.getWorld().getName().equalsIgnoreCase(world))
                 {
                     sender.sendMessage(ChatColor.RED + "Coins are disabled in this world.");
@@ -141,7 +192,6 @@ class Cmds implements CommandExecutor {
         List<Entity> mobs = Bukkit.getWorlds().get(0).getEntities();
         if (args.length >= 2 && sender instanceof Player)
         {
-            Player p = (Player) sender;
             if (!args[1].equalsIgnoreCase("all"))
             {
                 try {r = Integer.valueOf(args[1]);}
@@ -170,7 +220,7 @@ class Cmds implements CommandExecutor {
                 Item i = (Item) m;
                 if (i.getItemStack().getItemMeta().getDisplayName() != null)
                     if (i.getItemStack().getItemMeta().getDisplayName().equals(
-                            ChatColor.translateAlternateColorCodes('&', LoadSettings.hS.get(Setting._String.nameOfCoin) ) ))
+                            ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin) ) ))
                     {
                         amount ++;
                         double random = (Math.random()*3);
@@ -200,14 +250,23 @@ class Cmds implements CommandExecutor {
 
     private void sendHelp (CommandSender sender)
     {
-        if (sender instanceof Player)
-            sender.sendMessage(ChatColor.DARK_RED + "                             * Help for Coins *");
-        else
-            sender.sendMessage(ChatColor.DARK_RED + "* Help for Coins *");
-        sender.sendMessage(ChatColor.RED + "/coins drop <player> <amount> [radius]" + ChatColor.GRAY + " - spawn coins");
-        sender.sendMessage(ChatColor.RED + "/coins remove [radius|all]" + ChatColor.GRAY + " - remove coins in a radius");
-        sender.sendMessage(ChatColor.RED + "/coins settings" + ChatColor.GRAY + " - list the currently loaded settings");
-        sender.sendMessage(ChatColor.RED + "/coins reload" + ChatColor.GRAY + " - reload the settings from config.yml");
+        if (sender instanceof Player) sender.sendMessage(ChatColor.DARK_RED + "                             * Help for Coins *");
+        else sender.sendMessage(ChatColor.DARK_RED + "* Help for Coins *");
+
+        if (sender.hasPermission("coins.drop"))
+            sender.sendMessage(ChatColor.RED + "/coins drop <player> <amount> [radius]" + ChatColor.GRAY + " - spawn coins");
+
+        if (sender.hasPermission("coins.remove"))
+            sender.sendMessage(ChatColor.RED + "/coins remove [radius|all]" + ChatColor.GRAY + " - remove coins in a radius");
+
+        if (sender.hasPermission("coins.admin"))
+        {
+            sender.sendMessage(ChatColor.RED + "/coins settings" + ChatColor.GRAY + " - list the currently loaded settings");
+            sender.sendMessage(ChatColor.RED + "/coins reload" + ChatColor.GRAY + " - reload the settings from config.yml");
+        }
+
+        if (Settings.hB.get(Config.BOOLEAN.enableWithdraw) && sender.hasPermission("coins.withdraw"))
+            sender.sendMessage(ChatColor.RED + "/withdraw <coins>" + ChatColor.GRAY + " - withdraw some money into coins");
     }
 
 }

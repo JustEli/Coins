@@ -2,8 +2,8 @@ package me.justeli.coins.cancel;
 
 import java.util.HashMap;
 
-import me.justeli.coins.settings.LoadSettings;
-import me.justeli.coins.settings.Setting;
+import me.justeli.coins.settings.Settings;
+import me.justeli.coins.settings.Config;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,12 +16,12 @@ public class PreventSpawner implements Listener {
 
 	@EventHandler
 	public void preventSpawnerCoin(CreatureSpawnEvent e) {
-        for (String world : LoadSettings.hA.get(Setting._Array.disabledWorlds) )
+        for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds) )
             if (e.getEntity().getWorld().getName().equalsIgnoreCase(world))
                 return;
 
 		if (e.getSpawnReason().equals(SpawnReason.SPAWNER)) {
-			if (!LoadSettings.hB.get(Setting._Boolean.spawnerDrop))
+			if (!Settings.hB.get(Config.BOOLEAN.spawnerDrop))
 				spawner.put(e.getEntity().getUniqueId().toString() + ".spawner", true);
 		}
 	}

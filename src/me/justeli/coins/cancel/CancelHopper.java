@@ -1,22 +1,49 @@
 package me.justeli.coins.cancel;
 
 import me.justeli.coins.events.CoinsPickup;
-import me.justeli.coins.settings.LoadSettings;
-import me.justeli.coins.settings.Setting;
+import me.justeli.coins.settings.Settings;
+import me.justeli.coins.item.Coin;
+import me.justeli.coins.settings.Config;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 
 public class CancelHopper implements Listener {
+
+/*
+	@EventHandler (ignoreCancelled = true)
+	public void itemHopper (InventoryMoveItemEvent e)
+	{
+		if (e.getDestination().getType().equals(InventoryType.HOPPER))
+		{
+			ItemStack item = e.getItem();
+			if (item.getItemMeta().hasDisplayName() && item.getItemMeta().hasLore())
+			{
+				String pickupName = item.getItemMeta().getDisplayName();
+				String coinName = ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin));
+
+				if ( pickupName.equals(coinName) )
+				{
+					e.getSource().remove(e.getItem());
+					e.getDestination().remove(e.getItem());
+					e.getInitiator().remove(e.getItem());
+					e.setItem(new ItemStack(new Coin().item()));
+				}
+
+			}
+		}
+	} */
 	
 	@EventHandler (ignoreCancelled = true)
 	public void coinInventory (InventoryClickEvent e) 
 	{
-        for (String world : LoadSettings.hA.get(Setting._Array.disabledWorlds) )
+        for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds) )
             if (e.getWhoClicked().getWorld().getName().equalsIgnoreCase(world))
                 return;
 
@@ -30,9 +57,9 @@ public class CancelHopper implements Listener {
 			
 			if (item != null)
 				if (item.hasItemMeta())
-					if (item.getItemMeta().getDisplayName() != null)
+					if (item.getItemMeta().hasDisplayName())
 						if (item.getItemMeta().getDisplayName().equals(
-								ChatColor.translateAlternateColorCodes('&', LoadSettings.hS.get(Setting._String.nameOfCoin))
+								ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin))
 						))
 						{
 							Player p = (Player)e.getWhoClicked();
@@ -42,7 +69,7 @@ public class CancelHopper implements Listener {
                             e.getInventory().remove(item);
                             e.getClickedInventory().remove(item);
 
-                            CoinsPickup.giveCoin(item, p);
+                            CoinsPickup.giveReward(item, p);
 							
 						}
 

@@ -1,9 +1,9 @@
 package me.justeli.coins.events;
 
-import me.justeli.coins.item.CoinItem;
+import me.justeli.coins.item.Coin;
 import me.justeli.coins.cancel.PreventSpawner;
-import me.justeli.coins.settings.LoadSettings;
-import me.justeli.coins.settings.Setting;
+import me.justeli.coins.settings.Settings;
+import me.justeli.coins.settings.Config;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 
@@ -26,39 +26,37 @@ public class DropCoin implements Listener {
 		
 		Entity m = e.getEntity(); // mob
 
-        for (String world : LoadSettings.hA.get(Setting._Array.disabledWorlds) )
+        for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds) )
             if (m.getWorld().getName().equalsIgnoreCase(world))
                 return;
 
-		if (
-                ( m instanceof Monster || m instanceof Slime || m instanceof MagmaCube || m instanceof Ghast )
-                        && e.getEntity().getKiller() instanceof Player
-            )
+        if (e.getEntity().getKiller() instanceof Player)
+        {
+            if (
+                    (m instanceof Monster || m instanceof Slime || m instanceof MagmaCube || m instanceof Ghast)
 
-        { dropTheCoin(m, e.getEntity().getKiller()); }
+                    || ( (m instanceof Animals || m instanceof WaterMob || m instanceof Golem
+                            || m instanceof Villager || m instanceof Bat) && Settings.hB.get(Config.BOOLEAN.passiveDrop) )
 
-		else if (
-                ( m instanceof Animals || m instanceof WaterMob || m instanceof Golem || m instanceof Villager || m instanceof Bat )
-                        && LoadSettings.hB.get(Setting._Boolean.passiveDrop) && e.getEntity().getKiller() instanceof Player
-			)
+                    || (m instanceof Player && Settings.hB.get(Config.BOOLEAN.playerDrop))
+                )
 
-        { dropTheCoin(m, e.getEntity().getKiller()); }
-		
-		else if (m instanceof Player && LoadSettings.hB.get(Setting._Boolean.loseOnDeath))
-		{
-			double second = LoadSettings.hD.get(Setting._Double.moneyTaken_from);
-			double first = LoadSettings.hD.get(Setting._Double.moneyTaken_to) - second;
+            { dropTheCoin(m, e.getEntity().getKiller()); }
 
-			Player p = (Player) e.getEntity();
-			double random = Math.random() * first + second;
-			
-			EconomyResponse r = rep.getProvider().withdrawPlayer(p, (long)random);
-			if (r.transactionSuccess()) 
-				Title.sendSubTitle(p, 20, 100, 20, "&4&l- &c&l$" + (long)random + " &4&l-");
+        }
 
+        if ( m instanceof Player && Settings.hB.get(Config.BOOLEAN.loseOnDeath) )
+        {
+            double second = Settings.hD.get(Config.DOUBLE.moneyTaken_from);
+            double first = Settings.hD.get(Config.DOUBLE.moneyTaken_to) - second;
 
-		}
+            Player p = (Player) e.getEntity();
+            double random = Math.random() * first + second;
 
+            EconomyResponse r = rep.getProvider().withdrawPlayer(p, (long) random);
+            if (r.transactionSuccess())
+                Title.sendSubTitle(p, 20, 100, 20, "&4&o- &c&o$" + (long) random);
+        }
 	}
 
 
@@ -69,14 +67,34 @@ public class DropCoin implements Listener {
         if (dropEvent.isCancelled())
             return;
 
+        if (m.getType().equals(EntityType.PLAYER) && Settings.hB.get(Config.BOOLEAN.preventAlts))
+        {
+            Player player = (Player) m;
+            if (p.getAddress().getAddress().getHostAddress()
+                    .equals(player.getAddress().getAddress().getHostAddress()))
+                return;
+        }
+
         boolean stack = dropEvent.isStackable();
 
         if (!PreventSpawner.fromSpawner(m))
         {
-            if (Math.random() <= LoadSettings.hD.get(Setting._Double.dropChance))
+            if (Math.random() <= Settings.hD.get(Config.DOUBLE.dropChance))
             {
-                ItemStack coin = CoinItem.sunflower(stack);
+                ItemStack coin = new Coin().stack(stack).item();
                 m.getLocation().getWorld().dropItem(m.getLocation(), coin);
+
+                if (Settings.multiplier.containsKey(m.getType()))
+                {
+                    int amount = Settings.multiplier.get(m.getType());
+                    for (int i = 1; i < amount; i ++)
+                    {
+                        ItemStack newCoin = new Coin().stack(stack).item();
+                        m.getLocation().getWorld().dropItem(m.getLocation(), newCoin);
+                    }
+
+                }
+
             }
         }
         else PreventSpawner.removeFromList(m);

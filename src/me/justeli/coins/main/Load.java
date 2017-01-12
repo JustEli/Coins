@@ -4,8 +4,8 @@ import me.justeli.coins.cancel.CancelHopper;
 import me.justeli.coins.cancel.PreventSpawner;
 import me.justeli.coins.events.CoinsPickup;
 import me.justeli.coins.events.DropCoin;
-import me.justeli.coins.settings.LoadSettings;
-import me.justeli.coins.settings.Setting;
+import me.justeli.coins.settings.Settings;
+import me.justeli.coins.settings.Config;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,7 +28,7 @@ public class Load extends JavaPlugin
         registerCommands();
 
         if (Bukkit.getVersion().contains("1.8") || Bukkit.getVersion().contains("1.7"))
-            LoadSettings.hB.put(Setting._Boolean.olderServer, true);
+            Settings.hB.put(Config.BOOLEAN.olderServer, true);
 
     }
 
@@ -44,11 +44,12 @@ public class Load extends JavaPlugin
     private void registerCommands ()
     {
         this.getCommand("coins").setExecutor(new Cmds());
+        this.getCommand("withdraw").setExecutor(new Cmds());
     }
 
     private void registerConfig ()
     {
-        LoadSettings.enums();
+        Settings.enums();
     }
 
 }

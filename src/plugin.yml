@@ -1,5 +1,5 @@
 author: JustEli
-version: 0.5
+version: 1.0
 main: me.justeli.coins.main.Load
 name: Coins
 depend: [Vault]
@@ -7,3 +7,4 @@ depend: [Vault]
 commands:
   coins:
     aliases: [coin]
+  withdraw:
