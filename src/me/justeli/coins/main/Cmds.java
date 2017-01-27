@@ -8,6 +8,7 @@ import net.md_5.bungee.api.ChatColor;
 
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -25,6 +26,7 @@ import java.util.List;
 
 class Cmds implements CommandExecutor {
 
+    public static final double[] DOUBLES = {};
     private static RegisteredServiceProvider<Economy> rep = Bukkit.getServicesManager().getRegistration(Economy.class);
 
 	@Override
@@ -152,11 +154,39 @@ class Cmds implements CommandExecutor {
                 }
             }
 
-
+            Location location;
+            String name;
             if (p == null)
             {
-                sender.sendMessage(ChatColor.DARK_RED + "That player could not be found.");
-                return;
+                if (!args[1].contains(","))
+                {
+                    sender.sendMessage(ChatColor.DARK_RED + "That player could not be found.");
+                    return;
+                }
+                else
+                {
+                    try
+                    {
+                        String[] coords = args[1].split(",");
+                        double x = Double.valueOf(coords[0]);
+                        double y = Double.valueOf(coords[1]);
+                        double z = Double.valueOf(coords[2]);
+
+                        location = new Location( sender instanceof Player ? ((Player) sender).getWorld() : Bukkit.getWorlds().get(0), x, y, z );
+                        name = x + ", " + y + ", " + z;
+                    }
+                    catch (NumberFormatException | ArrayIndexOutOfBoundsException e)
+                    {
+                        sender.sendMessage(ChatColor.DARK_RED + "One or more of those coords is an invalid number.");
+                        return;
+                    }
+                }
+
+            }
+            else
+            {
+                location = p.getLocation();
+                name = p.getName();
             }
 
             for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds) )
@@ -178,10 +208,10 @@ class Cmds implements CommandExecutor {
                 return;
             }
 
-            CoinParticles.dropCoins(p, radius, amount);
-            sender.sendMessage(ChatColor.BLUE + "Spawned "+amount+" coins in radius "+radius+" around "+p.getName()+".");
+            CoinParticles.dropCoins(location, radius, amount);
+            sender.sendMessage(ChatColor.BLUE + "Spawned "+amount+" coins in radius "+radius+" around " + name + ".");
 
-        } else sender.sendMessage(ChatColor.RED + "Usage: /coins drop <player> <amount> [radius]");
+        } else sender.sendMessage(ChatColor.RED + "Usage: /coins drop <player|x,y,z> <amount> [radius]");
 
     }
 
@@ -254,7 +284,7 @@ class Cmds implements CommandExecutor {
         else sender.sendMessage(ChatColor.DARK_RED + "* Help for Coins *");
 
         if (sender.hasPermission("coins.drop"))
-            sender.sendMessage(ChatColor.RED + "/coins drop <player> <amount> [radius]" + ChatColor.GRAY + " - spawn coins");
+            sender.sendMessage(ChatColor.RED + "/coins drop <player|x,y,z> <amount> [radius]" + ChatColor.GRAY + " - spawn coins");
 
         if (sender.hasPermission("coins.remove"))
             sender.sendMessage(ChatColor.RED + "/coins remove [radius|all]" + ChatColor.GRAY + " - remove coins in a radius");

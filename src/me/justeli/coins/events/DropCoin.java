@@ -55,7 +55,7 @@ public class DropCoin implements Listener {
 
             EconomyResponse r = rep.getProvider().withdrawPlayer(p, (long) random);
             if (r.transactionSuccess())
-                Title.sendSubTitle(p, 20, 100, 20, "&4&o- &c&o$" + (long) random);
+                Title.sendSubTitle(p, 20, 100, 20, Settings.hS.get(Config.STRING.deathMessage).replace("%amount%", String.valueOf( (long)random )));
         }
 	}
 

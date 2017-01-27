@@ -8,37 +8,28 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.ItemStack;
 
 public class CancelHopper implements Listener {
 
-/*
 	@EventHandler (ignoreCancelled = true)
-	public void itemHopper (InventoryMoveItemEvent e)
+	public void itemHopper (InventoryPickupItemEvent e)
 	{
-		if (e.getDestination().getType().equals(InventoryType.HOPPER))
+		if (e.getInventory().getType().equals(InventoryType.HOPPER))
 		{
-			ItemStack item = e.getItem();
+			ItemStack item = e.getItem().getItemStack();
 			if (item.getItemMeta().hasDisplayName() && item.getItemMeta().hasLore())
 			{
 				String pickupName = item.getItemMeta().getDisplayName();
 				String coinName = ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin));
 
 				if ( pickupName.equals(coinName) )
-				{
-					e.getSource().remove(e.getItem());
-					e.getDestination().remove(e.getItem());
-					e.getInitiator().remove(e.getItem());
-					e.setItem(new ItemStack(new Coin().item()));
-				}
+					e.getItem().setItemStack(new ItemStack(new Coin().item()));
 
 			}
 		}
-	} */
+	}
 	
 	@EventHandler (ignoreCancelled = true)
 	public void coinInventory (InventoryClickEvent e) 

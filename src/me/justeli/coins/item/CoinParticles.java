@@ -11,9 +11,9 @@ import org.bukkit.util.Vector;
 
 public class CoinParticles {
 
-	public static void dropCoins (Player player, int radius, int amount)
+	public static void dropCoins (Location location, int radius, int amount)
 	{
-		Location l = player.getLocation().add(0.0, 0.5, 0.0);
+		Location l = location.add(0.0, 0.5, 0.0);
 		ItemStack coin = new Coin().unique().item();
 		ItemMeta meta = coin.getItemMeta();
 

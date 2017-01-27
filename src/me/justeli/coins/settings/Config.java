@@ -19,6 +19,7 @@ public enum Config {
         playerDrop,
         preventAlts,
         enableWithdraw,
+        roundedMoney,
 
     }
 
@@ -26,6 +27,7 @@ public enum Config {
 
         nameOfCoin,
         pickupMessage,
+        deathMessage,
         soundName,
         mobMultiplier,
 

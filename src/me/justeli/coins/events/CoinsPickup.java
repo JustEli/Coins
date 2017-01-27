@@ -20,6 +20,7 @@ import me.justeli.coins.api.ActionBar;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -86,7 +87,7 @@ public class CoinsPickup implements Listener {
 				if (randomMoney == 0)
 					giveReward(item.getItemStack(), p);
 				else
-					addMoney(p, randomMoney);
+					addMoney(p, randomMoney, true);
 
 				if (Settings.hB.get(Config.BOOLEAN.pickupSound))
 				{
@@ -110,7 +111,6 @@ public class CoinsPickup implements Listener {
 
 				}
 
-
 			}
 		}.runTaskTimer(Load.main, 2, 0);
 
@@ -122,15 +122,18 @@ public class CoinsPickup implements Listener {
 		double first = Settings.hD.get(Config.DOUBLE.moneyAmount_to) - second;
 
 		int amount = item.getAmount();
-		long total = amount * (long)( Math.random() * first + second );
+		double total = amount * ( Math.random() * first + second );
 
-		addMoney (p, total);
+		addMoney (p, total, Settings.hB.get(Config.BOOLEAN.roundedMoney));
 	}
 
-	private static void addMoney (Player p, long amount)
+	private static void addMoney (Player p, double amount, boolean integer)
 	{
+		amount = Double.parseDouble(new DecimalFormat( integer ? "#" : "###.#" ).format( amount ));
 		rep.getProvider().depositPlayer(p, amount);
-		new ActionBar( Settings.hS.get(Config.STRING.pickupMessage).replace("%amount%", String.valueOf(amount)) ).send(p);
+
+		String stringAmount = String.valueOf( integer ? Integer.toString((int) amount) : amount );
+		new ActionBar( Settings.hS.get(Config.STRING.pickupMessage).replace("%amount%", stringAmount )).send(p);
 	}
 
 }

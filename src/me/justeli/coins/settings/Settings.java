@@ -31,20 +31,23 @@ public class Settings {
             Load.main.saveDefaultConfig();
         FileConfiguration file = YamlConfiguration.loadConfiguration( config );
 
-        for (Config.BOOLEAN s : Config.BOOLEAN.values())
-            hB.put(s, file.getBoolean( s.name() ) );
-
-        for (Config.STRING s : Config.STRING.values())
-            hS.put(s, file.getString( s.name() ) );
-
-        for (Config.DOUBLE s : Config.DOUBLE.values())
-            hD.put(s, file.getDouble( s.name().replace('_', '.') ) );
-
-        for (Config.ARRAY s : Config.ARRAY.values())
-            hA.put(s, file.getStringList( s.name() ) );
+        int errors = 0;
 
         try
         {
+            for (Config.BOOLEAN s : Config.BOOLEAN.values())
+                hB.put(s, file.getBoolean( s.name() ) );
+
+            for (Config.STRING s : Config.STRING.values())
+                if (file.getString( s.name() ) != null) hS.put(s, file.getString( s.name() ) );
+                else { errorMessage (Msg.OutdatedConfig); errors++; }
+
+            for (Config.DOUBLE s : Config.DOUBLE.values())
+                hD.put(s, file.getDouble( s.name().replace('_', '.') ) );
+
+            for (Config.ARRAY s : Config.ARRAY.values())
+                hA.put(s, file.getStringList( s.name() ) );
+
             Set<String> keys = file.getConfigurationSection( Config.STRING.mobMultiplier.name() ).getKeys(false);
             for ( String key :  keys)
             {
@@ -63,13 +66,11 @@ public class Settings {
         }
         catch (NullPointerException e)
         {
-            System.err.print("Your config of Coins is outdated, update the Coins config.yml.");
-            System.err.print("You can copy it from here: https://github.com/JustEli/Coins/blob/master/src/config.yml");
-            System.err.print("Use /coins reload afterwards. You could also remove the config if you haven't configured it.");
+            errorMessage (Msg.OutdatedConfig);
             return false;
         }
 
-        return true;
+        return errors == 0;
     }
 
     public static void remove ()
@@ -99,6 +100,23 @@ public class Settings {
             message += s.toString() + " &7\u00BB &b" + hA.get(s) + "\n&r";
 
         return message;
+    }
+
+    private enum Msg {
+        OutdatedConfig
+    }
+
+    private static void errorMessage (Msg msg)
+    {
+        switch (msg)
+        {
+            case OutdatedConfig:
+                System.err.print("Your config of Coins is outdated, update the Coins config.yml.");
+                System.err.print("You can copy it from here: https://github.com/JustEli/Coins/blob/master/src/config.yml");
+                System.err.print("Use /coins reload afterwards. You could also remove the config if you haven't configured it.");
+                break;
+        }
+
     }
 
 }

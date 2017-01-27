@@ -34,7 +34,7 @@ public class Coin {
     }
 
     /**
-     * Makes it a withdrawnable item.
+     * Makes it a withdrawn item.
      * @param amount
      * @return
      */
