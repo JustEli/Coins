@@ -1,6 +1,7 @@
 package me.justeli.coins.main;
 
 import me.justeli.coins.cancel.CancelHopper;
+import me.justeli.coins.cancel.CoinPlace;
 import me.justeli.coins.cancel.PreventSpawner;
 import me.justeli.coins.events.CoinsPickup;
 import me.justeli.coins.events.DropCoin;
@@ -39,6 +40,7 @@ public class Load extends JavaPlugin
         manager.registerEvents(new PreventSpawner(), this);
         manager.registerEvents(new CoinsPickup(), this);
         manager.registerEvents(new DropCoin(), this);
+        manager.registerEvents(new CoinPlace(), this);
     }
 
     private void registerCommands ()

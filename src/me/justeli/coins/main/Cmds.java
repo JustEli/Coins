@@ -26,7 +26,6 @@ import java.util.List;
 
 class Cmds implements CommandExecutor {
 
-    public static final double[] DOUBLES = {};
     private static RegisteredServiceProvider<Economy> rep = Bukkit.getServicesManager().getRegistration(Economy.class);
 
 	@Override
@@ -143,8 +142,8 @@ class Cmds implements CommandExecutor {
             int radius = amount/20;
             if (radius < 2)
                 radius = 2;
-            if (args.length >= 4)
 
+            if (args.length >= 4)
             {
                 try {radius = Integer.valueOf(args[3]);}
                 catch (NumberFormatException e)
@@ -172,12 +171,12 @@ class Cmds implements CommandExecutor {
                         double y = Double.valueOf(coords[1]);
                         double z = Double.valueOf(coords[2]);
 
-                        location = new Location( sender instanceof Player ? ((Player) sender).getWorld() : Bukkit.getWorlds().get(0), x, y, z );
+                        location = new Location( coords.length == 4 ? Bukkit.getWorld(coords[3]) : ( sender instanceof Player ? ((Player) sender).getWorld() : Bukkit.getWorlds().get(0) ), x, y, z );
                         name = x + ", " + y + ", " + z;
                     }
-                    catch (NumberFormatException | ArrayIndexOutOfBoundsException e)
+                    catch (NumberFormatException | ArrayIndexOutOfBoundsException | NullPointerException e)
                     {
-                        sender.sendMessage(ChatColor.DARK_RED + "One or more of those coords is an invalid number.");
+                        sender.sendMessage(ChatColor.DARK_RED + "Those coords or the world couldn't be found.");
                         return;
                     }
                 }
@@ -189,12 +188,20 @@ class Cmds implements CommandExecutor {
                 name = p.getName();
             }
 
-            for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds) )
-                if (p.getWorld().getName().equalsIgnoreCase(world))
+            if (p != null || sender instanceof Player)
+            {
+                if (p == null)
+                    p = (Player)sender;
+
+                for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds) )
                 {
-                    sender.sendMessage(ChatColor.RED + "Coins are disabled in this world.");
-                    return;
+                    if (p.getWorld().getName().equalsIgnoreCase(world))
+                    {
+                        sender.sendMessage(ChatColor.RED + "Coins are disabled in this world.");
+                        return;
+                    }
                 }
+            }
 
             if (radius < 1 || radius > 80)
             {
@@ -211,7 +218,8 @@ class Cmds implements CommandExecutor {
             CoinParticles.dropCoins(location, radius, amount);
             sender.sendMessage(ChatColor.BLUE + "Spawned "+amount+" coins in radius "+radius+" around " + name + ".");
 
-        } else sender.sendMessage(ChatColor.RED + "Usage: /coins drop <player|x,y,z> <amount> [radius]");
+        }
+        else sender.sendMessage(ChatColor.RED + "Usage: /coins drop <player|x,y,z[,world]> <amount> [radius]");
 
     }
 
@@ -270,12 +278,8 @@ class Cmds implements CommandExecutor {
             }
 
         }
-        if (r != 0)
-            sender.sendMessage(ChatColor.BLUE + "Removed " + amount + " coins in a radius of " + r + ".");
-        else if (sender instanceof Player)
-            sender.sendMessage(ChatColor.BLUE + "Removed " + amount + " coins in this world.");
-        else
-            sender.sendMessage(ChatColor.BLUE + "Removed " + amount + " coins in the default world.");
+        sender.sendMessage(ChatColor.BLUE + "Removed " + amount + " coins in "
+                + (r != 0 ? "a radius of " + r + "." : (sender instanceof Player ? "this" : "the default") + " world."));
     }
 
     private void sendHelp (CommandSender sender)
@@ -284,7 +288,7 @@ class Cmds implements CommandExecutor {
         else sender.sendMessage(ChatColor.DARK_RED + "* Help for Coins *");
 
         if (sender.hasPermission("coins.drop"))
-            sender.sendMessage(ChatColor.RED + "/coins drop <player|x,y,z> <amount> [radius]" + ChatColor.GRAY + " - spawn coins");
+            sender.sendMessage(ChatColor.RED + "/coins drop <player|x,y,z[,world]> <amount> [radius]" + ChatColor.GRAY + " - spawn coins");
 
         if (sender.hasPermission("coins.remove"))
             sender.sendMessage(ChatColor.RED + "/coins remove [radius|all]" + ChatColor.GRAY + " - remove coins in a radius");
