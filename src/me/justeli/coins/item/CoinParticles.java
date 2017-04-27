@@ -4,12 +4,12 @@ import java.util.Collections;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
-public class CoinParticles {
+public class CoinParticles
+{
 
 	public static void dropCoins (Location location, int radius, int amount)
 	{

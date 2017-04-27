@@ -1,6 +1,6 @@
 package me.justeli.coins.events;
 
-import me.justeli.coins.main.Load;
+import me.justeli.coins.main.Coins;
 import me.justeli.coins.settings.Settings;
 import me.justeli.coins.settings.Config;
 import org.bukkit.Bukkit;
@@ -24,14 +24,14 @@ import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.HashMap;
 
-public class CoinsPickup implements Listener {
-
+public class CoinsPickup implements Listener
+{
 	private final static HashMap<String, Boolean> thrown = new HashMap<>();
 	private static RegisteredServiceProvider<Economy> rep = Bukkit.getServicesManager().getRegistration(Economy.class);
 	
 	@EventHandler
-	public void onPickup (PlayerPickupItemEvent e) {
-
+	public void onPickup (PlayerPickupItemEvent e)
+	{
 		for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds) )
 			if (e.getPlayer().getWorld().getName().equalsIgnoreCase(world))
 				return;
@@ -47,7 +47,7 @@ public class CoinsPickup implements Listener {
 			{
 				e.setCancelled(true);
 
-				if (!e.getPlayer().hasPermission("coins.disable") || e.getPlayer().isOp())
+				if (!e.getPlayer().hasPermission("coins.disable") || e.getPlayer().isOp() || e.getPlayer().hasPermission("*"))
 					giveCoin(item, e.getPlayer(), 0);
 			}
 
@@ -55,7 +55,7 @@ public class CoinsPickup implements Listener {
 			{
 				e.setCancelled(true);
 				int amount = Integer.valueOf( ChatColor.stripColor(pickupName.split(" ")[0]) );
-				if (!e.getPlayer().hasPermission("coins.disable") || e.getPlayer().isOp())
+				if (!e.getPlayer().hasPermission("coins.disable") || e.getPlayer().isOp() || e.getPlayer().hasPermission("*"))
 					giveCoin(item, e.getPlayer(), item.getItemStack().getAmount() * amount);
 			}
 		}
@@ -77,9 +77,10 @@ public class CoinsPickup implements Listener {
 
 		item.setVelocity(new Vector(0, 0.3, 0));
 
-		new BukkitRunnable() {
-			public void run() {
-
+		new BukkitRunnable()
+		{
+			public void run()
+			{
 				this.cancel();
 
 				item.remove();
@@ -104,15 +105,12 @@ public class CoinsPickup implements Listener {
 						p.playSound(p.getEyeLocation(), playsound, 0.3f, 0.3f);
 					}
 					catch ( IllegalArgumentException e )
-					{
-						Bukkit.getLogger().severe( e.getMessage() + ": the sound does not exist. Change it in the Coins config." );
-						Bukkit.getLogger().severe( "Please use a sound from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html" );
-					}
+					{ Settings.errorMessage(Settings.Msg.NO_SUCH_SOUND, new String[] {e.getMessage()} ); }
 
 				}
 
 			}
-		}.runTaskTimer(Load.main, 2, 0);
+		}.runTaskTimer(Coins.main, 2, 0);
 
 	}
 
@@ -133,7 +131,8 @@ public class CoinsPickup implements Listener {
 		rep.getProvider().depositPlayer(p, amount);
 
 		String stringAmount = String.valueOf( integer ? Integer.toString((int) amount) : amount );
-		new ActionBar( Settings.hS.get(Config.STRING.pickupMessage).replace("%amount%", stringAmount )).send(p);
+		new ActionBar( Settings.hS.get(Config.STRING.pickupMessage)
+				.replace("%amount%", stringAmount ).replace("{$}", Settings.hS.get(Config.STRING.currencySymbol))).send(p);
 	}
 
 }

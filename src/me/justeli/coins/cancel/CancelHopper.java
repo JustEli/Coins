@@ -11,8 +11,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.ItemStack;
 
-public class CancelHopper implements Listener {
-
+public class CancelHopper implements Listener
+{
 	@EventHandler (ignoreCancelled = true)
 	public void itemHopper (InventoryPickupItemEvent e)
 	{
@@ -42,8 +42,8 @@ public class CancelHopper implements Listener {
 				   e.getAction().equals(InventoryAction.PICKUP_ALL)
 				|| e.getAction().equals(InventoryAction.PLACE_ALL)
 				|| e.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)
-			)) {
-			
+			))
+		{
 			ItemStack item = e.getCurrentItem();
 			
 			if (item != null)

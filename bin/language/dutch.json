@@ -1,0 +1,26 @@
+{
+  "LOADED_SETTINGS" : "&3&oActuele instellingen voor de Coins configuratie.",
+  "NO_PERMISSION" : "&4Je hebt hebt geen toegang tot dat commando.",
+  "RELOAD_SUCCESS" : "&eInstellingen van &6Coins &ezijn herladen in &a{0}ms&e.",
+  "MINOR_ISSUES" : "&c&oEr waren een paar problemen met het herladen, check console.",
+  "CHECK_SETTINGS" : "&e&oBekijk de geladen instellingen met &f&o/coins settings&e&o.",
+  "WITHDRAW_COINS" : "&e&oJe betaalde &f&o{$}{0} &e&oen kreeg er &f&o{0} munten&e&o voor terug.",
+  "NOT_THAT_MUCH" : "&cJe kan niet zo veel munten aanvragen.",
+  "COINS_DISABLED" : "&cCoins is niet ingeschakeld in deze wereld.",
+  "SPAWNED_COINS" : "&9Je gooide {0} munten in straal van {1} om {2} heen.",
+  "REMOVED_COINS" : "&9Verwijderde in totaal {0} munten.",
+
+  "PLAYER_NOT_FOUND" : "&4Die speler is niet online.",
+  "COORDS_NOT_FOUND" : "&4Die coordinaten of wereld waren niet gevonden.",
+
+  "INVALID_AMOUNT" : "&cDat is geen geldige hoeveelheid.",
+  "INVALID_NUMBER" : "&cDat is geen geldig nummer.",
+  "INVALID_RADIUS" : "&cDat is geen geldige straal.",
+
+  "COINS_HELP" : "&4:: Help voor Coins",
+  "DROP_USAGE" : "&c/coins drop <speler|x,y,z[,wereld]> <aantal> [straal]",
+  "REMOVE_USAGE" : "&c/coins remove [straal|all] &7- verwijder munten in straal",
+  "SETTINGS_USAGE" : "&c/coins settings &7- geef actuele instellingen weer",
+  "RELOAD_USAGE" : "&c/coins reload &7- herlaad instellingen van config.yml",
+  "WITHDRAW_USAGE" : "&c/withdraw <coins> &7- verander geld in munten"
+}

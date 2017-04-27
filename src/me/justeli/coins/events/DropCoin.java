@@ -17,14 +17,14 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 import me.justeli.coins.api.Title;
 
-public class DropCoin implements Listener {
-	
+public class DropCoin implements Listener
+{
 	private RegisteredServiceProvider<Economy> rep = Bukkit.getServicesManager().getRegistration(Economy.class);
 	
 	@EventHandler
-	public void onDeath (EntityDeathEvent e) {
-		
-		Entity m = e.getEntity(); // mob
+	public void onDeath (EntityDeathEvent e)
+    {
+		Entity m = e.getEntity();
 
         for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds) )
             if (m.getWorld().getName().equalsIgnoreCase(world))
@@ -55,7 +55,8 @@ public class DropCoin implements Listener {
 
             EconomyResponse r = rep.getProvider().withdrawPlayer(p, (long) random);
             if (r.transactionSuccess())
-                Title.sendSubTitle(p, 20, 100, 20, Settings.hS.get(Config.STRING.deathMessage).replace("%amount%", String.valueOf( (long)random )));
+                Title.sendSubTitle(p, 20, 100, 20, Settings.hS.get(Config.STRING.deathMessage)
+                        .replace("%amount%", String.valueOf( (long)random )).replace("{$}", Settings.hS.get(Config.STRING.currencySymbol)));
         }
 	}
 

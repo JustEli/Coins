@@ -2,6 +2,7 @@ package me.justeli.coins.settings;
 
 /**
  * Created by Eli on 12/14/2016.
+ *
  */
 
 public enum Config {
@@ -30,6 +31,7 @@ public enum Config {
         deathMessage,
         soundName,
         mobMultiplier,
+        currencySymbol,
 
     }
 

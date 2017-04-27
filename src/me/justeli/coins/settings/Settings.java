@@ -1,36 +1,47 @@
 package me.justeli.coins.settings;
 
-import me.justeli.coins.main.Load;
+import me.justeli.coins.main.Coins;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.ContainerFactory;
+import org.json.simple.parser.ContentHandler;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
-import java.io.File;
+import java.io.*;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
  * Created by Eli on 12/14/2016.
+ *
  */
 
-public class Settings {
-
+public class Settings
+{
     public final static HashMap<Config.BOOLEAN, Boolean> hB = new HashMap<>();
     public final static HashMap<Config.STRING, String> hS = new HashMap<>();
     public final static HashMap<Config.DOUBLE, Double> hD = new HashMap<>();
     public final static HashMap<Config.ARRAY, List<String>> hA = new HashMap<>();
 
+    final static HashMap<Messages, String> language = new HashMap<>();
     public final static HashMap<EntityType, Integer> multiplier = new HashMap<>();
+
+    private static FileConfiguration getFile ()
+    {
+        File config = new File( Coins.main.getDataFolder() + File.separator + "config.yml" );
+        if (!config.exists())
+            Coins.main.saveDefaultConfig();
+        return YamlConfiguration.loadConfiguration( config );
+    }
 
     public static boolean enums ()
     {
-        File config = new File( Load.main.getDataFolder() + File.separator + "config.yml" );
-        if (!config.exists())
-            Load.main.saveDefaultConfig();
-        FileConfiguration file = YamlConfiguration.loadConfiguration( config );
-
+        FileConfiguration file = getFile();
         int errors = 0;
 
         try
@@ -39,8 +50,18 @@ public class Settings {
                 hB.put(s, file.getBoolean( s.name() ) );
 
             for (Config.STRING s : Config.STRING.values())
-                if (file.getString( s.name() ) != null) hS.put(s, file.getString( s.name() ) );
-                else { errorMessage (Msg.OutdatedConfig); errors++; }
+            {
+                if (file.getString( s.name() ) != null)
+                    hS.put(s, file.getString( s.name() ) );
+                else if (s.equals(Config.STRING.currencySymbol))
+                {
+                    errorMessage(Msg.OUTDATED_CONFIG, new String[] {"currencySymbol: $"});
+                    hS.put(s, "$" );
+                    errors ++;
+                }
+                else
+                    { errorMessage (Msg.OUTDATED_CONFIG, null); errors++; }
+            }
 
             for (Config.DOUBLE s : Config.DOUBLE.values())
                 hD.put(s, file.getDouble( s.name().replace('_', '.') ) );
@@ -58,17 +79,19 @@ public class Settings {
                 }
                 catch (IllegalArgumentException e)
                 {
-                    System.err.print("There is no entity with the name " + key.toUpperCase() + ", change it.");
-                    System.err.print("Get types from here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html");
+                    errorMessage( Msg.NO_SUCH_ENTITY, new String[] {key.toUpperCase()} );
                     return false;
                 }
             }
         }
         catch (NullPointerException e)
         {
-            errorMessage (Msg.OutdatedConfig);
+            errorMessage (Msg.OUTDATED_CONFIG, null);
             return false;
         }
+
+        boolean langErr = setLanguage();
+        if (!langErr) errors++;
 
         return errors == 0;
     }
@@ -84,36 +107,92 @@ public class Settings {
 
     public static String getSettings ()
     {
-        String message = "&3&oCurrently loaded settings of the Coins configuration.\n&r";
+        StringBuilder message = new StringBuilder( Messages.LOADED_SETTINGS.toString() + "\n&r" );
         for (Config.STRING s : Config.STRING.values())
             if (!s.equals(Config.STRING.mobMultiplier))
-                message += s.toString() + " &7\u00BB &8" + hS.get(s) + "\n&r";
+                message.append(s.toString()).append(" &7\u00BB &8").append(hS.get(s)).append("\n&r");
 
         for (Config.BOOLEAN s : Config.BOOLEAN.values())
             if (!s.equals(Config.BOOLEAN.olderServer))
-                message += s.toString() + " &7\u00BB " + hB.get(s).toString().replace("true", "&atrue").replace("false", "&cfalse") + "\n&r";
+                message.append(s.toString()).append(" &7\u00BB ")
+                        .append(hB.get(s).toString().replace("true", "&atrue").replace("false", "&cfalse")).append("\n&r");
 
         for (Config.DOUBLE s : Config.DOUBLE.values())
-            message += s.toString().replace("_", " &o") + " &7\u00BB &e" + hD.get(s) + "\n&r";
+            message.append(s.toString().replace("_", " &o")).append(" &7\u00BB &e").append(hD.get(s)).append("\n&r");
 
         for (Config.ARRAY s : Config.ARRAY.values())
-            message += s.toString() + " &7\u00BB &b" + hA.get(s) + "\n&r";
+            message.append(s.toString()).append(" &7\u00BB &b").append(hA.get(s)).append("\n&r");
 
-        return message;
+        return message.toString();
     }
 
-    private enum Msg {
-        OutdatedConfig
+    private static boolean setLanguage ()
+    {
+        File dirLang = new File(Coins.main.getDataFolder() + File.separator + "language" + File.separator);
+        if (!dirLang.exists())
+        {
+            Coins.main.saveResource("language/english.json", false);
+            Coins.main.saveResource("language/dutch.json", false);
+            Coins.main.saveResource("language/spanish.json", false);
+            Coins.main.saveResource("language/swedish.json", false);
+        }
+
+        FileConfiguration file = getFile();
+        String lang = "english";
+        boolean failure = false;
+        try
+        {
+            lang = file.getString("language").toLowerCase();
+        }
+        catch (NullPointerException e)
+        { errorMessage(Msg.OUTDATED_CONFIG, new String[] {"language: english"}); failure = true; }
+
+        try
+        {
+            JSONParser parser = new JSONParser();
+            Object object = parser.parse(new InputStreamReader(new FileInputStream(Coins.main.getDataFolder()
+                    + File.separator + "language" + File.separator + lang + ".json"), "UTF-8"));
+            JSONObject json = (JSONObject) object;
+            for (Messages m : Messages.values())
+                language.put( m, json.get(m.name()).toString() );
+        }
+        catch (FileNotFoundException e)
+        { errorMessage(Msg.LANG_NOT_FOUND, new String[] {file.getString("language")}); return false; }
+        catch (ParseException | IOException e)
+        { e.printStackTrace(); return false; }
+
+        return !failure;
     }
 
-    private static void errorMessage (Msg msg)
+    public enum Msg
+    {
+        OUTDATED_CONFIG,
+        LANG_NOT_FOUND,
+        NO_SUCH_ENTITY,
+        NO_SUCH_SOUND,
+    }
+
+    public static void errorMessage (Msg msg, String[] input)
     {
         switch (msg)
         {
-            case OutdatedConfig:
+            case OUTDATED_CONFIG:
                 System.err.print("Your config of Coins is outdated, update the Coins config.yml.");
                 System.err.print("You can copy it from here: https://github.com/JustEli/Coins/blob/master/src/config.yml");
                 System.err.print("Use /coins reload afterwards. You could also remove the config if you haven't configured it.");
+                System.err.print("The config is probably missing (add it): " + Arrays.toString(input));
+                break;
+            case LANG_NOT_FOUND:
+                System.err.print("The language '" + input[0] + "' that you set in your config does not exist.");
+                System.err.print("Check all available languages in the folder 'Coins/language'.");
+                break;
+            case NO_SUCH_ENTITY:
+                System.err.print("There is no entity with the name " + input[0] + ", please change it.");
+                System.err.print("Get types from here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html");
+                break;
+            case NO_SUCH_SOUND:
+                System.err.print( input[0] + ": the sound does not exist. Change it in the Coins config." );
+                System.err.print( "Please use a sound from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html" );
                 break;
         }
 

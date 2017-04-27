@@ -11,16 +11,18 @@ import org.bukkit.event.HandlerList;
 
 /**
  * Created by Eli on 12/22/2016.
+ *
  */
-public class CoinDropEvent extends Event {
-
+public class CoinDropEvent extends Event
+{
     private static final HandlerList handlers = new HandlerList();
     private final Entity entity;
     private final Player player;
     private boolean cancelled = false;
     private boolean stackable = Settings.hB.get(Config.BOOLEAN.stackCoins);
 
-    CoinDropEvent (Entity entity, Player player) {
+    CoinDropEvent (Entity entity, Player player)
+    {
         this.entity = entity;
         this.player = player;
     }

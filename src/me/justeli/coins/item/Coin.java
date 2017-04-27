@@ -10,8 +10,8 @@ import net.md_5.bungee.api.ChatColor;
 
 import java.util.Collections;
 
-public class Coin {
-
+public class Coin
+{
     private ItemStack coin;
     public Coin ()
     {
@@ -35,8 +35,8 @@ public class Coin {
 
     /**
      * Makes it a withdrawn item.
-     * @param amount
-     * @return
+     * @param amount amount of coins
+     * @return the Coin
      */
 
     public Coin withdraw (long amount)
@@ -54,7 +54,7 @@ public class Coin {
     }
 
     /**
-     * Returns the ItemStack itself.
+     * @return the ItemStack itself.
      */
     public ItemStack item ()
     {

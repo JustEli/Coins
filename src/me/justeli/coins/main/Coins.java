@@ -13,11 +13,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Created by Eli on 12/13/2016.
+ *
  */
 
-public class Load extends JavaPlugin
+public class Coins extends JavaPlugin
 {
-    public static Load main;
+    public static Coins main;
 
     @Override
     public void onEnable ()

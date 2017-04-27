@@ -10,28 +10,32 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 
-public class PreventSpawner implements Listener {
-
+public class PreventSpawner implements Listener
+{
 	private final static HashMap<String, Boolean> spawner = new HashMap<>();
 
 	@EventHandler
-	public void preventSpawnerCoin(CreatureSpawnEvent e) {
+	public void preventSpawnerCoin (CreatureSpawnEvent e)
+	{
         for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds) )
             if (e.getEntity().getWorld().getName().equalsIgnoreCase(world))
                 return;
 
-		if (e.getSpawnReason().equals(SpawnReason.SPAWNER)) {
+		if (e.getSpawnReason().equals(SpawnReason.SPAWNER))
+		{
 			if (!Settings.hB.get(Config.BOOLEAN.spawnerDrop))
 				spawner.put(e.getEntity().getUniqueId().toString() + ".spawner", true);
 		}
 	}
 
-	public static boolean fromSpawner(Entity m) {
+	public static boolean fromSpawner (Entity m)
+	{
 		String key = m.getUniqueId().toString() + ".spawner";
 		return spawner.containsKey(key);
 	}
 
-	public static void removeFromList(Entity m) {
+	public static void removeFromList (Entity m)
+	{
 		String key = m.getUniqueId().toString() + ".spawner";
 		spawner.remove(key);
 	}

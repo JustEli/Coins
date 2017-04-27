@@ -2,6 +2,7 @@ package me.justeli.coins.main;
 
 import me.justeli.coins.api.ActionBar;
 import me.justeli.coins.item.CoinParticles;
+import me.justeli.coins.settings.Messages;
 import me.justeli.coins.settings.Settings;
 import me.justeli.coins.settings.Config;
 import net.md_5.bungee.api.ChatColor;
@@ -24,17 +25,24 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.List;
 
-class Cmds implements CommandExecutor {
-
+class Cmds implements CommandExecutor
+{
     private static RegisteredServiceProvider<Economy> rep = Bukkit.getServicesManager().getRegistration(Economy.class);
+
+    private static String color (String message)
+    {
+        return ChatColor.translateAlternateColorCodes('&', message);
+    }
 
 	@Override
 	public boolean onCommand (CommandSender sender, Command cmd, String l, String[] args)
 	{
-		if ( l.equalsIgnoreCase("coins") || l.equalsIgnoreCase("coin") ) {
-            if (args.length >= 1) {
-
-                switch (args[0]) {
+		if ( l.equalsIgnoreCase("coins") || l.equalsIgnoreCase("coin") )
+		{
+            if (args.length >= 1)
+            {
+                switch (args[0])
+                {
                     case "reload":
                         if (sender.hasPermission("coins.admin"))
                         {
@@ -42,34 +50,37 @@ class Cmds implements CommandExecutor {
                             Settings.remove();
                             Settings.remove();
                             boolean success = Settings.enums();
-                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                                    "&eConfig of &6Coins &ehas been reloaded in &a" + (System.currentTimeMillis() - ms) + "ms&e."));
-                            if (!success) sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                                    "&c&oThere were some minor errors while reloading, check console."));
-                            else sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                                    "&e&oYou can check the loaded settings with &f&o/coins settings&e&o."));
+                            sender.sendMessage(color(Messages.RELOAD_SUCCESS.toString().replace("{0}", Long.toString(System.currentTimeMillis() - ms) )));
+                            if (!success)
+                                sender.sendMessage(color( Messages.MINOR_ISSUES.toString() ));
+                            else
+                                sender.sendMessage(color( Messages.CHECK_SETTINGS.toString() ));
                         }
-                        else sender.sendMessage(ChatColor.RED + "You do not have access to that command.");
+                        else noPerm(sender);
                         break;
                     case "settings":
                         if (sender.hasPermission("coins.admin"))
                         {
                             String settings = Settings.getSettings();
-                            sender.sendMessage( ChatColor.translateAlternateColorCodes('&', settings) );
+                            sender.sendMessage( color(settings) );
                         }
-                        else sender.sendMessage(ChatColor.RED + "You do not have access to that command.");
+                        else noPerm(sender);
                         break;
                     case "drop":
                         if (sender.hasPermission("coins.drop"))
                             dropCoins(sender, args);
                         else
-                            sender.sendMessage(ChatColor.RED + "You do not have access to that command.");
+                            noPerm(sender);
                         break;
                     case "remove":
                         if (sender.hasPermission("coins.remove"))
                             removeCoins(sender, args);
                         else
-                            sender.sendMessage(ChatColor.RED + "You do not have access to that command.");
+                            noPerm(sender);
+                        break;
+                    case "lang":
+                        for (Messages m : Messages.values())
+                            sender.sendMessage(m.toString());
                         break;
                     default:
                         sendHelp(sender);
@@ -89,8 +100,17 @@ class Cmds implements CommandExecutor {
 
             if (!sender.hasPermission("coins.withdraw") || !(sender instanceof Player))
             {
-                sender.sendMessage(ChatColor.DARK_RED + "You do not have access to that command.");
+                noPerm(sender);
                 return true;
+            }
+
+            for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds) )
+            {
+                if ( ((Player)sender).getWorld().getName().equalsIgnoreCase(world) )
+                {
+                    sender.sendMessage( color(Messages.COINS_DISABLED.toString()) );
+                    return true;
+                }
             }
 
             Player p = (Player) sender;
@@ -102,7 +122,7 @@ class Cmds implements CommandExecutor {
                 try { amount = Integer.valueOf(args[0]); }
                 catch (NumberFormatException e)
                 {
-                    sender.sendMessage(ChatColor.DARK_RED + "That is an invalid amount of coins.");
+                    sender.sendMessage(color( Messages.INVALID_AMOUNT.toString() ));
                     return true;
                 }
 
@@ -110,14 +130,15 @@ class Cmds implements CommandExecutor {
                 {
                     p.getInventory().addItem( new Coin().withdraw(amount).item() );
                     rep.getProvider().withdrawPlayer(p, amount);
-                    p.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                            "&e&oYou withdrawed &f&o$" + amount + " &e&oand received &f&o" + amount + " coins&e&o for it."));
-                    new ActionBar("&4- &c$" + amount).send(p);
+                    p.sendMessage(color (
+                            Messages.WITHDRAW_COINS.toString().replace("{0}", Long.toString(amount)) ));
+                    new ActionBar(Settings.hS.get(Config.STRING.deathMessage)
+                            .replace("%amount%", String.valueOf( amount )).replace("{$}", Settings.hS.get(Config.STRING.currencySymbol))).send(p);
                 }
-                else p.sendMessage(ChatColor.RED + "You are not allowed to withdraw that much.");
+                else p.sendMessage(color ( Messages.NOT_THAT_MUCH.toString()) );
             }
 
-            else p.sendMessage(ChatColor.RED + "Usage: /withdraw <coins>");
+            else p.sendMessage(color( Messages.WITHDRAW_USAGE.toString()));
 
         }
 		
@@ -135,7 +156,7 @@ class Cmds implements CommandExecutor {
             try {amount = Integer.valueOf(args[2]); }
             catch (NumberFormatException e)
             {
-                sender.sendMessage(ChatColor.DARK_RED + "That is an invalid number.");
+                sender.sendMessage(color(Messages.INVALID_NUMBER.toString()));
                 return;
             }
 
@@ -148,7 +169,7 @@ class Cmds implements CommandExecutor {
                 try {radius = Integer.valueOf(args[3]);}
                 catch (NumberFormatException e)
                 {
-                    sender.sendMessage(ChatColor.DARK_RED + "That is an invalid number.");
+                    sender.sendMessage(color(Messages.INVALID_NUMBER.toString()));
                     return;
                 }
             }
@@ -159,7 +180,7 @@ class Cmds implements CommandExecutor {
             {
                 if (!args[1].contains(","))
                 {
-                    sender.sendMessage(ChatColor.DARK_RED + "That player could not be found.");
+                    sender.sendMessage(color(Messages.PLAYER_NOT_FOUND.toString()));
                     return;
                 }
                 else
@@ -171,12 +192,13 @@ class Cmds implements CommandExecutor {
                         double y = Double.valueOf(coords[1]);
                         double z = Double.valueOf(coords[2]);
 
-                        location = new Location( coords.length == 4 ? Bukkit.getWorld(coords[3]) : ( sender instanceof Player ? ((Player) sender).getWorld() : Bukkit.getWorlds().get(0) ), x, y, z );
+                        location = new Location( coords.length == 4 ?
+                                Bukkit.getWorld(coords[3]) : ( sender instanceof Player ? ((Player) sender).getWorld() : Bukkit.getWorlds().get(0) ), x, y, z );
                         name = x + ", " + y + ", " + z;
                     }
                     catch (NumberFormatException | ArrayIndexOutOfBoundsException | NullPointerException e)
                     {
-                        sender.sendMessage(ChatColor.DARK_RED + "Those coords or the world couldn't be found.");
+                        sender.sendMessage( color(Messages.COORDS_NOT_FOUND.toString()) );
                         return;
                     }
                 }
@@ -197,7 +219,7 @@ class Cmds implements CommandExecutor {
                 {
                     if (p.getWorld().getName().equalsIgnoreCase(world))
                     {
-                        sender.sendMessage(ChatColor.RED + "Coins are disabled in this world.");
+                        sender.sendMessage( color(Messages.COINS_DISABLED.toString()) );
                         return;
                     }
                 }
@@ -205,21 +227,22 @@ class Cmds implements CommandExecutor {
 
             if (radius < 1 || radius > 80)
             {
-                sender.sendMessage(ChatColor.DARK_RED + "That is an invalid radius.");
+                sender.sendMessage( color(Messages.INVALID_RADIUS.toString()) );
                 return;
             }
 
             if (amount < 1 || amount > 1000)
             {
-                sender.sendMessage(ChatColor.DARK_RED + "That is an invalid amount.");
+                sender.sendMessage( color(Messages.INVALID_AMOUNT.toString()) );
                 return;
             }
 
             CoinParticles.dropCoins(location, radius, amount);
-            sender.sendMessage(ChatColor.BLUE + "Spawned "+amount+" coins in radius "+radius+" around " + name + ".");
+            sender.sendMessage( color(Messages.SPAWNED_COINS.toString())
+                    .replace("{0}", Long.toString(amount)).replace("{1}", Long.toString(radius)).replace("{2}", name)  );
 
         }
-        else sender.sendMessage(ChatColor.RED + "Usage: /coins drop <player|x,y,z[,world]> <amount> [radius]");
+        else sender.sendMessage ( color(Messages.DROP_USAGE.toString()) );
 
     }
 
@@ -233,10 +256,10 @@ class Cmds implements CommandExecutor {
             if (!args[1].equalsIgnoreCase("all"))
             {
                 try {r = Integer.valueOf(args[1]);}
-                catch (NumberFormatException e) { sender.sendMessage(ChatColor.DARK_RED + "That is an invalid number."); return; }
+                catch (NumberFormatException e) { sender.sendMessage( color(Messages.INVALID_RADIUS.toString()) ); return; }
                 if (r < 1 || r > 80)
                 {
-                    sender.sendMessage(ChatColor.DARK_RED + "That is an invalid radius.");
+                    sender.sendMessage(color(Messages.INVALID_RADIUS.toString()));
                     return;
                 }
             }
@@ -258,7 +281,7 @@ class Cmds implements CommandExecutor {
                 Item i = (Item) m;
                 if (i.getItemStack().getItemMeta().getDisplayName() != null)
                     if (i.getItemStack().getItemMeta().getDisplayName().equals(
-                            ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin) ) ))
+                            ( color(Settings.hS.get(Config.STRING.nameOfCoin)) ) ))
                     {
                         amount ++;
                         double random = (Math.random()*3);
@@ -273,34 +296,37 @@ class Cmds implements CommandExecutor {
                                     this.cancel();
                                 }
                             }
-                        }.runTaskTimer(Load.main, rand, rand);
+                        }.runTaskTimer(Coins.main, rand, rand);
                     }
             }
 
         }
-        sender.sendMessage(ChatColor.BLUE + "Removed " + amount + " coins in "
-                + (r != 0 ? "a radius of " + r + "." : (sender instanceof Player ? "this" : "the default") + " world."));
+        sender.sendMessage( color(Messages.REMOVED_COINS.toString().replace("{0}", Long.toString(amount)) ) );
     }
 
     private void sendHelp (CommandSender sender)
     {
-        if (sender instanceof Player) sender.sendMessage(ChatColor.DARK_RED + "                             * Help for Coins *");
-        else sender.sendMessage(ChatColor.DARK_RED + "* Help for Coins *");
+        sender.sendMessage( color(Messages.COINS_HELP.toString()) );
 
         if (sender.hasPermission("coins.drop"))
-            sender.sendMessage(ChatColor.RED + "/coins drop <player|x,y,z[,world]> <amount> [radius]" + ChatColor.GRAY + " - spawn coins");
+            sender.sendMessage( color(Messages.DROP_USAGE.toString()) );
 
         if (sender.hasPermission("coins.remove"))
-            sender.sendMessage(ChatColor.RED + "/coins remove [radius|all]" + ChatColor.GRAY + " - remove coins in a radius");
+            sender.sendMessage( color(Messages.REMOVE_USAGE.toString()) );
 
         if (sender.hasPermission("coins.admin"))
         {
-            sender.sendMessage(ChatColor.RED + "/coins settings" + ChatColor.GRAY + " - list the currently loaded settings");
-            sender.sendMessage(ChatColor.RED + "/coins reload" + ChatColor.GRAY + " - reload the settings from config.yml");
+            sender.sendMessage( color(Messages.SETTINGS_USAGE.toString()) );
+            sender.sendMessage( color(Messages.RELOAD_USAGE.toString()) );
         }
 
         if (Settings.hB.get(Config.BOOLEAN.enableWithdraw) && sender.hasPermission("coins.withdraw"))
-            sender.sendMessage(ChatColor.RED + "/withdraw <coins>" + ChatColor.GRAY + " - withdraw some money into coins");
+            sender.sendMessage( color(Messages.WITHDRAW_USAGE.toString()) );
+    }
+
+    private void noPerm (CommandSender sender)
+    {
+        sender.sendMessage( color( Messages.NO_PERMISSION.toString()));
     }
 
 }
