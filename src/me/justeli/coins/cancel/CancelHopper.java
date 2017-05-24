@@ -1,14 +1,17 @@
 package me.justeli.coins.cancel;
 
 import me.justeli.coins.events.CoinsPickup;
-import me.justeli.coins.settings.Settings;
 import me.justeli.coins.item.Coin;
 import me.justeli.coins.settings.Config;
-import net.md_5.bungee.api.ChatColor;
+import me.justeli.coins.settings.Settings;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.*;
+import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryPickupItemEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 
 public class CancelHopper implements Listener

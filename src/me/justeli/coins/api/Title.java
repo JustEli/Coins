@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
 import java.lang.reflect.Constructor;
 
 
@@ -14,24 +15,23 @@ public class Title extends JavaPlugin {
 			Object handle = player.getClass().getMethod("getHandle").invoke(player);
 			Object playerConnection = handle.getClass().getField("playerConnection").get(handle);
 			playerConnection.getClass().getMethod("sendPacket", getNMSClass("Packet")).invoke(playerConnection, packet);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception ignored) { }
 	}
 
 	private static Class<?> getNMSClass(String name) {
 		String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
 		try {
 			return Class.forName("net.minecraft.server." + version + "." + name);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+		} catch (ClassNotFoundException ignored) {
 			return null;
 		}
 	}
 
-	public static void sendSubTitle(Player player, Integer fadeIn, Integer stay, Integer fadeOut, String subtitle) {
-
-		try {
+	public static void sendSubTitle(Player player, Integer fadeIn, Integer stay, Integer fadeOut, String subtitle)
+	{
+		subtitle = ChatColor.translateAlternateColorCodes('&', subtitle);
+		try
+		{
 			Object e;
 			Object chatTitle;
 			Object chatSubtitle;
@@ -40,7 +40,6 @@ public class Title extends JavaPlugin {
 			Object subtitlePacket;
 
             String title = "";
-            subtitle = ChatColor.translateAlternateColorCodes('&', subtitle);
 
             e = getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("TITLE").get(null);
             chatTitle = getNMSClass("IChatBaseComponent").getDeclaredClasses()[0].getMethod("a", new Class[]{String.class}).invoke(null, "{\"text\":\"" + title + "\"}");
@@ -54,8 +53,10 @@ public class Title extends JavaPlugin {
             subtitlePacket = subtitleConstructor.newInstance(e, chatSubtitle, fadeIn, stay, fadeOut);
             sendPacket(player, subtitlePacket);
 
-		} catch (Exception var11) {
-			var11.printStackTrace();
+		}
+		catch (Exception var11)
+		{
+			player.sendMessage(subtitle);
 		}
 	}
 }

@@ -2,7 +2,7 @@ package me.justeli.coins.cancel;
 
 import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Settings;
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;

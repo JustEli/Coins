@@ -3,10 +3,8 @@ package me.justeli.coins.settings;
 import me.justeli.coins.main.Coins;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.*;
+import org.bukkit.entity.EntityType;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.ContainerFactory;
-import org.json.simple.parser.ContentHandler;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
@@ -135,17 +133,18 @@ public class Settings
             Coins.main.saveResource("language/dutch.json", false);
             Coins.main.saveResource("language/spanish.json", false);
             Coins.main.saveResource("language/swedish.json", false);
+            Coins.main.saveResource("language/german.json", false);
         }
 
         FileConfiguration file = getFile();
-        String lang = "english";
+        String lang = getLanguage();
         boolean failure = false;
-        try
+
+        if (lang == null)
         {
-            lang = file.getString("language").toLowerCase();
+            failure = true;
+            lang = "english";
         }
-        catch (NullPointerException e)
-        { errorMessage(Msg.OUTDATED_CONFIG, new String[] {"language: english"}); failure = true; }
 
         try
         {
@@ -164,12 +163,24 @@ public class Settings
         return !failure;
     }
 
+    public static String getLanguage ()
+    {
+        try
+        {
+            FileConfiguration file = getFile();
+            return file.getString("language").toLowerCase();
+        }
+        catch (NullPointerException e)
+        { errorMessage(Msg.OUTDATED_CONFIG, new String[] {"language: english"}); return null; }
+    }
+
     public enum Msg
     {
         OUTDATED_CONFIG,
         LANG_NOT_FOUND,
         NO_SUCH_ENTITY,
         NO_SUCH_SOUND,
+        NO_ECONOMY_SUPPORT
     }
 
     public static void errorMessage (Msg msg, String[] input)
@@ -187,13 +198,17 @@ public class Settings
                 System.err.print("Check all available languages in the folder 'Coins/language'.");
                 break;
             case NO_SUCH_ENTITY:
-                System.err.print("There is no entity with the name " + input[0] + ", please change it.");
+                System.err.print("There is no entity with the name " + input[0] + ", please change the Coins config.");
                 System.err.print("Get types from here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html");
                 break;
             case NO_SUCH_SOUND:
                 System.err.print( input[0] + ": the sound does not exist. Change it in the Coins config." );
                 System.err.print( "Please use a sound from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html" );
                 break;
+            case NO_ECONOMY_SUPPORT:
+                System.err.print( "======= There seems to be no Vault or economy supportive plugin installed." );
+                System.err.print( "======= Please install Vault and an economy supportive plugin like Essentials." );
+                System.err.print( "======= Coins will be disabled now.." );
         }
 
     }

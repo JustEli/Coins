@@ -1,14 +1,14 @@
 package me.justeli.coins.main;
 
 import me.justeli.coins.api.ActionBar;
+import me.justeli.coins.api.Complete;
+import me.justeli.coins.item.Coin;
 import me.justeli.coins.item.CoinParticles;
+import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Messages;
 import me.justeli.coins.settings.Settings;
-import me.justeli.coins.settings.Config;
-import net.md_5.bungee.api.ChatColor;
-
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -16,9 +16,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import me.justeli.coins.api.Complete;
-import me.justeli.coins.item.Coin;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -27,8 +24,6 @@ import java.util.List;
 
 class Cmds implements CommandExecutor
 {
-    private static RegisteredServiceProvider<Economy> rep = Bukkit.getServicesManager().getRegistration(Economy.class);
-
     private static String color (String message)
     {
         return ChatColor.translateAlternateColorCodes('&', message);
@@ -126,10 +121,10 @@ class Cmds implements CommandExecutor
                     return true;
                 }
 
-                if (amount > 0 && amount <= Settings.hD.get(Config.DOUBLE.maxWithdrawAmount) && rep.getProvider().getBalance(p) >= amount)
+                if (amount > 0 && amount <= Settings.hD.get(Config.DOUBLE.maxWithdrawAmount) && Coins.getEcononomy().getBalance(p) >= amount)
                 {
                     p.getInventory().addItem( new Coin().withdraw(amount).item() );
-                    rep.getProvider().withdrawPlayer(p, amount);
+                    Coins.getEcononomy().withdrawPlayer(p, amount);
                     p.sendMessage(color (
                             Messages.WITHDRAW_COINS.toString().replace("{0}", Long.toString(amount)) ));
                     new ActionBar(Settings.hS.get(Config.STRING.deathMessage)

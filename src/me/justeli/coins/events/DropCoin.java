@@ -1,26 +1,21 @@
 package me.justeli.coins.events;
 
-import me.justeli.coins.item.Coin;
+import me.justeli.coins.api.Title;
 import me.justeli.coins.cancel.PreventSpawner;
-import me.justeli.coins.settings.Settings;
+import me.justeli.coins.item.Coin;
+import me.justeli.coins.main.Coins;
 import me.justeli.coins.settings.Config;
-import net.milkbowl.vault.economy.Economy;
+import me.justeli.coins.settings.Settings;
 import net.milkbowl.vault.economy.EconomyResponse;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.RegisteredServiceProvider;
-
-import me.justeli.coins.api.Title;
 
 public class DropCoin implements Listener
 {
-	private RegisteredServiceProvider<Economy> rep = Bukkit.getServicesManager().getRegistration(Economy.class);
-	
 	@EventHandler
 	public void onDeath (EntityDeathEvent e)
     {
@@ -53,13 +48,12 @@ public class DropCoin implements Listener
             Player p = (Player) e.getEntity();
             double random = Math.random() * first + second;
 
-            EconomyResponse r = rep.getProvider().withdrawPlayer(p, (long) random);
+            EconomyResponse r = Coins.getEcononomy().withdrawPlayer(p, (long) random);
             if (r.transactionSuccess())
                 Title.sendSubTitle(p, 20, 100, 20, Settings.hS.get(Config.STRING.deathMessage)
                         .replace("%amount%", String.valueOf( (long)random )).replace("{$}", Settings.hS.get(Config.STRING.currencySymbol)));
         }
 	}
-
 
 	private void dropTheCoin (Entity m, Player p)
     {

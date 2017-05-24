@@ -1,12 +1,11 @@
 package me.justeli.coins.item;
 
-import me.justeli.coins.settings.Settings;
 import me.justeli.coins.settings.Config;
+import me.justeli.coins.settings.Settings;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import net.md_5.bungee.api.ChatColor;
 
 import java.util.Collections;
 

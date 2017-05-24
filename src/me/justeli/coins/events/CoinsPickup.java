@@ -1,9 +1,10 @@
 package me.justeli.coins.events;
 
+import me.justeli.coins.api.ActionBar;
 import me.justeli.coins.main.Coins;
-import me.justeli.coins.settings.Settings;
 import me.justeli.coins.settings.Config;
-import org.bukkit.Bukkit;
+import me.justeli.coins.settings.Settings;
+import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -12,11 +13,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.RegisteredServiceProvider;
-
-import net.md_5.bungee.api.ChatColor;
-import net.milkbowl.vault.economy.Economy;
-import me.justeli.coins.api.ActionBar;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -27,9 +23,8 @@ import java.util.HashMap;
 public class CoinsPickup implements Listener
 {
 	private final static HashMap<String, Boolean> thrown = new HashMap<>();
-	private static RegisteredServiceProvider<Economy> rep = Bukkit.getServicesManager().getRegistration(Economy.class);
 	
-	@EventHandler
+	@EventHandler (ignoreCancelled = true)
 	public void onPickup (PlayerPickupItemEvent e)
 	{
 		for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds) )
@@ -128,7 +123,7 @@ public class CoinsPickup implements Listener
 	private static void addMoney (Player p, double amount, boolean integer)
 	{
 		amount = Double.parseDouble(new DecimalFormat( integer ? "#" : "###.#" ).format( amount ));
-		rep.getProvider().depositPlayer(p, amount);
+		Coins.getEcononomy().depositPlayer(p, amount);
 
 		String stringAmount = String.valueOf( integer ? Integer.toString((int) amount) : amount );
 		new ActionBar( Settings.hS.get(Config.STRING.pickupMessage)
