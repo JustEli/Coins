@@ -6,7 +6,6 @@ import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import java.util.Collections;
@@ -38,7 +37,7 @@ public class CoinParticles
 
 	private static void later (int ticks, Runnable runnable)
 	{
-		BukkitTask task = new BukkitRunnable()
+		new BukkitRunnable()
 		{
 			@Override
 			public void run()
@@ -47,8 +46,6 @@ public class CoinParticles
 			}
 		}
 				.runTaskLater(Coins.getInstance(), ticks);
-
-		return task.getTaskId();
 	}
 
 }
