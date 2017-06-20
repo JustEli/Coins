@@ -31,9 +31,9 @@ public class Settings
 
     private static FileConfiguration getFile ()
     {
-        File config = new File( Coins.main.getDataFolder() + File.separator + "config.yml" );
+        File config = new File( Coins.getInstance().getDataFolder() + File.separator + "config.yml" );
         if (!config.exists())
-            Coins.main.saveDefaultConfig();
+            Coins.getInstance().saveDefaultConfig();
         return YamlConfiguration.loadConfiguration( config );
     }
 
@@ -126,14 +126,14 @@ public class Settings
 
     private static boolean setLanguage ()
     {
-        File dirLang = new File(Coins.main.getDataFolder() + File.separator + "language" + File.separator);
+        File dirLang = new File(Coins.getInstance().getDataFolder() + File.separator + "language" + File.separator);
         if (!dirLang.exists())
         {
-            Coins.main.saveResource("language/english.json", false);
-            Coins.main.saveResource("language/dutch.json", false);
-            Coins.main.saveResource("language/spanish.json", false);
-            Coins.main.saveResource("language/swedish.json", false);
-            Coins.main.saveResource("language/german.json", false);
+            Coins.getInstance().saveResource("language/english.json", false);
+            Coins.getInstance().saveResource("language/dutch.json", false);
+            Coins.getInstance().saveResource("language/spanish.json", false);
+            Coins.getInstance().saveResource("language/swedish.json", false);
+            Coins.getInstance().saveResource("language/german.json", false);
         }
 
         FileConfiguration file = getFile();
@@ -149,7 +149,7 @@ public class Settings
         try
         {
             JSONParser parser = new JSONParser();
-            Object object = parser.parse(new InputStreamReader(new FileInputStream(Coins.main.getDataFolder()
+            Object object = parser.parse(new InputStreamReader(new FileInputStream(Coins.getInstance().getDataFolder()
                     + File.separator + "language" + File.separator + lang + ".json"), "UTF-8"));
             JSONObject json = (JSONObject) object;
             for (Messages m : Messages.values())

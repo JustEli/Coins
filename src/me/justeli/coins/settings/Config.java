@@ -5,12 +5,11 @@ package me.justeli.coins.settings;
  *
  */
 
-public enum Config {
-
+public enum Config
+{
     ;
-
-    public enum BOOLEAN {
-
+    public enum BOOLEAN
+    {
         stackCoins,
         spawnerDrop,
         passiveDrop,
@@ -20,38 +19,32 @@ public enum Config {
         playerDrop,
         preventAlts,
         enableWithdraw,
-        roundedMoney,
-
     }
 
-    public enum STRING {
-
+    public enum STRING
+    {
         nameOfCoin,
         pickupMessage,
         deathMessage,
         soundName,
         mobMultiplier,
         currencySymbol,
-
     }
 
-    public enum DOUBLE {
-
+    public enum DOUBLE
+    {
         dropChance,
         maxWithdrawAmount,
-
         moneyAmount_from,
         moneyAmount_to,
-
         moneyTaken_from,
         moneyTaken_to,
-
+        moneyDecimals,
     }
 
-    public enum ARRAY {
-
+    public enum ARRAY
+    {
         disabledWorlds,
-
     }
 
 

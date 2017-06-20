@@ -20,14 +20,15 @@ pickupMessage: "&2+ &a{$}%amount%"
 # 'from' and 'to' which - as money - will be given to the player on pickup.
 moneyAmount:
   from: 3.0
-  to: 8.0
+  to: 7.0
 
-# Should money be rounded when given (i.e. $3 $6 $8) or not (i.e. $2.3 $5.8 $8.0).
-roundedMoney: false
+# How many decimals should money have? Set to 0 for integers/rounded money (i.e. $3 $6 $8).
+# Value 1 (default) means i.e. $2.3 $5.8 $8.0, value of 2 means i.e. $5.23, $3.70, $6.99, etc.
+moneyDecimals: 1
 
 # Should coins be stacked? (Or should a coin be one on its own?)
 # Stacked coins don't act like one coin. The stack is counted and the worth is multiplied.
-# Not stacking coins is just for a cooler effect (but probably laggier).
+# Not stacking coins is just for a cooler effect.
 stackCoins: false
 
 # Put the amount of coins dropped for a specific mob here, by default: mobs drop one coin.
@@ -59,7 +60,7 @@ passiveDrop: false
 # If the sound name remains untouched, and you use 1.8, it will do an 1.8 sound automaticly for you.
 # Here is a list of 1.9+ sounds: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
 pickupSound: true
-soundName: "BLOCK_LAVA_POP"
+soundName: "ITEM_ARMOR_EQUIP_GOLD"
 
 # Chance of dropping a coin after a mob has been killed.
 # Value from 0.0 to 1.0: 0.0 meaning 0%, 1.0 meaning 100% (so 0.9 meaning 90%).
@@ -90,8 +91,8 @@ loseOnDeath: true
 
 # If so, how much will be taken?
 moneyTaken:
-  from: 100
-  to: 150
+  from: 10
+  to: 30
 
 # The message in the middle of their screen.
 deathMessage: "&4- &c{$}%amount%"

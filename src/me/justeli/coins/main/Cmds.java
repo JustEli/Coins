@@ -3,7 +3,6 @@ package me.justeli.coins.main;
 import me.justeli.coins.api.ActionBar;
 import me.justeli.coins.api.Complete;
 import me.justeli.coins.item.Coin;
-import me.justeli.coins.item.CoinParticles;
 import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Messages;
 import me.justeli.coins.settings.Settings;
@@ -121,10 +120,10 @@ class Cmds implements CommandExecutor
                     return true;
                 }
 
-                if (amount > 0 && amount <= Settings.hD.get(Config.DOUBLE.maxWithdrawAmount) && Coins.getEcononomy().getBalance(p) >= amount)
+                if (amount > 0 && amount <= Settings.hD.get(Config.DOUBLE.maxWithdrawAmount) && Coins.getEconomy().getBalance(p) >= amount)
                 {
                     p.getInventory().addItem( new Coin().withdraw(amount).item() );
-                    Coins.getEcononomy().withdrawPlayer(p, amount);
+                    Coins.getEconomy().withdrawPlayer(p, amount);
                     p.sendMessage(color (
                             Messages.WITHDRAW_COINS.toString().replace("{0}", Long.toString(amount)) ));
                     new ActionBar(Settings.hS.get(Config.STRING.deathMessage)
@@ -142,7 +141,6 @@ class Cmds implements CommandExecutor
 
 	private void dropCoins (CommandSender sender, String[] args)
     {
-
         if (args.length >= 3)
         {
             Player p = Complete.onlinePlayer(args[1]);
@@ -232,7 +230,7 @@ class Cmds implements CommandExecutor
                 return;
             }
 
-            CoinParticles.dropCoins(location, radius, amount);
+            Coins.particles (location, radius, amount);
             sender.sendMessage( color(Messages.SPAWNED_COINS.toString())
                     .replace("{0}", Long.toString(amount)).replace("{1}", Long.toString(radius)).replace("{2}", name)  );
 
@@ -291,7 +289,7 @@ class Cmds implements CommandExecutor
                                     this.cancel();
                                 }
                             }
-                        }.runTaskTimer(Coins.main, rand, rand);
+                        }.runTaskTimer(Coins.getInstance(), rand, rand);
                     }
             }
 

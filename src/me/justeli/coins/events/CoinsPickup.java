@@ -4,6 +4,7 @@ import me.justeli.coins.api.ActionBar;
 import me.justeli.coins.main.Coins;
 import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Settings;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Item;
@@ -16,13 +17,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class CoinsPickup implements Listener
 {
 	private final static HashMap<String, Boolean> thrown = new HashMap<>();
+	private final static HashMap<UUID, Double> pickup = new HashMap<>();
 	
 	@EventHandler (ignoreCancelled = true)
 	public void onPickup (PlayerPickupItemEvent e)
@@ -83,7 +85,7 @@ public class CoinsPickup implements Listener
 				if (randomMoney == 0)
 					giveReward(item.getItemStack(), p);
 				else
-					addMoney(p, randomMoney, true);
+					addMoney(p, randomMoney, 0);
 
 				if (Settings.hB.get(Config.BOOLEAN.pickupSound))
 				{
@@ -91,11 +93,9 @@ public class CoinsPickup implements Listener
 					{
 						String sound = Settings.hS.get(Config.STRING.soundName);
 
-						Sound playsound;
-						if (Settings.hB.get(Config.BOOLEAN.olderServer) && sound.equals("BLOCK_LAVA_POP"))
-							playsound = Sound.valueOf("NOTE_STICKS");
-						else
-							playsound = Sound.valueOf( sound.toUpperCase() );
+						Sound playsound = Sound.valueOf( Settings.hB.get(Config.BOOLEAN.olderServer)
+										&& ( sound.equals("BLOCK_LAVA_POP") || sound.equals("ITEM_ARMOR_EQUIP_GOLD"))?
+										"NOTE_STICKS" : sound.toUpperCase());
 
 						p.playSound(p.getEyeLocation(), playsound, 0.3f, 0.3f);
 					}
@@ -105,7 +105,7 @@ public class CoinsPickup implements Listener
 				}
 
 			}
-		}.runTaskTimer(Coins.main, 2, 0);
+		}.runTaskTimer(Coins.getInstance(), 2, 0);
 
 	}
 
@@ -117,17 +117,34 @@ public class CoinsPickup implements Listener
 		int amount = item.getAmount();
 		double total = amount * ( Math.random() * first + second );
 
-		addMoney (p, total, Settings.hB.get(Config.BOOLEAN.roundedMoney));
+		addMoney (p, total, Settings.hD.get(Config.DOUBLE.moneyDecimals).intValue());
 	}
 
-	private static void addMoney (Player p, double amount, boolean integer)
+	private static void addMoney (Player p, double a, int integer)
 	{
-		amount = Double.parseDouble(new DecimalFormat( integer ? "#" : "###.#" ).format( amount ));
-		Coins.getEcononomy().depositPlayer(p, amount);
+		final double amount = format(a, integer);
+		Coins.getEconomy().depositPlayer(p, amount);
 
-		String stringAmount = String.valueOf( integer ? Integer.toString((int) amount) : amount );
+		final UUID u = p.getUniqueId();
+
+		pickup.put(u, amount + (pickup.containsKey(u)? format(pickup.get(u), integer) : 0));
+		final double newAmount = format(pickup.get(u), integer);
+
+		Runnable task = () ->
+		{
+			if (pickup.containsKey(u) && format(pickup.get(u), integer) == newAmount)
+				pickup.remove(u);
+		};
+		Bukkit.getScheduler().runTaskLater(Coins.getInstance(), task, 10L);
+
 		new ActionBar( Settings.hS.get(Config.STRING.pickupMessage)
-				.replace("%amount%", stringAmount ).replace("{$}", Settings.hS.get(Config.STRING.currencySymbol))).send(p);
+				.replace("%amount%", String.format("%." + integer + "f", newAmount) )
+				.replace("{$}", Settings.hS.get(Config.STRING.currencySymbol))).send(p);
+	}
+
+	private static Double format (Double amount, int decimals)
+	{
+		return Double.parseDouble(String.format("%." + decimals + "f", amount));
 	}
 
 }

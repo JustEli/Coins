@@ -25,7 +25,7 @@ public class DropCoin implements Listener
             if (m.getWorld().getName().equalsIgnoreCase(world))
                 return;
 
-        if (e.getEntity().getKiller() instanceof Player)
+        if (e.getEntity().getKiller() != null)
         {
             if (
                     (m instanceof Monster || m instanceof Slime || m instanceof MagmaCube || m instanceof Ghast)
@@ -33,7 +33,7 @@ public class DropCoin implements Listener
                     || ( (m instanceof Animals || m instanceof WaterMob || m instanceof Golem
                             || m instanceof Villager || m instanceof Bat) && Settings.hB.get(Config.BOOLEAN.passiveDrop) )
 
-                    || (m instanceof Player && Settings.hB.get(Config.BOOLEAN.playerDrop))
+                    || (m instanceof Player && Settings.hB.get(Config.BOOLEAN.playerDrop) && Coins.getEconomy().getBalance((Player)m) >= 0)
                 )
 
             { dropTheCoin(m, e.getEntity().getKiller()); }
@@ -48,7 +48,7 @@ public class DropCoin implements Listener
             Player p = (Player) e.getEntity();
             double random = Math.random() * first + second;
 
-            EconomyResponse r = Coins.getEcononomy().withdrawPlayer(p, (long) random);
+            EconomyResponse r = Coins.getEconomy().withdrawPlayer(p, (long) random);
             if (r.transactionSuccess())
                 Title.sendSubTitle(p, 20, 100, 20, Settings.hS.get(Config.STRING.deathMessage)
                         .replace("%amount%", String.valueOf( (long)random )).replace("{$}", Settings.hS.get(Config.STRING.currencySymbol)));

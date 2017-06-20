@@ -18,19 +18,18 @@ public class CoinPlace implements Listener
     @EventHandler
     public void coinPlace (PlayerInteractEvent e)
     {
-        try
+        if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)
+                && e.getItem() != null
+                && e.getItem().hasItemMeta()
+                && e.getItem().getItemMeta().hasDisplayName())
         {
-            if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getItem().getItemMeta().hasDisplayName())
-            {
-                String pickupName = e.getItem().getItemMeta().getDisplayName();
-                String coinName = ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin));
+            String pickupName = e.getItem().getItemMeta().getDisplayName();
+            String coinName = ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin));
 
-                if (pickupName.contains(coinName))
-                    e.setCancelled(true);
+            if (pickupName.contains(coinName))
+                e.setCancelled(true);
 
-            }
         }
-        catch (NullPointerException ignored) {}
     }
 
 }
