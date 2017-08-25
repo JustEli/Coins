@@ -33,6 +33,7 @@ stackCoins: false
 
 # Put the amount of coins dropped for a specific mob here, by default: mobs drop one coin.
 # ENDER_DRAGON is added by default, meaning that on kill of Ender Dragon, 64 coins drop.
+# Set a mob type to 0 (i.e. 'BAT: 0') to disable coins for that specific type.
 # You can find mob types via this URL (types that aren't creatures will be ignored):
 # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
 mobMultiplier:
@@ -49,6 +50,7 @@ preventAlts: true
 
 # Should mobs from spawners drop a coin too?
 # Mobs from spawners won't drop a coin by default.
+# When 'false', mobs can still drop when the player (who killed) has permission: 'coins.spawner'.
 spawnerDrop: false
 
 # Should passive mobs also drop a coin?

@@ -72,22 +72,18 @@ public class DropCoin implements Listener
 
         boolean stack = dropEvent.isStackable();
 
-        if (!PreventSpawner.fromSpawner(m))
+        if (!PreventSpawner.fromSpawner(m) || p.hasPermission("coins.spawner"))
         {
             if (Math.random() <= Settings.hD.get(Config.DOUBLE.dropChance))
             {
-                ItemStack coin = new Coin().stack(stack).item();
-                m.getLocation().getWorld().dropItem(m.getLocation(), coin);
-
+                int amount = 1;
                 if (Settings.multiplier.containsKey(m.getType()))
-                {
-                    int amount = Settings.multiplier.get(m.getType());
-                    for (int i = 1; i < amount; i ++)
-                    {
-                        ItemStack newCoin = new Coin().stack(stack).item();
-                        m.getLocation().getWorld().dropItem(m.getLocation(), newCoin);
-                    }
+                    amount = Settings.multiplier.get(m.getType());
 
+                for (int i = 0; i < amount; i ++)
+                {
+                    ItemStack coin = new Coin().stack(stack).item();
+                    m.getLocation().getWorld().dropItem(m.getLocation(), coin);
                 }
 
             }
