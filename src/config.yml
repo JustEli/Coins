@@ -50,7 +50,7 @@ preventAlts: true
 
 # Should mobs from spawners drop a coin too?
 # Mobs from spawners won't drop a coin by default.
-# When 'false', mobs can still drop when the player (who killed) has permission: 'coins.spawner'.
+# When 'false', mobs can still drop coins when the player (who killed) has permission: 'coins.spawner'.
 spawnerDrop: false
 
 # Should passive mobs also drop a coin?

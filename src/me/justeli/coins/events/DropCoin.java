@@ -28,10 +28,10 @@ public class DropCoin implements Listener
         if (e.getEntity().getKiller() != null)
         {
             if (
-                    (m instanceof Monster || m instanceof Slime || m instanceof MagmaCube || m instanceof Ghast)
+                    (m instanceof Monster || m instanceof Slime || m instanceof Ghast || m instanceof EnderDragon || m instanceof Shulker)
 
-                    || ( (m instanceof Animals || m instanceof WaterMob || m instanceof Golem
-                            || m instanceof Villager || m instanceof Bat) && Settings.hB.get(Config.BOOLEAN.passiveDrop) )
+                    || ( (m instanceof Animals || m instanceof Squid || m instanceof Snowman || m instanceof IronGolem
+                            || m instanceof Villager || m instanceof Ambient) && Settings.hB.get(Config.BOOLEAN.passiveDrop) )
 
                     || (m instanceof Player && Settings.hB.get(Config.BOOLEAN.playerDrop) && Coins.getEconomy().getBalance((Player)m) >= 0)
                 )
