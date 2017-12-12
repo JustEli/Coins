@@ -1,10 +1,9 @@
 author: JustEli
-version: 1.5.2
+version: 1.5.3
 main: me.justeli.coins.main.Coins
 name: Coins
 softdepend: [Vault]
 
 commands:
   coins:
-    aliases: [coin]
-  withdraw:
+    aliases: [coin, withdraw]

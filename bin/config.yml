@@ -4,7 +4,7 @@
 
 # What language should the plugin use? And what is your server's currency?
 # All available languages can be found in folder 'languages' in the plugin folder.
-# Included languages by default: english, dutch, german, spanish and swedish.
+# Included languages by default: english, dutch, german, spanish, swedish & chinese.
 language: english
 currencySymbol: "$"
 

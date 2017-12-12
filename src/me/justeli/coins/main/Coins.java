@@ -108,7 +108,8 @@ public class Coins extends JavaPlugin
     private void registerCommands ()
     {
         this.getCommand("coins").setExecutor(new Cmds());
-        this.getCommand("withdraw").setExecutor(new Cmds());
+        if (Settings.hB.get(Config.BOOLEAN.enableWithdraw))
+            this.getCommand("withdraw").setExecutor(new Cmds());
     }
 
     private void registerConfig ()

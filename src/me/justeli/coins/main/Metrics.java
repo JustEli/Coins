@@ -250,34 +250,38 @@ public class Metrics
      * @throws Exception If the request failed.
      */
     private static void sendData(JSONObject data) throws Exception {
-        if (data == null) {
-            throw new IllegalArgumentException("Data cannot be null!");
+        try
+        {
+            if (data == null) {
+                throw new IllegalArgumentException("Data cannot be null!");
+            }
+            if (Bukkit.isPrimaryThread()) {
+                throw new IllegalAccessException("This method must not be called from the main thread!");
+            }
+            HttpsURLConnection connection = (HttpsURLConnection) new URL(URL).openConnection();
+
+            // Compress the data to save bandwidth
+            byte[] compressedData = compress(data.toString());
+
+            // Add headers
+            connection.setRequestMethod("POST");
+            connection.addRequestProperty("Accept", "application/json");
+            connection.addRequestProperty("Connection", "close");
+            connection.addRequestProperty("Content-Encoding", "gzip"); // We gzip our request
+            connection.addRequestProperty("Content-Length", String.valueOf(compressedData.length));
+            connection.setRequestProperty("Content-Type", "application/json"); // We send our data in JSON format
+            connection.setRequestProperty("User-Agent", "MC-Server/" + B_STATS_VERSION);
+
+            // Send data
+            connection.setDoOutput(true);
+            DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
+            outputStream.write(compressedData);
+            outputStream.flush();
+            outputStream.close();
+
+            connection.getInputStream().close(); // We don't care about the response - Just send our data :)
         }
-        if (Bukkit.isPrimaryThread()) {
-            throw new IllegalAccessException("This method must not be called from the main thread!");
-        }
-        HttpsURLConnection connection = (HttpsURLConnection) new URL(URL).openConnection();
-
-        // Compress the data to save bandwidth
-        byte[] compressedData = compress(data.toString());
-
-        // Add headers
-        connection.setRequestMethod("POST");
-        connection.addRequestProperty("Accept", "application/json");
-        connection.addRequestProperty("Connection", "close");
-        connection.addRequestProperty("Content-Encoding", "gzip"); // We gzip our request
-        connection.addRequestProperty("Content-Length", String.valueOf(compressedData.length));
-        connection.setRequestProperty("Content-Type", "application/json"); // We send our data in JSON format
-        connection.setRequestProperty("User-Agent", "MC-Server/" + B_STATS_VERSION);
-
-        // Send data
-        connection.setDoOutput(true);
-        DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
-        outputStream.write(compressedData);
-        outputStream.flush();
-        outputStream.close();
-
-        connection.getInputStream().close(); // We don't care about the response - Just send our data :)
+        catch (IOException ignored) {}
     }
 
     /*

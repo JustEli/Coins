@@ -134,6 +134,7 @@ public class Settings
             Coins.getInstance().saveResource("language/spanish.json", false);
             Coins.getInstance().saveResource("language/swedish.json", false);
             Coins.getInstance().saveResource("language/german.json", false);
+            Coins.getInstance().saveResource("language/chinese.json", false);
         }
 
         FileConfiguration file = getFile();
