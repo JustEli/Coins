@@ -14,7 +14,7 @@ public class Coin
     private ItemStack coin;
     public Coin ()
     {
-        this.coin = new ItemStack(Material.DOUBLE_PLANT);
+        this.coin = new ItemStack(Material.valueOf(Settings.hS.get(Config.STRING.coinItem)));
         ItemMeta meta = this.coin.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin)));
         this.coin.setItemMeta(meta);

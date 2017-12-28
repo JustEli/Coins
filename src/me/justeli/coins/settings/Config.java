@@ -24,6 +24,7 @@ public enum Config
     public enum STRING
     {
         nameOfCoin,
+        coinItem,
         pickupMessage,
         deathMessage,
         soundName,

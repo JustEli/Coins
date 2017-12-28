@@ -1,6 +1,7 @@
 package me.justeli.coins.settings;
 
 import me.justeli.coins.main.Coins;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
@@ -49,16 +50,36 @@ public class Settings
 
             for (Config.STRING s : Config.STRING.values())
             {
-                if (file.getString( s.name() ) != null)
-                    hS.put(s, file.getString( s.name() ) );
-                else if (s.equals(Config.STRING.currencySymbol))
+                if (s.equals(Config.STRING.coinItem))
                 {
-                    errorMessage(Msg.OUTDATED_CONFIG, new String[] {"currencySymbol: $"});
-                    hS.put(s, "$" );
-                    errors ++;
+                    if (file.getString(s.name()) != null)
+                    {
+                        try
+                        {
+                            Material coin = Material.valueOf(file.getString(s.name())
+                                    .toUpperCase().replace(" ", "_").replace("COIN", "DOUBLE_PLANT"));
+                            hS.put(s, coin.name() );
+                        }
+                        catch (IllegalArgumentException | NullPointerException e)
+                        {
+                            errorMessage( Msg.NO_SUCH_MATERIAL, new String[]{file.getString(s.name())} );
+                            hS.put(s, "DOUBLE_PLANT" );
+                            errors++;
+                        }
+                    }
+                    else
+                    {
+                        errorMessage(Msg.OUTDATED_CONFIG, new String[] {"coinItem: coin"});
+                        hS.put(s, "DOUBLE_PLANT" );
+                        errors ++;
+                    }
                 }
+                else if (file.getString( s.name() ) != null)
+                    hS.put(s, file.getString( s.name() ) );
                 else
-                    { errorMessage (Msg.OUTDATED_CONFIG, null); errors++; }
+                {
+                    errorMessage (Msg.OUTDATED_CONFIG, null); errors++;
+                }
             }
 
             for (Config.DOUBLE s : Config.DOUBLE.values())
@@ -181,7 +202,8 @@ public class Settings
         LANG_NOT_FOUND,
         NO_SUCH_ENTITY,
         NO_SUCH_SOUND,
-        NO_ECONOMY_SUPPORT
+        NO_ECONOMY_SUPPORT,
+        NO_SUCH_MATERIAL
     }
 
     public static void errorMessage (Msg msg, String[] input)
@@ -192,7 +214,7 @@ public class Settings
                 System.err.print("Your config of Coins is outdated, update the Coins config.yml.");
                 System.err.print("You can copy it from here: https://github.com/JustEli/Coins/blob/master/src/config.yml");
                 System.err.print("Use /coins reload afterwards. You could also remove the config if you haven't configured it.");
-                System.err.print("The config is probably missing (add it): " + Arrays.toString(input));
+                if (input != null) System.err.print("This option is probably missing (add it): " + Arrays.toString(input));
                 break;
             case LANG_NOT_FOUND:
                 System.err.print("The language '" + input[0] + "' that you set in your config does not exist.");
@@ -201,6 +223,10 @@ public class Settings
             case NO_SUCH_ENTITY:
                 System.err.print("There is no entity with the name " + input[0] + ", please change the Coins config.");
                 System.err.print("Get types from here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html");
+                break;
+            case NO_SUCH_MATERIAL:
+                System.err.print("There is no material with the name " + input[0] + ", please change the Coins config.");
+                System.err.print("Get materials from here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html");
                 break;
             case NO_SUCH_SOUND:
                 System.err.print( input[0] + ": the sound does not exist. Change it in the Coins config." );
