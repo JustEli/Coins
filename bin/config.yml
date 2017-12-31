@@ -12,6 +12,10 @@ currencySymbol: "$"
 # Find a list of all color codes here: http://minecraft.gamepedia.com/Formatting_codes
 nameOfCoin: "&6Coin"
 
+# Woo! What item will the dropped material be? Find all materials at:
+# https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+coinItem: coin     # coin = sunflower
+
 # Message sent as action bar, telling them how much money they have picked up.
 # The variable {$} will be replaced by the 'currencySymbol', default: $.
 pickupMessage: "&2+ &a{$}%amount%"
@@ -59,7 +63,7 @@ passiveDrop: false
 
 # Play a sound on pickup of a coin.
 # This sound is a 1.9+ sound, if you use 1.8, put another sound in there.
-# If the sound name remains untouched, and you use 1.8, it will do an 1.8 sound automaticly for you.
+# If the sound name remains untouched, and you use 1.8, it will do an 1.8 sound automatically for you.
 # Here is a list of 1.9+ sounds: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
 pickupSound: true
 soundName: "ITEM_ARMOR_EQUIP_GOLD"

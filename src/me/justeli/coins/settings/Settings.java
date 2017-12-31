@@ -147,16 +147,10 @@ public class Settings
 
     private static boolean setLanguage ()
     {
-        File dirLang = new File(Coins.getInstance().getDataFolder() + File.separator + "language" + File.separator);
-        if (!dirLang.exists())
-        {
-            Coins.getInstance().saveResource("language/english.json", false);
-            Coins.getInstance().saveResource("language/dutch.json", false);
-            Coins.getInstance().saveResource("language/spanish.json", false);
-            Coins.getInstance().saveResource("language/swedish.json", false);
-            Coins.getInstance().saveResource("language/german.json", false);
-            Coins.getInstance().saveResource("language/chinese.json", false);
-        }
+        String[] langs = new String[]{"english", "dutch", "spanish", "german", "swedish", "chinese", "hungarian"};
+        for (String lang :langs)
+            if (!new File(Coins.getInstance().getDataFolder() + File.separator + "language" + File.separator + lang + ".json").exists())
+                Coins.getInstance().saveResource("language/" + lang + ".json", false);
 
         FileConfiguration file = getFile();
         String lang = getLanguage();

@@ -65,6 +65,7 @@ public class Coins extends JavaPlugin
         metrics.add("passiveDrop", String.valueOf(Settings.hB.get(Config.BOOLEAN.passiveDrop)));
 
         metrics.add("nameOfCoin", Settings.hS.get(Config.STRING.nameOfCoin));
+        metrics.add("coinItem", Settings.hS.get(Config.STRING.coinItem));
         metrics.add("pickupMessage", Settings.hS.get(Config.STRING.pickupMessage));
         metrics.add("moneyDecimals", String.valueOf(Settings.hD.get(Config.DOUBLE.moneyDecimals).intValue()));
         metrics.add("stackCoins", String.valueOf(Settings.hB.get(Config.BOOLEAN.stackCoins)));

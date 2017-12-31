@@ -85,7 +85,7 @@ public class CoinsPickup implements Listener
 				if (randomMoney == 0)
 					giveReward(item.getItemStack(), p);
 				else
-					addMoney(p, randomMoney, 0);
+					addMoney(p, (double) randomMoney, 0);
 
 				if (Settings.hB.get(Config.BOOLEAN.pickupSound))
 				{
@@ -111,28 +111,28 @@ public class CoinsPickup implements Listener
 
 	public static void giveReward (ItemStack item, Player p)
 	{
-		double second = Settings.hD.get(Config.DOUBLE.moneyAmount_from);
-		double first = Settings.hD.get(Config.DOUBLE.moneyAmount_to) - second;
+		Double second = Settings.hD.get(Config.DOUBLE.moneyAmount_from);
+		Double first = Settings.hD.get(Config.DOUBLE.moneyAmount_to) - second;
 
 		int amount = item.getAmount();
-		double total = amount * ( Math.random() * first + second );
+		Double total = amount * ( Math.random() * first + second );
 
 		addMoney (p, total, Settings.hD.get(Config.DOUBLE.moneyDecimals).intValue());
 	}
 
-	private static void addMoney (Player p, double a, int integer)
+	private static void addMoney (Player p, Double a, int integer)
 	{
-		final double amount = format(a, integer);
+		final Double amount = format(a, integer);
 		Coins.getEconomy().depositPlayer(p, amount);
 
 		final UUID u = p.getUniqueId();
 
 		pickup.put(u, amount + (pickup.containsKey(u)? format(pickup.get(u), integer) : 0));
-		final double newAmount = format(pickup.get(u), integer);
+		final Double newAmount = format(pickup.get(u), integer);
 
 		Runnable task = () ->
 		{
-			if (pickup.containsKey(u) && format(pickup.get(u), integer) == newAmount)
+			if (pickup.containsKey(u) && format(pickup.get(u), integer).equals(newAmount))
 				pickup.remove(u);
 		};
 		Bukkit.getScheduler().runTaskLater(Coins.getInstance(), task, 10L);
@@ -144,7 +144,9 @@ public class CoinsPickup implements Listener
 
 	private static Double format (Double amount, int decimals)
 	{
-		return Double.parseDouble(String.format("%." + decimals + "f", amount));
+		try { return Double.parseDouble(String.format( "%." + decimals + "f", amount )); }
+		catch (NumberFormatException e)
+		{ return Double.parseDouble(String.format( "%." + decimals + "f", amount ).replace(",", ".")); }
 	}
 
 }
