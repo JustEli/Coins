@@ -299,7 +299,7 @@ class Cmds implements CommandExecutor
 
     private void sendHelp (CommandSender sender)
     {
-        sender.sendMessage( color(Messages.COINS_HELP.toString()) );
+        sender.sendMessage( color(Messages.COINS_HELP.toString() + " " + Coins.getInstance().getDescription().getVersion()) );
 
         if (sender.hasPermission("coins.drop"))
             sender.sendMessage( color(Messages.DROP_USAGE.toString()) );

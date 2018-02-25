@@ -147,8 +147,7 @@ public class Settings
 
     private static boolean setLanguage ()
     {
-        String[] langs = new String[]{"english", "dutch", "spanish", "german", "swedish", "chinese", "hungarian"};
-        for (String lang :langs)
+        for (String lang :new String[]{"english", "dutch", "spanish", "german", "swedish", "chinese", "hungarian"})
             if (!new File(Coins.getInstance().getDataFolder() + File.separator + "language" + File.separator + lang + ".json").exists())
                 Coins.getInstance().saveResource("language/" + lang + ".json", false);
 
