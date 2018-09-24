@@ -27,6 +27,7 @@ public class CoinsPickup implements Listener
 	private final static HashMap<UUID, Double> pickup = new HashMap<>();
 	
 	@EventHandler (ignoreCancelled = true)
+	@SuppressWarnings("deprecation")
 	public void onPickup (PlayerPickupItemEvent e)
 	{
 		for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds) )

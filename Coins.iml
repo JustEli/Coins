@@ -18,6 +18,6 @@
         <jarDirectory url="file://$MODULE_DIR$/../../../BuildTools/@plugins" recursive="false" />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="Spigot 1.12" level="application" />
+    <orderEntry type="library" name="Spigot 1.13.1" level="application" />
   </component>
 </module>
