@@ -71,7 +71,9 @@ public class DropCoin implements Listener
                 return;
         }
 
-        boolean stack = dropEvent.isStackable();
+        boolean stack;
+        if (Settings.hB.get(Config.BOOLEAN.dropEachCoin)) stack = false;
+        else stack = dropEvent.isStackable();
 
         if (!PreventSpawner.fromSpawner(m) || p.hasPermission("coins.spawner"))
         {
@@ -80,6 +82,14 @@ public class DropCoin implements Listener
                 int amount = 1;
                 if (Settings.multiplier.containsKey(m.getType()))
                     amount = Settings.multiplier.get(m.getType());
+
+                if (Settings.hB.get(Config.BOOLEAN.dropEachCoin))
+                {
+                    int second = Settings.hD.get(Config.DOUBLE.moneyAmount_from).intValue();
+                    int first = Settings.hD.get(Config.DOUBLE.moneyAmount_to).intValue()+1 - second;
+
+                    amount *= ( Math.random() * first + second );
+                }
 
                 for (int i = 0; i < amount; i ++)
                 {

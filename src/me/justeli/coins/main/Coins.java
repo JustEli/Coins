@@ -17,6 +17,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Locale;
+
 /**
  * Created by Eli on 12/13/2016.
  *
@@ -31,6 +33,7 @@ public class Coins extends JavaPlugin
     public void onEnable ()
     {
         main = this;
+        Locale.setDefault(Locale.US);
 
         registerConfig();
         registerEvents();
@@ -59,6 +62,7 @@ public class Coins extends JavaPlugin
         metrics.add("language", WordUtils.capitalize(Settings.getLanguage()));
         metrics.add("currencySymbol", Settings.hS.get(Config.STRING.currencySymbol));
         metrics.add("dropChance", Settings.hD.get(Config.DOUBLE.dropChance)*100 + "%");
+        metrics.add("dropEachCoin", String.valueOf(Settings.hB.get(Config.BOOLEAN.dropEachCoin)));
         metrics.add("pickupSound", Settings.hS.get(Config.STRING.soundName));
         metrics.add("enableWithdraw", String.valueOf(Settings.hB.get(Config.BOOLEAN.enableWithdraw)));
         metrics.add("loseOnDeath", String.valueOf(Settings.hB.get(Config.BOOLEAN.loseOnDeath)));

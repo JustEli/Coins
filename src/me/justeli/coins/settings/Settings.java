@@ -9,7 +9,11 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -50,7 +54,12 @@ public class Settings
 
             for (Config.STRING s : Config.STRING.values())
             {
-                if (s.equals(Config.STRING.coinItem))
+                if (s.equals(Config.STRING.multiSuffix) && file.getString(s.name()) == null)
+                {
+                    hS.put(s, "s");
+                    errorMessage(Msg.OUTDATED_CONFIG, new String[] {"multiSuffix: s", "dropEachCoin: false"});
+                }
+                else if (s.equals(Config.STRING.coinItem))
                 {
                     if (file.getString(s.name()) != null)
                     {
@@ -214,21 +223,21 @@ public class Settings
                 System.err.print("Check all available languages in the folder 'Coins/language'.");
                 break;
             case NO_SUCH_ENTITY:
-                System.err.print("There is no entity with the name " + input[0] + ", please change the Coins config.");
+                System.err.print("There is no entity with the name '" + input[0] + "', please change the Coins config.");
                 System.err.print("Get types from here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html");
                 break;
             case NO_SUCH_MATERIAL:
-                System.err.print("There is no material with the name " + input[0] + ", please change the Coins config.");
+                System.err.print("There is no material with the name '" + input[0] + "', please change the Coins config.");
                 System.err.print("Get materials from here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html");
                 break;
             case NO_SUCH_SOUND:
-                System.err.print( input[0] + ": the sound does not exist. Change it in the Coins config." );
+                System.err.print(  "The sound '" + input[0] + "' does not exist. Change it in the Coins config." );
                 System.err.print( "Please use a sound from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html" );
                 break;
             case NO_ECONOMY_SUPPORT:
-                System.err.print( "======= There seems to be no Vault or economy supportive plugin installed." );
-                System.err.print( "======= Please install Vault and an economy supportive plugin like Essentials." );
-                System.err.print( "======= Coins will be disabled now.." );
+                System.err.print( "===ERROR=== There seems to be no Vault or economy supportive plugin installed." );
+                System.err.print( "===ERROR=== Please install Vault and an economy supportive plugin like Essentials." );
+                System.err.print( "===ERROR=== Coins will be disabled now.." );
         }
 
     }

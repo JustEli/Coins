@@ -49,7 +49,7 @@ public class CoinsPickup implements Listener
 					giveCoin(item, e.getPlayer(), 0);
 			}
 
-			else if ( pickupName.endsWith(coinName + "s") )
+			else if ( pickupName.endsWith(coinName + Settings.hS.get(Config.STRING.multiSuffix)) )
 			{
 				e.setCancelled(true);
 				int amount = Integer.valueOf( ChatColor.stripColor(pickupName.split(" ")[0]) );
@@ -112,6 +112,12 @@ public class CoinsPickup implements Listener
 
 	public static void giveReward (ItemStack item, Player p)
 	{
+		if (Settings.hB.get(Config.BOOLEAN.dropEachCoin))
+		{
+			addMoney (p, 1d, 0);
+			return;
+		}
+
 		Double second = Settings.hD.get(Config.DOUBLE.moneyAmount_from);
 		Double first = Settings.hD.get(Config.DOUBLE.moneyAmount_to) - second;
 
@@ -136,7 +142,8 @@ public class CoinsPickup implements Listener
 			if (pickup.containsKey(u) && format(pickup.get(u), integer).equals(newAmount))
 				pickup.remove(u);
 		};
-		Bukkit.getScheduler().runTaskLater(Coins.getInstance(), task, 10L);
+		Bukkit.getScheduler().runTaskLater(Coins.getInstance(), task,
+                Settings.hB.get(Config.BOOLEAN.dropEachCoin)? 30L : 10L);
 
 		new ActionBar( Settings.hS.get(Config.STRING.pickupMessage)
 				.replace("%amount%", String.format("%." + integer + "f", newAmount) )

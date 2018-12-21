@@ -41,7 +41,8 @@ public class Coin
     public Coin withdraw (long amount)
     {
         ItemMeta meta = this.coin.getItemMeta();
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&e" + amount + " &r" + Settings.hS.get(Config.STRING.nameOfCoin) + "s"));
+        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&e" + amount + " &r"
+                + Settings.hS.get(Config.STRING.nameOfCoin) + Settings.hS.get(Config.STRING.multiSuffix)));
         this.coin.setItemMeta(meta);
 
         return this;

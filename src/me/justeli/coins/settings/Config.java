@@ -19,6 +19,7 @@ public enum Config
         playerDrop,
         preventAlts,
         enableWithdraw,
+        dropEachCoin
     }
 
     public enum STRING
@@ -30,6 +31,7 @@ public enum Config
         soundName,
         mobMultiplier,
         currencySymbol,
+        multiSuffix
     }
 
     public enum DOUBLE

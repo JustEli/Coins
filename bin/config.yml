@@ -4,35 +4,45 @@
 
 # What language should the plugin use? And what is your server's currency?
 # All available languages can be found in folder 'languages' in the plugin folder.
-# Included languages by default: english, dutch, german, spanish, swedish & chinese.
+# Included languages by default: english, dutch, german, spanish, swedish, chinese & hungarian.
 language: english
 currencySymbol: "$"
 
 # You aren't really going to notice this, but in hoppers you can see its name.
-# Find a list of all color codes here: http://minecraft.gamepedia.com/Formatting_codes
+# See a list of all color codes here: http://minecraft.gamepedia.com/Formatting_codes
+# 'multiSuffix's parameter will be added behind 'nameOfCoin' in case it's more than one coin.
 nameOfCoin: "&6Coin"
+multiSuffix: s
 
-# Woo! What item will the dropped material be? Find all materials at:
+# What item will the dropped 'coin' (material) be? Find all materials at:
 # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
 coinItem: coin     # coin = sunflower
 
-# Message sent as action bar, telling them how much money they have picked up.
+# This message is sent as action bar, telling the player how much money they have picked up.
 # The variable {$} will be replaced by the 'currencySymbol', default: $.
 pickupMessage: "&2+ &a{$}%amount%"
 
-# The amount of money a coin is worth. Creates a random number between
+# This plugin will drop one coin, being worth what's set at 'moneyAmount'. But here you can
+# set that a mob should drop 'moneyAmount's AMOUNT of coins, with each coin being worth $1.
+dropEachCoin: false
+
+# The amount of money one coin is worth. Creates a random number between
 # 'from' and 'to' which - as money - will be given to the player on pickup.
+# However, if 'dropEachCoin' is set to true, killed mobs will drop 'from' to 'to' coins,
+# with each coin being worth $1. So by default it will drop 3 to 7 coins when 'dropEachCoin' is true.
 moneyAmount:
   from: 3.0
   to: 7.0
 
 # How many decimals should money have? Set to 0 for integers/rounded money (i.e. $3 $6 $8).
 # Value 1 (default) means i.e. $2.3 $5.8 $8.0, value of 2 means i.e. $5.23, $3.70, $6.99, etc.
+# This setting will be ignored (and set to 0) if 'dropEachCoin' is set to true.
 moneyDecimals: 1
 
 # Should coins be stacked? (Or should a coin be one on its own?)
 # Stacked coins don't act like one coin. The stack is counted and the worth is multiplied.
 # Not stacking coins is just for a cooler effect.
+# This setting will be ignored (and set to false) if 'dropEachCoin' is set to true.
 stackCoins: false
 
 # Put the amount of coins dropped for a specific mob here, by default: mobs drop one coin.
