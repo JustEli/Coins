@@ -28,6 +28,8 @@ public enum Messages
     SETTINGS_USAGE,
     RELOAD_USAGE,
     REMOVED_COINS,
+    INVENTORY_FULL,
+    VERSION_CHECK,
     ;
 
     @Override

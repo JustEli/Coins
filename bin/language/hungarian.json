@@ -9,6 +9,7 @@
   "COINS_DISABLED" : "&cA Coins letiltott ebben a világban.",
   "SPAWNED_COINS" : "&9Leidézve {0} érmék {1} sugárban {2} körül.",
   "REMOVED_COINS" : "&9Összesen {0} érmét távolított el.",
+  "INVENTORY_FULL" : "&cYou cannot withdraw when your inventory is full!",
 
   "PLAYER_NOT_FOUND" : "&4Ez a játékos nem található.",
   "COORDS_NOT_FOUND" : "&4Azok a koordináták vagy a világ nem volt megtalálható.",
@@ -22,5 +23,6 @@
   "REMOVE_USAGE" : "&c/coins remove [radius|all] &7- elveszi az érméket egy sugárban",
   "SETTINGS_USAGE" : "&c/coins settings &7- listázza az éppen betöltött beállításokat",
   "RELOAD_USAGE" : "&c/coins reload &7- újratölti a beállításokat a config.yml-ben",
+  "VERSION_CHECK" : "&c/coins version &7- check if there's a new release",
   "WITHDRAW_USAGE" : "&c/withdraw <érmék> &7- vonjon pénzt érmékre"
 }

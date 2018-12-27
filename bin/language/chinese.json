@@ -9,6 +9,7 @@
   "COINS_DISABLED" : "&c这个世界的Coins功能已被禁止",
   "SPAWNED_COINS" : "&9已在{2}周围半径{1}内生成{0}游戏币",
   "REMOVED_COINS" : "&9已移除{0}游戏币",
+  "INVENTORY_FULL" : "&cYou cannot withdraw when your inventory is full!",
 
   "PLAYER_NOT_FOUND" : "&4没有这个玩家",
   "COORDS_NOT_FOUND" : "&4坐标或世界不存在",
@@ -22,5 +23,6 @@
   "REMOVE_USAGE" : "&c/coins remove [radius|all] &7- 在一定半径内移除游戏币",
   "SETTINGS_USAGE" : "&c/coins settings &7- 列出当前的插件配置",
   "RELOAD_USAGE" : "&c/coins reload &7- 重载config.yml文件的配置",
+  "VERSION_CHECK" : "&c/coins version &7- check if there's a new release",
   "WITHDRAW_USAGE" : "&c/withdraw <coins> &7- 把钱换成游戏币"
 }

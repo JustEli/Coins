@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -87,7 +88,8 @@ public class Settings
                     hS.put(s, file.getString( s.name() ) );
                 else
                 {
-                    errorMessage (Msg.OUTDATED_CONFIG, null); errors++;
+                    errorMessage (Msg.OUTDATED_CONFIG, new String[]{s.name()});
+                    errors++;
                 }
             }
 
@@ -174,10 +176,25 @@ public class Settings
         {
             JSONParser parser = new JSONParser();
             Object object = parser.parse(new InputStreamReader(new FileInputStream(Coins.getInstance().getDataFolder()
-                    + File.separator + "language" + File.separator + lang + ".json"), "UTF-8"));
+                    + File.separator + "language" + File.separator + lang + ".json"), StandardCharsets.UTF_8));
             JSONObject json = (JSONObject) object;
             for (Messages m : Messages.values())
-                language.put( m, json.get(m.name()).toString() );
+            {
+                try
+                {
+                    Object name = json.get(m.name());
+                    language.put( m, name.toString() );
+                }
+                catch (NullPointerException ex)
+                {
+                    failure = true;
+                    if (m.equals(Messages.INVENTORY_FULL))
+                        language.put( m, "&cYou cannot withdraw when your inventory is full!" );
+                    if (m.equals(Messages.VERSION_CHECK))
+                        language.put(m, "&c/coins version &7- check if there's a new release");
+                    errorMessage(Msg.NO_TRANSLATION, new String[]{m.name()});
+                }
+            }
         }
         catch (FileNotFoundException e)
         { errorMessage(Msg.LANG_NOT_FOUND, new String[] {file.getString("language")}); return false; }
@@ -205,7 +222,8 @@ public class Settings
         NO_SUCH_ENTITY,
         NO_SUCH_SOUND,
         NO_ECONOMY_SUPPORT,
-        NO_SUCH_MATERIAL
+        NO_SUCH_MATERIAL,
+        NO_TRANSLATION,
     }
 
     public static void errorMessage (Msg msg, String[] input)
@@ -213,31 +231,35 @@ public class Settings
         switch (msg)
         {
             case OUTDATED_CONFIG:
-                System.err.print("Your config of Coins is outdated, update the Coins config.yml.");
-                System.err.print("You can copy it from here: https://github.com/JustEli/Coins/blob/master/src/config.yml");
-                System.err.print("Use /coins reload afterwards. You could also remove the config if you haven't configured it.");
-                if (input != null) System.err.print("This option is probably missing (add it): " + Arrays.toString(input));
+                System.out.println("===ERROR=== Your config of Coins is outdated, update the Coins config.yml.");
+                System.out.println("===ERROR=== You can copy it from here: https://github.com/JustEli/Coins/blob/master/src/config.yml");
+                System.out.println("===ERROR=== Use /coins reload afterwards. You could also remove the config if you haven't configured it.");
+                if (input != null) System.err.print("===ERROR=== This option is probably missing (add it): " + Arrays.toString(input));
                 break;
             case LANG_NOT_FOUND:
-                System.err.print("The language '" + input[0] + "' that you set in your config does not exist.");
-                System.err.print("Check all available languages in the folder 'Coins/language'.");
+                System.out.println("===ERROR=== The language '" + input[0] + "' that you set in your config does not exist.");
+                System.out.println("===ERROR=== Check all available languages in the folder 'Coins/language'.");
                 break;
             case NO_SUCH_ENTITY:
-                System.err.print("There is no entity with the name '" + input[0] + "', please change the Coins config.");
-                System.err.print("Get types from here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html");
+                System.out.println("===ERROR=== There is no entity with the name '" + input[0] + "', please change the Coins config.");
+                System.out.println("===ERROR=== Get types from here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html");
                 break;
             case NO_SUCH_MATERIAL:
-                System.err.print("There is no material with the name '" + input[0] + "', please change the Coins config.");
-                System.err.print("Get materials from here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html");
+                System.out.println("===ERROR=== There is no material with the name '" + input[0] + "', please change the Coins config.");
+                System.out.println("===ERROR=== Get materials from here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html");
                 break;
             case NO_SUCH_SOUND:
-                System.err.print(  "The sound '" + input[0] + "' does not exist. Change it in the Coins config." );
-                System.err.print( "Please use a sound from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html" );
+                System.out.println( "===ERROR=== The sound '" + input[0] + "' does not exist. Change it in the Coins config." );
+                System.out.println( "===ERROR=== Please use a sound from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html" );
                 break;
             case NO_ECONOMY_SUPPORT:
-                System.err.print( "===ERROR=== There seems to be no Vault or economy supportive plugin installed." );
-                System.err.print( "===ERROR=== Please install Vault and an economy supportive plugin like Essentials." );
-                System.err.print( "===ERROR=== Coins will be disabled now.." );
+                System.out.println( "===ERROR=== There seems to be no Vault or economy supportive plugin installed." );
+                System.out.println( "===ERROR=== Please install Vault and an economy supportive plugin like Essentials." );
+                System.out.println( "===ERROR=== Coins will be disabled now.." );
+            case NO_TRANSLATION:
+                System.out.println( "===ERROR=== The translation for '" + input[0] + "' was not found.");
+                System.out.println( "===ERROR=== Please add it to the {language}.json file.");
+                System.out.println( "===ERROR=== Or delete your /language/ folder in /Coins/. RECOMMENDED");
         }
 
     }

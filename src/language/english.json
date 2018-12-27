@@ -9,6 +9,7 @@
   "COINS_DISABLED" : "&cCoins are disabled in this world.",
   "SPAWNED_COINS" : "&9Spawned {0} coins in radius {1} around {2}.",
   "REMOVED_COINS" : "&9Removed a total of {0} coins.",
+  "INVENTORY_FULL" : "&cYou cannot withdraw when your inventory is full!",
 
   "PLAYER_NOT_FOUND" : "&4That player could not be found.",
   "COORDS_NOT_FOUND" : "&4Those coords or the world couldn't be found.",
@@ -22,5 +23,6 @@
   "REMOVE_USAGE" : "&c/coins remove [radius|all] &7- remove coins in a radius",
   "SETTINGS_USAGE" : "&c/coins settings &7- list the currently loaded settings",
   "RELOAD_USAGE" : "&c/coins reload &7- reload the settings from config.yml",
+  "VERSION_CHECK" : "&c/coins version &7- check if there's a new release",
   "WITHDRAW_USAGE" : "&c/withdraw <coins> &7- withdraw some money into coins"
 }

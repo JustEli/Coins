@@ -76,6 +76,23 @@ class Cmds implements CommandExecutor
                         for (Messages m : Messages.values())
                             sender.sendMessage(m.toString());
                         break;
+                    case "version":
+                    case "update":
+                        if (sender.hasPermission("coins.admin"))
+                        {
+                            String version = Coins.update;
+                            String current = Coins.getInstance().getDescription().getVersion();
+                            sender.sendMessage(color("&eVersion currently installed: &f" + current));
+                            sender.sendMessage(color("&eLatest released version: &f" + version));
+                            if (version.equals(current))
+                                sender.sendMessage(color("&aYou're all up to date with version" + current + "!"));
+                            else
+                            {
+                                sender.sendMessage(color("&cConsider updating the plugin to version " + version + "!"));
+                                sender.sendMessage("https://www.spigotmc.org/resources/coins.33382/");
+                            }
+                        }
+                        break;
                     default:
                         sendHelp(sender);
                         break;
@@ -122,6 +139,11 @@ class Cmds implements CommandExecutor
 
                 if (amount > 0 && amount <= Settings.hD.get(Config.DOUBLE.maxWithdrawAmount) && Coins.getEconomy().getBalance(p) >= amount)
                 {
+                    if (p.getInventory().firstEmpty() == -1)
+                    {
+                        p.sendMessage(color(Messages.INVENTORY_FULL.toString()));
+                        return true;
+                    }
                     p.getInventory().addItem( new Coin().withdraw(amount).item() );
                     Coins.getEconomy().withdrawPlayer(p, amount);
                     p.sendMessage(color (
@@ -299,7 +321,11 @@ class Cmds implements CommandExecutor
 
     private void sendHelp (CommandSender sender)
     {
-        sender.sendMessage( color(Messages.COINS_HELP.toString() + " " + Coins.getInstance().getDescription().getVersion()) );
+        String version = Coins.getInstance().getDescription().getVersion();
+        String update = Coins.update;
+        String notice = "";
+        if (!update.equals(version)) notice = "&l (outdated; /coins update)";
+        sender.sendMessage( color(Messages.COINS_HELP.toString() + " " + version + notice) );
 
         if (sender.hasPermission("coins.drop"))
             sender.sendMessage( color(Messages.DROP_USAGE.toString()) );
@@ -311,6 +337,7 @@ class Cmds implements CommandExecutor
         {
             sender.sendMessage( color(Messages.SETTINGS_USAGE.toString()) );
             sender.sendMessage( color(Messages.RELOAD_USAGE.toString()) );
+            sender.sendMessage( color(Messages.VERSION_CHECK.toString() ));
         }
 
         if (Settings.hB.get(Config.BOOLEAN.enableWithdraw) && sender.hasPermission("coins.withdraw"))
@@ -321,5 +348,4 @@ class Cmds implements CommandExecutor
     {
         sender.sendMessage( color( Messages.NO_PERMISSION.toString()));
     }
-
 }

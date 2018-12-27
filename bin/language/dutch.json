@@ -9,8 +9,9 @@
   "COINS_DISABLED" : "&cCoins is niet ingeschakeld in deze wereld.",
   "SPAWNED_COINS" : "&9Je gooide {0} munten in straal van {1} om {2} heen.",
   "REMOVED_COINS" : "&9Verwijderde in totaal {0} munten.",
+  "INVENTORY_FULL" : "&cJe kunt geen munten verkrijgen als je inventaris vol zit.",
 
-  "PLAYER_NOT_FOUND" : "&4Die speler is niet online.",
+  "PLAYER_NOT_FOUND", : "&4Die speler is niet online.",
   "COORDS_NOT_FOUND" : "&4Die coordinaten of wereld waren niet gevonden.",
 
   "INVALID_AMOUNT" : "&cDat is geen geldige hoeveelheid.",
@@ -22,5 +23,6 @@
   "REMOVE_USAGE" : "&c/coins remove [straal|all] &7- verwijder munten in straal",
   "SETTINGS_USAGE" : "&c/coins settings &7- geef actuele instellingen weer",
   "RELOAD_USAGE" : "&c/coins reload &7- herlaad instellingen van config.yml",
+  "VERSION_CHECK" : "&c/coins version &7- kijk of er een update is",
   "WITHDRAW_USAGE" : "&c/withdraw <coins> &7- verander geld in munten"
 }

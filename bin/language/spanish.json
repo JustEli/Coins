@@ -9,6 +9,7 @@
   "COINS_DISABLED" : "&cCoins están desactivadas en este mundo.",
   "SPAWNED_COINS" : "&9Generadas {0} monedas en un radio de {1} alrededor de {2}.",
   "REMOVED_COINS" : "&9Removidas un total de {0} monedas.",
+  "INVENTORY_FULL" : "&cYou cannot withdraw when your inventory is full!",
 
   "PLAYER_NOT_FOUND" : "&4No se encuentra ese jugador.",
   "COORDS_NOT_FOUND" : "&4Las coordenadas o el mundo no se pueden encontrar.",
@@ -22,5 +23,6 @@
   "REMOVE_USAGE" : "&c/coins remove [radio|all] &7- remueve monedas en un radio",
   "SETTINGS_USAGE" : "&c/coins settings &7- lista las opciones actualmente cargadas",
   "RELOAD_USAGE" : "&c/coins reload &7- recarga las opciones de el config.yml",
+  "VERSION_CHECK" : "&c/coins version &7- check if there's a new release",
   "WITHDRAW_USAGE" : "&c/withdraw <coins> &7- retira algo de dinero en monedas"
 }
