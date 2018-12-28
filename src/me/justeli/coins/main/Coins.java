@@ -45,8 +45,10 @@ public class Coins extends JavaPlugin
     // todo config option for pitch/volume pickup
     // todo able to pickup with inventory full
     // todo send locale messages
+    // todo support for standalone Vault
 
     // https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/meta/tags/CustomItemTagContainer.html
+    // https://www.spigotmc.org/resources/pickupmoney.11334/
 
     @Override
     public void onEnable ()

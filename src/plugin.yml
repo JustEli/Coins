@@ -1,9 +1,0 @@
-author: JustEli
-version: 1.7.1
-main: me.justeli.coins.main.Coins
-name: Coins
-softdepend: [Vault]
-
-commands:
-  coins:
-    aliases: [coin, withdraw]
