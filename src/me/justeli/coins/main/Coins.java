@@ -123,7 +123,7 @@ public class Coins extends JavaPlugin
         }
         catch (NullPointerException | NoClassDefFoundError e)
         {
-            Settings.errorMessage(Settings.Msg.NO_ECONOMY_SUPPORT, null);
+            Settings.errorMessage(Settings.Msg.NO_ECONOMY_SUPPORT, new String[]{});
             Bukkit.getPluginManager().disablePlugin(this);
         }
     }
