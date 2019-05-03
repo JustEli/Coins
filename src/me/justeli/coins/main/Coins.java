@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.justeli.coins.cancel.CancelHopper;
+import me.justeli.coins.cancel.CancelInventories;
 import me.justeli.coins.cancel.CoinPlace;
 import me.justeli.coins.cancel.PreventSpawner;
 import me.justeli.coins.events.CoinsPickup;
@@ -14,6 +15,7 @@ import me.justeli.coins.settings.Settings;
 import net.milkbowl.vault.economy.Economy;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.PluginManager;
@@ -86,10 +88,13 @@ public class Coins extends JavaPlugin
 
             if (!getDescription().getVersion().equals(version))
             {
-                System.out.println("A new version of Coins was released (" + version + ")!");
-                System.out.println("https://www.spigotmc.org/resources/coins.33382/");
+                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "A new version of Coins was released (" + version + ")!");
+                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "https://www.spigotmc.org/resources/coins.33382/");
             }
+        });
 
+        later(() ->
+        {
             Metrics metrics = new Metrics(this);
 
             metrics.add("language", WordUtils.capitalize(Settings.getLanguage()));
@@ -156,6 +161,7 @@ public class Coins extends JavaPlugin
         manager.registerEvents(new CoinsPickup(), this);
         manager.registerEvents(new DropCoin(), this);
         manager.registerEvents(new CoinPlace(), this);
+        manager.registerEvents(new CancelInventories(), this);
     }
 
     private void registerCommands ()
@@ -175,7 +181,7 @@ public class Coins extends JavaPlugin
         Settings.enums();
     }
 
-    public static int async (Runnable runnable)
+    private static int async (Runnable runnable)
     {
         BukkitTask task = new BukkitRunnable()
         {
@@ -188,6 +194,21 @@ public class Coins extends JavaPlugin
                 .runTaskAsynchronously(getInstance());
 
         return task.getTaskId();
+    }
+
+    private static int later (Runnable runnable)
+    {
+            BukkitTask task = new BukkitRunnable()
+            {
+                @Override
+                public void run()
+                {
+                    runnable.run();
+                }
+            }
+                    .runTaskLater(getInstance(), 1);
+
+            return task.getTaskId();
     }
 
 }

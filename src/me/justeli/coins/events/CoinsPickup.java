@@ -36,7 +36,7 @@ public class CoinsPickup implements Listener
 
 		Item item = e.getItem();
 
-		if (item.getItemStack().getItemMeta().hasDisplayName())
+		if (item.getItemStack().getItemMeta() != null && item.getItemStack().getItemMeta().hasDisplayName())
 		{
 			String pickupName = item.getItemStack().getItemMeta().getDisplayName();
 			String coinName = ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin));
@@ -44,8 +44,9 @@ public class CoinsPickup implements Listener
 			if ( pickupName.equals(coinName) )
 			{
 				e.setCancelled(true);
+				Player p = e.getPlayer();
 
-				if (!e.getPlayer().hasPermission("coins.disable") || e.getPlayer().isOp() || e.getPlayer().hasPermission("*"))
+				if (!p.hasPermission("coins.disable") || p.isOp() || p.hasPermission("*"))
 					giveCoin(item, e.getPlayer(), 0);
 			}
 
@@ -114,12 +115,12 @@ public class CoinsPickup implements Listener
 	{
 		if (Settings.hB.get(Config.BOOLEAN.dropEachCoin))
 		{
-			addMoney (p, 1d, 0);
+			addMoney (p, (double)item.getAmount(), 0);
 			return;
 		}
 
 		Double second = Settings.hD.get(Config.DOUBLE.moneyAmount_from);
-		Double first = Settings.hD.get(Config.DOUBLE.moneyAmount_to) - second;
+		Double first  = Settings.hD.get(Config.DOUBLE.moneyAmount_to) - second;
 
 		int amount = item.getAmount();
 		Double total = amount * ( Math.random() * first + second );

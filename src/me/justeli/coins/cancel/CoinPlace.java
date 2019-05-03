@@ -21,6 +21,7 @@ public class CoinPlace implements Listener
         if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)
                 && e.getItem() != null
                 && e.getItem().hasItemMeta()
+                && e.getItem().getItemMeta()!= null
                 && e.getItem().getItemMeta().hasDisplayName())
         {
             String pickupName = e.getItem().getItemMeta().getDisplayName();
@@ -28,7 +29,6 @@ public class CoinPlace implements Listener
 
             if (pickupName.contains(coinName))
                 e.setCancelled(true);
-
         }
     }
 

@@ -10,16 +10,7 @@
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="inheritedJdk" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../BuildTools/@plugins" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-        <jarDirectory url="file://$MODULE_DIR$/../../../BuildTools/@plugins" recursive="false" />
-      </library>
-    </orderEntry>
-    <orderEntry type="library" name="Spigot 1.13.1" level="application" />
+    <orderEntry type="library" name="@plugins" level="application" />
+    <orderEntry type="library" name="spigot-1.14" level="application" />
   </component>
 </module>

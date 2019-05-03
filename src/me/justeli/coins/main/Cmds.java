@@ -85,7 +85,7 @@ class Cmds implements CommandExecutor
                             sender.sendMessage(color("&eVersion currently installed: &f" + current));
                             sender.sendMessage(color("&eLatest released version: &f" + version));
                             if (version.equals(current))
-                                sender.sendMessage(color("&aYou're all up to date with version" + current + "!"));
+                                sender.sendMessage(color("&aYou're up to date with version " + current + "."));
                             else
                             {
                                 sender.sendMessage(color("&cConsider updating the plugin to version " + version + "!"));
