@@ -256,10 +256,12 @@ public class Settings
                 System.out.println( "===ERROR=== There seems to be no Vault or economy supportive plugin installed." );
                 System.out.println( "===ERROR=== Please install Vault and an economy supportive plugin like Essentials." );
                 System.out.println( "===ERROR=== Coins will be disabled now.." );
+                break;
             case NO_TRANSLATION:
                 System.out.println( "===ERROR=== The translation for '" + input[0] + "' was not found.");
                 System.out.println( "===ERROR=== Please add it to the {language}.json file.");
                 System.out.println( "===ERROR=== Or delete your /language/ folder in /Coins/. RECOMMENDED");
+                break;
         }
 
     }
