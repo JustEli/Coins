@@ -1,5 +1,5 @@
 author: JustEli
-version: 1.7.2
+version: 1.7.3
 main: me.justeli.coins.main.Coins
 name: Coins
 softdepend: [Vault]

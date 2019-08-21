@@ -28,8 +28,10 @@ public class DropCoin implements Listener
         if (e.getEntity().getKiller() != null)
         {
             if (
-                    (m instanceof Monster || m instanceof Slime || m instanceof Ghast
-                            || m instanceof EnderDragon || (!Settings.hB.get(Config.BOOLEAN.olderServer) && m instanceof Shulker))
+                    (m instanceof Monster || m instanceof Slime || m instanceof Ghast || m instanceof EnderDragon ||
+                            (!Settings.hB.get(Config.BOOLEAN.olderServer) && m instanceof Shulker) ||
+                            (Settings.hB.get(Config.BOOLEAN.newerServer) && m instanceof Phantom)
+                    )
 
                     || ( (m instanceof Animals || m instanceof Squid || m instanceof Snowman || m instanceof IronGolem
                             || m instanceof Villager || m instanceof Ambient) && Settings.hB.get(Config.BOOLEAN.passiveDrop) )
@@ -74,6 +76,12 @@ public class DropCoin implements Listener
         boolean stack;
         if (Settings.hB.get(Config.BOOLEAN.dropEachCoin)) stack = false;
         else stack = dropEvent.isStackable();
+
+        if (PreventSpawner.fromSplit(m))
+        {
+            PreventSpawner.removeFromList(m);
+            return;
+        }
 
         if (!PreventSpawner.fromSpawner(m) || p.hasPermission("coins.spawner"))
         {

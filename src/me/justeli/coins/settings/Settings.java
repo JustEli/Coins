@@ -158,7 +158,7 @@ public class Settings
 
     private static boolean setLanguage ()
     {
-        for (String lang :new String[]{"english", "dutch", "spanish", "german", "swedish", "chinese", "hungarian"})
+        for (String lang :new String[]{"english", "dutch", "spanish", "german", "french", "swedish", "chinese", "hungarian"})
             if (!new File(Coins.getInstance().getDataFolder() + File.separator + "language" + File.separator + lang + ".json").exists())
                 Coins.getInstance().saveResource("language/" + lang + ".json", false);
 
@@ -231,36 +231,37 @@ public class Settings
         switch (msg)
         {
             case OUTDATED_CONFIG:
-                System.out.println("===ERROR=== Your config of Coins is outdated, update the Coins config.yml.");
-                System.out.println("===ERROR=== You can copy it from here: https://github.com/JustEli/Coins/blob/master/src/config.yml");
-                System.out.println("===ERROR=== Use /coins reload afterwards. You could also remove the config if you haven't configured it.");
-                if (input != null) System.err.print("===ERROR=== This option is probably missing (add it): " + Arrays.toString(input));
+                Coins.console(Coins.LogType.ERROR, "Your config of Coins is outdated, update the Coins config.yml.");
+                Coins.console(Coins.LogType.ERROR, "You can copy it from here: https://github.com/JustEli/Coins/blob/master/src/config.yml");
+                Coins.console(Coins.LogType.ERROR, "Use /coins reload afterwards. You could also remove the config if you haven't configured it.");
+                if (input != null)
+                    Coins.console(Coins.LogType.ERROR, "This option is probably missing (add it): " + Arrays.toString(input));
                 break;
             case LANG_NOT_FOUND:
-                System.out.println("===ERROR=== The language '" + input[0] + "' that you set in your config does not exist.");
-                System.out.println("===ERROR=== Check all available languages in the folder 'Coins/language'.");
+                Coins.console(Coins.LogType.ERROR, "The language '" + input[0] + "' that you set in your config does not exist.");
+                Coins.console(Coins.LogType.ERROR, "Check all available languages in the folder 'Coins/language'.");
                 break;
             case NO_SUCH_ENTITY:
-                System.out.println("===ERROR=== There is no entity with the name '" + input[0] + "', please change the Coins config.");
-                System.out.println("===ERROR=== Get types from here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html");
+                Coins.console(Coins.LogType.ERROR, "There is no entity with the name '" + input[0] + "', please change the Coins config.");
+                Coins.console(Coins.LogType.ERROR, "Get types from here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html");
                 break;
             case NO_SUCH_MATERIAL:
-                System.out.println("===ERROR=== There is no material with the name '" + input[0] + "', please change the Coins config.");
-                System.out.println("===ERROR=== Get materials from here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html");
+                Coins.console(Coins.LogType.ERROR, "There is no material with the name '" + input[0] + "', please change the Coins config.");
+                Coins.console(Coins.LogType.ERROR, "Get materials from here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html");
                 break;
             case NO_SUCH_SOUND:
-                System.out.println( "===ERROR=== The sound '" + input[0] + "' does not exist. Change it in the Coins config." );
-                System.out.println( "===ERROR=== Please use a sound from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html" );
+                Coins.console(Coins.LogType.ERROR, "The sound '" + input[0] + "' does not exist. Change it in the Coins config." );
+                Coins.console(Coins.LogType.ERROR, "Please use a sound from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html" );
                 break;
             case NO_ECONOMY_SUPPORT:
-                System.out.println( "===ERROR=== There seems to be no Vault or economy supportive plugin installed." );
-                System.out.println( "===ERROR=== Please install Vault and an economy supportive plugin like Essentials." );
-                System.out.println( "===ERROR=== Coins will be disabled now.." );
+                Coins.console(Coins.LogType.ERROR, "There seems to be no Vault or economy supportive plugin installed." );
+                Coins.console(Coins.LogType.ERROR, "Please install Vault and an economy supportive plugin like Essentials." );
+                Coins.console(Coins.LogType.ERROR, "Coins will be disabled now.." );
                 break;
             case NO_TRANSLATION:
-                System.out.println( "===ERROR=== The translation for '" + input[0] + "' was not found.");
-                System.out.println( "===ERROR=== Please add it to the {language}.json file.");
-                System.out.println( "===ERROR=== Or delete your /language/ folder in /Coins/. RECOMMENDED");
+                Coins.console(Coins.LogType.ERROR, "The translation for '" + input[0] + "' was not found.");
+                Coins.console(Coins.LogType.ERROR, "Please add it to the {language}.json file.");
+                Coins.console(Coins.LogType.ERROR, "Or delete your /language/ folder in /Coins/. RECOMMENDED");
                 break;
         }
 

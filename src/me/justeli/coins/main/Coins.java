@@ -65,8 +65,11 @@ public class Coins extends JavaPlugin
         async(() ->
         {
             String v = Bukkit.getVersion();
+            Bukkit.getConsoleSender().sendMessage(v);
             if (v.contains("1.8") || v.contains("1.7"))
                 Settings.hB.put(Config.BOOLEAN.olderServer, true);
+            if (v.contains("1.14") || v.contains("1.13"))
+                Settings.hB.put(Config.BOOLEAN.newerServer, true);
 
             String version;
             try
@@ -88,8 +91,8 @@ public class Coins extends JavaPlugin
 
             if (!getDescription().getVersion().equals(version))
             {
-                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "A new version of Coins was released (" + version + ")!");
-                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "https://www.spigotmc.org/resources/coins.33382/");
+                Coins.console(LogType.INFO, "A new version of Coins was released (" + version + ")!");
+                Coins.console(LogType.INFO, "https://www.spigotmc.org/resources/coins.33382/");
             }
         });
 
@@ -113,6 +116,7 @@ public class Coins extends JavaPlugin
             metrics.add("stackCoins", String.valueOf(Settings.hB.get(Config.BOOLEAN.stackCoins)));
             metrics.add("playerDrop", String.valueOf(Settings.hB.get(Config.BOOLEAN.playerDrop)));
             metrics.add("spawnerDrop", String.valueOf(Settings.hB.get(Config.BOOLEAN.spawnerDrop)));
+            metrics.add("preventSplits", String.valueOf(Settings.hB.get(Config.BOOLEAN.preventSplits)));
 
             metrics.add("moneyAmount", ( String.valueOf((Settings.hD.get(Config.DOUBLE.moneyAmount_from)
                     + Settings.hD.get(Config.DOUBLE.moneyAmount_to))/2) ));
@@ -211,4 +215,23 @@ public class Coins extends JavaPlugin
             return task.getTaskId();
     }
 
+    public enum LogType
+    {
+        ERROR,
+        WARNING,
+        INFO
+    }
+
+    public static void console (LogType type, String message)
+    {
+        ChatColor color;
+        switch (type)
+        {
+            case INFO:      color = ChatColor.AQUA;     break;
+            case ERROR:     color = ChatColor.RED;      break;
+            case WARNING:   color = ChatColor.YELLOW;   break;
+            default:        color = ChatColor.WHITE;    break;
+        }
+        Bukkit.getConsoleSender().sendMessage(color + "=" + type.name() + "= " + message);
+    }
 }

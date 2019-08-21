@@ -1,5 +1,6 @@
 package me.justeli.coins.api;
 
+import me.justeli.coins.main.Coins;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -39,8 +40,17 @@ public class ActionBar
         }
         else
         {
-            Bars.sendAction(player, this.text);
+            try
+            {
+                Bars.sendAction(player, this.text);
+            }
+            catch (NoClassDefFoundError e)
+            {
+                Coins.console(Coins.LogType.ERROR, "You seem to be using Bukkit, but the plugin Coins requires Spigot! " +
+                        "This prevents the plugin from showing the amount of money players pick up. Please use Spigot. " +
+                        "Moving from Bukkit to Spigot will NOT cause any problems with other plugins, " +
+                        "since Spigot only adds more features to Bukkit.");
+            }
         }
     }
-
 }

@@ -1,0 +1,28 @@
+{
+  "LOADED_SETTINGS" : "&3&oConfiguration actuellement chargée.",
+  "NO_PERMISSION" : "&4Vous n'avez pas la permission d'accéder à cette commande.",
+  "RELOAD_SUCCESS" : "&eLa configuration de &6Coins &ea été rechargée en &a{0}ms&e.",
+  "MINOR_ISSUES" : "&c&oIl y a eu quelques erreurs mineures lors du rechargement, vérifiez la console.",
+  "CHECK_SETTINGS" : "&e&oVous pouvez voir la configuration chargée avec &f&o/coins settings&e&o.",
+  "WITHDRAW_COINS" : "&e&oVous avez retiré &f&o{$}{0} &e&oet reçu &f&o{0} coins&e&o.",
+  "NOT_THAT_MUCH" : "&cVous n'êtes pas autorisé à retirer autant.",
+  "COINS_DISABLED" : "&cCoins est désactivé dans ce monde.",
+  "SPAWNED_COINS" : "&9{0} coin(s) apparu(s) dans un rayon {1} autour {2}.",
+  "REMOVED_COINS" : "&9Un total de {0} coins a été retiré.",
+  "INVENTORY_FULL" : "&cVous ne pouvez retirer lorsque votre inventaire est plein!",
+
+  "PLAYER_NOT_FOUND" : "&4Impossible de trouver ce joueur.",
+  "COORDS_NOT_FOUND" : "&4Ces coordonnées du monde n'ont pu être trouvées.",
+
+  "INVALID_AMOUNT" : "&cMontant invalide.",
+  "INVALID_NUMBER" : "&cNombre invalide.",
+  "INVALID_RADIUS" : "&cRayon invalide.",
+
+  "COINS_HELP" : "&4:: Aide pour Coins",
+  "DROP_USAGE" : "&c/coins drop <joueur|x,y,z[,monde]> <montant> [rayon]",
+  "REMOVE_USAGE" : "&c/coins remove [rayon|all] &7- retire des coins dans un rayon",
+  "SETTINGS_USAGE" : "&c/coins settings &7- liste la configuration actuellement chargée",
+  "RELOAD_USAGE" : "&c/coins reload &7- recharge la configuration de config.yml",
+  "VERSION_CHECK" : "&c/coins version &7- vérifie s'il y a une nouvelle version",
+  "WITHDRAW_USAGE" : "&c/withdraw <coins> &7- retire un peu d'argent dans Coins"
+}

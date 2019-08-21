@@ -19,7 +19,9 @@ public enum Config
         playerDrop,
         preventAlts,
         enableWithdraw,
-        dropEachCoin
+        dropEachCoin,
+        preventSplits,
+        newerServer,
     }
 
     public enum STRING
@@ -49,7 +51,4 @@ public enum Config
     {
         disabledWorlds,
     }
-
-
-
 }

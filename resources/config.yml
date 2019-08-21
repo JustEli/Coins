@@ -4,7 +4,7 @@
 
 # What language should the plugin use? And what is your server's currency?
 # All available languages can be found in folder 'languages' in the plugin folder.
-# Included languages by default: english, dutch, german, spanish, swedish, chinese & hungarian.
+# Included languages by default: english, dutch, german, french, spanish, swedish, chinese & hungarian.
 language: english
 currencySymbol: "$"
 
@@ -12,7 +12,7 @@ currencySymbol: "$"
 # See a list of all color codes here: http://minecraft.gamepedia.com/Formatting_codes
 # 'multiSuffix's parameter will be added behind 'nameOfCoin' in case it's more than one coin.
 nameOfCoin: "&6Coin"
-multiSuffix: s
+multiSuffix: "s"
 
 # What item will the dropped 'coin' (material) be? Find all materials at:
 # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
@@ -51,7 +51,8 @@ stackCoins: false
 # You can find mob types via this URL (types that aren't creatures will be ignored):
 # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
 mobMultiplier:
-  ENDER_DRAGON: 64
+  ENDER_DRAGON: 50
+  WITHER: 20
   PLAYER: 3
 
 # When a player gets killed by another player, should (three; setting above) coins drop?
@@ -70,6 +71,10 @@ spawnerDrop: false
 # Should passive mobs also drop a coin?
 # Passive mobs don't drop a coin by default.
 passiveDrop: false
+
+# Prevent slimes and magma cubes spawned by splits from dropping coins?
+# I've noticed that players can easily get hundreds of coins in slime chunks keeping this 'false'.
+preventSplits: true
 
 # Play a sound on pickup of a coin.
 # This sound is a 1.9+ sound, if you use 1.8, put another sound in there.
@@ -105,7 +110,7 @@ maxWithdrawAmount: 10000.0
 # It shows a title (in the middle of the screen) how much they lost on death.
 loseOnDeath: true
 
-# If so, how much will be taken?
+# If so, how much will be taken? A random integer in between 10 and 30 by default.
 moneyTaken:
   from: 10
   to: 30
