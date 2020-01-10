@@ -44,11 +44,13 @@ public class Coins extends JavaPlugin
     static String update;
 
     // todo add NBT-tags for coins
-    // todo config option for pitch/volume pickup
     // todo able to pickup with inventory full
-    // todo send locale messages
     // todo support for standalone Vault
+    // -> todo drop player heads with textures (when stacked)
+    // todo an option to require the majority of player damage to drop coins
+    // todo after 5 kills in a 4 block radius you no longer are awarded
 
+    // todo https://www.spigotmc.org/threads/fake-item-pickup-playerpickupitemevent-with-full-inventory.156983/#post-2062690
     // https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/meta/tags/CustomItemTagContainer.html
     // https://www.spigotmc.org/resources/pickupmoney.11334/
 
@@ -65,10 +67,9 @@ public class Coins extends JavaPlugin
         async(() ->
         {
             String v = Bukkit.getVersion();
-            Bukkit.getConsoleSender().sendMessage(v);
             if (v.contains("1.8") || v.contains("1.7"))
                 Settings.hB.put(Config.BOOLEAN.olderServer, true);
-            if (v.contains("1.14") || v.contains("1.13"))
+            if (v.contains("1.14") || v.contains("1.13") || v.contains("1.15") || v.contains("1.16"))
                 Settings.hB.put(Config.BOOLEAN.newerServer, true);
 
             String version;
@@ -194,25 +195,21 @@ public class Coins extends JavaPlugin
             {
                 runnable.run();
             }
-        }
-                .runTaskAsynchronously(getInstance());
-
+        }.runTaskAsynchronously(getInstance());
         return task.getTaskId();
     }
 
-    private static int later (Runnable runnable)
+    public static int later (Runnable runnable)
     {
-            BukkitTask task = new BukkitRunnable()
+        BukkitTask task = new BukkitRunnable()
+        {
+            @Override
+            public void run()
             {
-                @Override
-                public void run()
-                {
-                    runnable.run();
-                }
+                runnable.run();
             }
-                    .runTaskLater(getInstance(), 1);
-
-            return task.getTaskId();
+        }.runTaskLater(getInstance(), 1);
+        return task.getTaskId();
     }
 
     public enum LogType

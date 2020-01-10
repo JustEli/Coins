@@ -1,21 +1,24 @@
 package me.justeli.coins.events;
 
+import me.justeli.coins.api.Extras;
 import me.justeli.coins.api.Title;
 import me.justeli.coins.cancel.PreventSpawner;
 import me.justeli.coins.item.Coin;
 import me.justeli.coins.main.Coins;
 import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Settings;
-import net.milkbowl.vault.economy.EconomyResponse;
-import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class DropCoin implements Listener
 {
+    // Drop coins when mob is killed.
 	@EventHandler
 	public void onDeath (EntityDeathEvent e)
     {
@@ -39,7 +42,7 @@ public class DropCoin implements Listener
                     || (m instanceof Player && Settings.hB.get(Config.BOOLEAN.playerDrop) && Coins.getEconomy().getBalance((Player)m) >= 0)
                 )
 
-            { dropTheCoin(m, e.getEntity().getKiller()); }
+            { dropMobCoin(m, e.getEntity().getKiller()); }
 
         }
 
@@ -50,32 +53,27 @@ public class DropCoin implements Listener
 
             Player p = (Player) e.getEntity();
             double random = Math.random() * first + second;
+            double take = Settings.hB.get(Config.BOOLEAN.takePercentage)? (random/100)*Coins.getEconomy().getBalance(p) : random;
 
-            EconomyResponse r = Coins.getEconomy().withdrawPlayer(p, (long) random);
-            if (r.transactionSuccess())
+            if (take > 0 && Coins.getEconomy().withdrawPlayer(p, (long) take).transactionSuccess())
+            {
                 Title.sendSubTitle(p, 20, 100, 20, Settings.hS.get(Config.STRING.deathMessage)
-                        .replace("%amount%", String.valueOf( (long)random )).replace("{$}", Settings.hS.get(Config.STRING.currencySymbol)));
+                        .replace("%amount%", String.valueOf( (long)take )).replace("{$}", Settings.hS.get(Config.STRING.currencySymbol)));
+
+                if (Settings.hB.get(Config.BOOLEAN.dropOnDeath) && p.getLocation().getWorld() != null)
+                    p.getWorld().dropItem(p.getLocation(), new Coin().withdraw((long)take).item());
+            }
         }
 	}
 
-	private void dropTheCoin (Entity m, Player p)
+	private void dropMobCoin (Entity m, Player p)
     {
-        CoinDropEvent dropEvent = new CoinDropEvent(m, p);
-        Bukkit.getPluginManager().callEvent(dropEvent);
-        if (dropEvent.isCancelled())
-            return;
-
-        if (m.getType().equals(EntityType.PLAYER) && Settings.hB.get(Config.BOOLEAN.preventAlts))
+        if (m instanceof Player && Settings.hB.get(Config.BOOLEAN.preventAlts))
         {
             Player player = (Player) m;
-            if (p.getAddress().getAddress().getHostAddress()
-                    .equals(player.getAddress().getAddress().getHostAddress()))
+            if (p.getAddress().getAddress().getHostAddress().equals(player.getAddress().getAddress().getHostAddress()))
                 return;
         }
-
-        boolean stack;
-        if (Settings.hB.get(Config.BOOLEAN.dropEachCoin)) stack = false;
-        else stack = dropEvent.isStackable();
 
         if (PreventSpawner.fromSplit(m))
         {
@@ -91,23 +89,48 @@ public class DropCoin implements Listener
                 if (Settings.multiplier.containsKey(m.getType()))
                     amount = Settings.multiplier.get(m.getType());
 
-                if (Settings.hB.get(Config.BOOLEAN.dropEachCoin))
-                {
-                    int second = Settings.hD.get(Config.DOUBLE.moneyAmount_from).intValue();
-                    int first = Settings.hD.get(Config.DOUBLE.moneyAmount_to).intValue()+1 - second;
-
-                    amount *= ( Math.random() * first + second );
-                }
-
-                for (int i = 0; i < amount; i ++)
-                {
-                    ItemStack coin = new Coin().stack(stack).item();
-                    m.getLocation().getWorld().dropItem(m.getLocation(), coin);
-                }
-
+                dropCoin(amount, p, m.getLocation());
             }
         }
         else PreventSpawner.removeFromList(m);
     }
 
+    @EventHandler (ignoreCancelled = true)
+    public void onMine (BlockBreakEvent e)
+    {
+        if (!Settings.hB.get(Config.BOOLEAN.onlyExperienceBlocks))
+        {
+            dropBlockCoin(e.getBlock(), e.getPlayer());
+            return;
+        }
+
+        if (e.getExpToDrop() != 0)
+            dropBlockCoin(e.getBlock(), e.getPlayer());
+    }
+
+    private static void dropBlockCoin (Block block, Player p)
+    {
+        if (Math.random() <= Settings.hD.get(Config.DOUBLE.minePercentage))
+            Coins.later(() -> dropCoin (1, p, block.getLocation().clone().add(0.5, 0.5, 0.5)));
+    }
+
+    private static void dropCoin (int amount, Player p, Location location)
+    {
+        if (Settings.hB.get(Config.BOOLEAN.dropEachCoin))
+        {
+            int second = Settings.hD.get(Config.DOUBLE.moneyAmount_from).intValue();
+            int first = Settings.hD.get(Config.DOUBLE.moneyAmount_to).intValue()+1 - second;
+
+            amount *= ( Math.random() * first + second );
+        }
+
+        amount *= Extras.getMultiplier(p);
+
+        boolean stack = !Settings.hB.get(Config.BOOLEAN.dropEachCoin) && Settings.hB.get(Config.BOOLEAN.stackCoins);
+        for (int i = 0; i < amount; i ++)
+        {
+            ItemStack coin = new Coin().stack(stack).item();
+            location.getWorld().dropItem(location, coin);
+        }
+    }
 }

@@ -2,6 +2,7 @@ package me.justeli.coins.main;
 
 import me.justeli.coins.api.ActionBar;
 import me.justeli.coins.api.Complete;
+import me.justeli.coins.api.Extras;
 import me.justeli.coins.item.Coin;
 import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Messages;
@@ -43,6 +44,7 @@ class Cmds implements CommandExecutor
                             long ms = System.currentTimeMillis();
                             Settings.remove();
                             Settings.remove();
+                            Extras.resetMultiplier();
                             boolean success = Settings.enums();
                             sender.sendMessage(color(Messages.RELOAD_SUCCESS.toString().replace("{0}", Long.toString(System.currentTimeMillis() - ms) )));
                             if (!success)
@@ -130,7 +132,7 @@ class Cmds implements CommandExecutor
             {
                 long amount;
 
-                try { amount = Integer.valueOf(args[0]); }
+                try { amount = Integer.parseInt(args[0]); }
                 catch (NumberFormatException e)
                 {
                     sender.sendMessage(color( Messages.INVALID_AMOUNT.toString() ));
@@ -146,8 +148,7 @@ class Cmds implements CommandExecutor
                     }
                     p.getInventory().addItem( new Coin().withdraw(amount).item() );
                     Coins.getEconomy().withdrawPlayer(p, amount);
-                    p.sendMessage(color (
-                            Messages.WITHDRAW_COINS.toString().replace("{0}", Long.toString(amount)) ));
+                    p.sendMessage(color(Messages.WITHDRAW_COINS.toString().replace("{0}", Long.toString(amount))));
                     new ActionBar(Settings.hS.get(Config.STRING.deathMessage)
                             .replace("%amount%", String.valueOf( amount )).replace("{$}", Settings.hS.get(Config.STRING.currencySymbol))).send(p);
                 }
@@ -168,7 +169,7 @@ class Cmds implements CommandExecutor
             Player p = Complete.onlinePlayer(args[1]);
 
             int amount;
-            try {amount = Integer.valueOf(args[2]); }
+            try {amount = Integer.parseInt(args[2]); }
             catch (NumberFormatException e)
             {
                 sender.sendMessage(color(Messages.INVALID_NUMBER.toString()));
@@ -181,7 +182,7 @@ class Cmds implements CommandExecutor
 
             if (args.length >= 4)
             {
-                try {radius = Integer.valueOf(args[3]);}
+                try {radius = Integer.parseInt(args[3]);}
                 catch (NumberFormatException e)
                 {
                     sender.sendMessage(color(Messages.INVALID_NUMBER.toString()));
@@ -203,9 +204,9 @@ class Cmds implements CommandExecutor
                     try
                     {
                         String[] coords = args[1].split(",");
-                        double x = Double.valueOf(coords[0]);
-                        double y = Double.valueOf(coords[1]);
-                        double z = Double.valueOf(coords[2]);
+                        double x = Double.parseDouble(coords[0]);
+                        double y = Double.parseDouble(coords[1]);
+                        double z = Double.parseDouble(coords[2]);
 
                         location = new Location( coords.length == 4 ?
                                 Bukkit.getWorld(coords[3]) : ( sender instanceof Player ? ((Player) sender).getWorld() : Bukkit.getWorlds().get(0) ), x, y, z );
@@ -270,7 +271,7 @@ class Cmds implements CommandExecutor
         {
             if (!args[1].equalsIgnoreCase("all"))
             {
-                try {r = Integer.valueOf(args[1]);}
+                try {r = Integer.parseInt(args[1]);}
                 catch (NumberFormatException e) { sender.sendMessage( color(Messages.INVALID_RADIUS.toString()) ); return; }
                 if (r < 1 || r > 80)
                 {
@@ -294,7 +295,7 @@ class Cmds implements CommandExecutor
             if (m instanceof Item)
             {
                 Item i = (Item) m;
-                if (i.getItemStack().getItemMeta().getDisplayName() != null)
+                if (i.getItemStack().getItemMeta() != null && i.getItemStack().getItemMeta().hasDisplayName())
                     if (i.getItemStack().getItemMeta().getDisplayName().equals(
                             ( color(Settings.hS.get(Config.STRING.nameOfCoin)) ) ))
                     {
@@ -324,7 +325,7 @@ class Cmds implements CommandExecutor
         String version = Coins.getInstance().getDescription().getVersion();
         String update = Coins.update;
         String notice = "";
-        if (!update.equals(version)) notice = "&l (outdated; /coins update)";
+        if (!update.equals(version)) notice = " (outdated; /coins update)";
         sender.sendMessage( color(Messages.COINS_HELP.toString() + " " + version + notice) );
 
         if (sender.hasPermission("coins.drop"))

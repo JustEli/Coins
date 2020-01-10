@@ -82,6 +82,8 @@ preventSplits: true
 # Here is a list of 1.9+ sounds: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
 pickupSound: true
 soundName: "ITEM_ARMOR_EQUIP_GOLD"
+soundPitch: 0.3
+soundVolume: 0.5
 
 # Chance of dropping a coin after a mob has been killed.
 # Value from 0.0 to 1.0: 0.0 meaning 0%, 1.0 meaning 100% (so 0.9 meaning 90%).
@@ -100,11 +102,11 @@ disabledWorlds:
 enableWithdraw: true
 maxWithdrawAmount: 10000.0
 
+# Drop coins for mined blocks. What's the chance? (0.2 = 20% = 1 coin per 5 /experience/ blocks mined)
+minePercentage: 0.3
 
-#
-#   From here kind of doesn't have to do with coins.
-#   But it was originally in my Coins package.
-#
+# Only drop coins by the given chance for blocks that drop experience, like: lapis, iron, spawners.
+onlyExperienceBlocks: true
 
 # Should players lose money on death?
 # It shows a title (in the middle of the screen) how much they lost on death.
@@ -114,6 +116,13 @@ loseOnDeath: true
 moneyTaken:
   from: 10
   to: 30
+
+# Should we take the *amount* of money from them, or the *percentage* of their money?
+# Amount of 10 to 30 would be $10 to $30. Percentage of 10 to 30 would be 10% to 30%.
+takePercentage: false
+
+# And should the money be dropped, or just disappear? Disappears by default.
+dropOnDeath: false
 
 # The message in the middle of their screen.
 deathMessage: "&4- &c{$}%amount%"

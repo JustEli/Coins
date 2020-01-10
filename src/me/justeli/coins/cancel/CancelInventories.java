@@ -55,14 +55,8 @@ public class CancelInventories implements Listener
                     Player p = (Player) e.getWhoClicked();
 
                     e.setCancelled(true);
-
-                    e.getInventory().remove(item);
-                    e.setCurrentItem(new ItemStack(Material.AIR));
-
-                    if (e.getClickedInventory() != null)
-                        e.getClickedInventory().remove(item);
-
                     CoinsPickup.giveReward(item, p);
+                    e.getCurrentItem().setAmount(0);
                 }
             }
         }

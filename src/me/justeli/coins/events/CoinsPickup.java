@@ -49,11 +49,10 @@ public class CoinsPickup implements Listener
 				if (!p.hasPermission("coins.disable") || p.isOp() || p.hasPermission("*"))
 					giveCoin(item, e.getPlayer(), 0);
 			}
-
 			else if ( pickupName.endsWith(coinName + Settings.hS.get(Config.STRING.multiSuffix)) )
 			{
 				e.setCancelled(true);
-				int amount = Integer.valueOf( ChatColor.stripColor(pickupName.split(" ")[0]) );
+				int amount = Integer.parseInt( ChatColor.stripColor(pickupName.split(" ")[0]) );
 				if (!e.getPlayer().hasPermission("coins.disable") || e.getPlayer().isOp() || e.getPlayer().hasPermission("*"))
 					giveCoin(item, e.getPlayer(), item.getItemStack().getAmount() * amount);
 			}
@@ -65,7 +64,7 @@ public class CoinsPickup implements Listener
 	{
 		ItemMeta meta = item.getItemStack().getItemMeta();
 
-		if (meta.getLore() != null)
+		if (meta != null && meta.getLore() != null)
 			if (thrown.containsKey(meta.getLore().get(0)))
 				return;
 
@@ -73,15 +72,12 @@ public class CoinsPickup implements Listener
 		meta.setLore(Collections.singletonList( random ));
 		thrown.put(random, true);
 		item.getItemStack().setItemMeta(meta);
-
 		item.setVelocity(new Vector(0, 0.3, 0));
 
 		new BukkitRunnable()
 		{
 			public void run()
 			{
-				this.cancel();
-
 				item.remove();
 				thrown.remove(meta.getLore().get(0));
 				if (randomMoney == 0)
@@ -95,11 +91,14 @@ public class CoinsPickup implements Listener
 					{
 						String sound = Settings.hS.get(Config.STRING.soundName);
 
-						Sound playsound = Sound.valueOf( Settings.hB.get(Config.BOOLEAN.olderServer)
+						Sound playSound = Sound.valueOf( Settings.hB.get(Config.BOOLEAN.olderServer)
 										&& ( sound.equals("BLOCK_LAVA_POP") || sound.equals("ITEM_ARMOR_EQUIP_GOLD"))?
 										"NOTE_STICKS" : sound.toUpperCase());
 
-						p.playSound(p.getEyeLocation(), playsound, 0.3f, 0.3f);
+						float volume = Settings.hD.get(Config.DOUBLE.pickupVolume).floatValue();
+						float pitch = Settings.hD.get(Config.DOUBLE.pickupPitch).floatValue();
+
+						p.playSound(p.getEyeLocation(), playSound, volume == 0? 0.3f : volume, pitch == 0? 0.3f : pitch);
 					}
 					catch ( IllegalArgumentException e )
 					{ Settings.errorMessage(Settings.Msg.NO_SUCH_SOUND, new String[] {e.getMessage()} ); }
@@ -107,7 +106,7 @@ public class CoinsPickup implements Listener
 				}
 
 			}
-		}.runTaskTimer(Coins.getInstance(), 2, 0);
+		}.runTaskLater(Coins.getInstance(), 2);
 
 	}
 
@@ -119,8 +118,8 @@ public class CoinsPickup implements Listener
 			return;
 		}
 
-		Double second = Settings.hD.get(Config.DOUBLE.moneyAmount_from);
-		Double first  = Settings.hD.get(Config.DOUBLE.moneyAmount_to) - second;
+		double second = Settings.hD.get(Config.DOUBLE.moneyAmount_from);
+		double first  = Settings.hD.get(Config.DOUBLE.moneyAmount_to) - second;
 
 		int amount = item.getAmount();
 		Double total = amount * ( Math.random() * first + second );
@@ -128,9 +127,9 @@ public class CoinsPickup implements Listener
 		addMoney (p, total, Settings.hD.get(Config.DOUBLE.moneyDecimals).intValue());
 	}
 
-	private static void addMoney (Player p, Double a, int integer)
+	public static void addMoney (Player p, Double a, int integer)
 	{
-		final Double amount = format(a, integer);
+		final double amount = format(a, integer);
 		Coins.getEconomy().depositPlayer(p, amount);
 
 		final UUID u = p.getUniqueId();

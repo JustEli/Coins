@@ -55,7 +55,4 @@ public class PreventSpawner implements Listener
 		prevent.remove(key + ".spawner");
 		prevent.remove(key + ".slime");
 	}
-
-
-
 }

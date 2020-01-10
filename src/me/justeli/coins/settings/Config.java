@@ -22,6 +22,9 @@ public enum Config
         dropEachCoin,
         preventSplits,
         newerServer,
+        takePercentage,
+        dropOnDeath,
+        onlyExperienceBlocks,
     }
 
     public enum STRING
@@ -33,7 +36,8 @@ public enum Config
         soundName,
         mobMultiplier,
         currencySymbol,
-        multiSuffix
+        multiSuffix,
+        //playerHead,
     }
 
     public enum DOUBLE
@@ -45,6 +49,9 @@ public enum Config
         moneyTaken_from,
         moneyTaken_to,
         moneyDecimals,
+        minePercentage,
+        pickupPitch,
+        pickupVolume,
     }
 
     public enum ARRAY
