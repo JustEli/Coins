@@ -11,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -95,7 +96,7 @@ public class DropCoin implements Listener
         else PreventSpawner.removeFromList(m);
     }
 
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler (ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onMine (BlockBreakEvent e)
     {
         if (!Settings.hB.get(Config.BOOLEAN.onlyExperienceBlocks))

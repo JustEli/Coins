@@ -49,6 +49,7 @@ public class Coins extends JavaPlugin
     // -> todo drop player heads with textures (when stacked)
     // todo an option to require the majority of player damage to drop coins
     // todo after 5 kills in a 4 block radius you no longer are awarded
+    // todo add option to not let balance go negative (with dropOnDeath: true)
 
     // todo https://www.spigotmc.org/threads/fake-item-pickup-playerpickupitemevent-with-full-inventory.156983/#post-2062690
     // https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/meta/tags/CustomItemTagContainer.html
