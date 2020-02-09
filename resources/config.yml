@@ -18,6 +18,12 @@ multiSuffix: "s"
 # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
 coinItem: coin     # coin = sunflower
 
+# You can also set a custom texture for the coin, as skull. Filling this will disable 'coinItem'.
+# Find textures here (example): https://minecraft-heads.com/custom-heads/decoration/3005-money-bag
+# Input the string from "Other > Value" at the bottom of the page, it's a 'texture value'.
+# In case of the example, that would be the one starting with "eyJ0ZXh0dXJl[...]".
+skullTexture: ""
+
 # This message is sent as action bar, telling the player how much money they have picked up.
 # The variable {$} will be replaced by the 'currencySymbol', default: $.
 pickupMessage: "&2+ &a{$}%amount%"
@@ -88,6 +94,10 @@ soundVolume: 0.5
 # Chance of dropping a coin after a mob has been killed.
 # Value from 0.0 to 1.0: 0.0 meaning 0%, 1.0 meaning 100% (so 0.9 meaning 90%).
 dropChance: 0.9
+
+# Set the amount of kills per location before coins stop dropping. Useful for overuse of grinders.
+# Default: 1, after 1 kill at X Y Z, it won't drop coins there for two hours. Disable by inputting 0.
+limitForLocation: 1
 
 # List all worlds you want Coins to be disabled in here.
 # Example for disabling two worlds called 'creative' and 'plots':

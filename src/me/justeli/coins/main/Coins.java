@@ -46,9 +46,7 @@ public class Coins extends JavaPlugin
     // todo add NBT-tags for coins
     // todo able to pickup with inventory full
     // todo support for standalone Vault
-    // -> todo drop player heads with textures (when stacked)
     // todo an option to require the majority of player damage to drop coins
-    // todo after 5 kills in a 4 block radius you no longer are awarded
     // todo add option to not let balance go negative (with dropOnDeath: true)
 
     // todo https://www.spigotmc.org/threads/fake-item-pickup-playerpickupitemevent-with-full-inventory.156983/#post-2062690
@@ -67,12 +65,6 @@ public class Coins extends JavaPlugin
 
         async(() ->
         {
-            String v = Bukkit.getVersion();
-            if (v.contains("1.8") || v.contains("1.7"))
-                Settings.hB.put(Config.BOOLEAN.olderServer, true);
-            if (v.contains("1.14") || v.contains("1.13") || v.contains("1.15") || v.contains("1.16"))
-                Settings.hB.put(Config.BOOLEAN.newerServer, true);
-
             String version;
             try
             {
@@ -98,9 +90,10 @@ public class Coins extends JavaPlugin
             }
         });
 
-        later(() ->
+        later(1, () ->
         {
             Metrics metrics = new Metrics(this);
+            String texture = Settings.hS.get(Config.STRING.skullTexture);
 
             metrics.add("language", WordUtils.capitalize(Settings.getLanguage()));
             metrics.add("currencySymbol", Settings.hS.get(Config.STRING.currencySymbol));
@@ -122,6 +115,7 @@ public class Coins extends JavaPlugin
 
             metrics.add("moneyAmount", ( String.valueOf((Settings.hD.get(Config.DOUBLE.moneyAmount_from)
                     + Settings.hD.get(Config.DOUBLE.moneyAmount_to))/2) ));
+            metrics.add("usingSkullTexture", String.valueOf(texture != null && !texture.isEmpty()));
         });
 
         if (getServer().getPluginManager().getPlugin("Vault") == null)
@@ -200,7 +194,7 @@ public class Coins extends JavaPlugin
         return task.getTaskId();
     }
 
-    public static int later (Runnable runnable)
+    public static int later (final int ticks, Runnable runnable)
     {
         BukkitTask task = new BukkitRunnable()
         {
@@ -209,7 +203,7 @@ public class Coins extends JavaPlugin
             {
                 runnable.run();
             }
-        }.runTaskLater(getInstance(), 1);
+        }.runTaskLater(getInstance(), ticks);
         return task.getTaskId();
     }
 

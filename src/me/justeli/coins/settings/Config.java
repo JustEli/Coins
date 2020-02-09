@@ -37,7 +37,7 @@ public enum Config
         mobMultiplier,
         currencySymbol,
         multiSuffix,
-        //playerHead,
+        skullTexture,
     }
 
     public enum DOUBLE
@@ -52,6 +52,7 @@ public enum Config
         minePercentage,
         pickupPitch,
         pickupVolume,
+        limitForLocation,
     }
 
     public enum ARRAY

@@ -17,8 +17,12 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
+
 public class DropCoin implements Listener
 {
+    private static final HashMap<Location, Integer> locationTracker = new HashMap<>();
+
     // Drop coins when mob is killed.
 	@EventHandler
 	public void onDeath (EntityDeathEvent e)
@@ -28,6 +32,20 @@ public class DropCoin implements Listener
         for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds) )
             if (m.getWorld().getName().equalsIgnoreCase(world))
                 return;
+
+        int setLimit = Settings.hD.get(Config.DOUBLE.limitForLocation).intValue();
+        if (setLimit >= 1)
+        {
+            final Location location = m.getLocation().getBlock().getLocation().clone();
+            int killAmount = locationTracker.getOrDefault(location, 0);
+            locationTracker.put(location, killAmount + 1);
+
+            Coins.later(144000, () ->
+                    locationTracker.put(location, locationTracker.getOrDefault(location, 0) - 1)); // subtract an hour later
+
+            if (killAmount > setLimit)
+                return;
+        }
 
         if (e.getEntity().getKiller() != null)
         {
@@ -112,7 +130,7 @@ public class DropCoin implements Listener
     private static void dropBlockCoin (Block block, Player p)
     {
         if (Math.random() <= Settings.hD.get(Config.DOUBLE.minePercentage))
-            Coins.later(() -> dropCoin (1, p, block.getLocation().clone().add(0.5, 0.5, 0.5)));
+            Coins.later(1, () -> dropCoin (1, p, block.getLocation().clone().add(0.5, 0.5, 0.5)));
     }
 
     private static void dropCoin (int amount, Player p, Location location)

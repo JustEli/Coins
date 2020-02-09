@@ -1,6 +1,7 @@
 package me.justeli.coins.settings;
 
 import me.justeli.coins.main.Coins;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -53,6 +54,12 @@ public class Settings
             for (Config.BOOLEAN s : Config.BOOLEAN.values())
                 hB.put(s, file.getBoolean( s.name() ) );
 
+            String v = Bukkit.getVersion();
+            if (v.contains("1.8") || v.contains("1.7"))
+                hB.put(Config.BOOLEAN.olderServer, true);
+            if (v.contains("1.14") || v.contains("1.13") || v.contains("1.15") || v.contains("1.16"))
+                hB.put(Config.BOOLEAN.newerServer, true);
+
             for (Config.STRING s : Config.STRING.values())
             {
                 if (s.equals(Config.STRING.multiSuffix) && file.getString(s.name()) == null)
@@ -66,8 +73,10 @@ public class Settings
                     {
                         try
                         {
-                            Material coin = Material.valueOf(file.getString(s.name())
-                                    .toUpperCase().replace(" ", "_").replace("COIN", "DOUBLE_PLANT"));
+                            String material = file.getString(s.name()).toUpperCase().replace(" ", "_");
+                            material = material.replace("COIN", hB.get(Config.BOOLEAN.newerServer)? "SUNFLOWER" : "DOUBLE_PLANT");
+
+                            Material coin = Material.valueOf(material);
                             hS.put(s, coin.name() );
                         }
                         catch (IllegalArgumentException | NullPointerException e)
