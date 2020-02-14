@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 public class Coin
@@ -23,7 +24,11 @@ public class Coin
         if (coin != null)
         {
             ItemMeta meta = this.coin.getItemMeta();
-            if (meta != null) meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin)));
+            if (meta != null)
+            {
+                meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin)));
+                meta.setLore(new ArrayList<>());
+            }
             this.coin.setItemMeta(meta);
         }
     }

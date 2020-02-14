@@ -4,6 +4,7 @@ import me.justeli.coins.events.CoinsPickup;
 import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Settings;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.Container;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -39,6 +40,7 @@ public class CoinPlace implements Listener
                     e.setCancelled(true);
                     int multi = e.getItem().getAmount();
                     e.getItem().setAmount(0);
+                    e.getItem().setType(Material.AIR);
 
                     double amount = Integer.parseInt(ChatColor.stripColor(pickupName.split(" ")[0]));
                     CoinsPickup.addMoney(p, amount * multi, 0);
