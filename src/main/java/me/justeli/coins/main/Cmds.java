@@ -1,5 +1,6 @@
 package me.justeli.coins.main;
 
+import me.justeli.coins.Coins;
 import me.justeli.coins.api.ActionBar;
 import me.justeli.coins.api.Complete;
 import me.justeli.coins.api.Extras;
@@ -22,18 +23,19 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.List;
 
-class Cmds implements CommandExecutor
+public class Cmds
+        implements CommandExecutor
 {
     private static String color (String message)
     {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
-	@Override
-	public boolean onCommand (CommandSender sender, Command cmd, String l, String[] args)
-	{
-		if ( l.equalsIgnoreCase("coins") || l.equalsIgnoreCase("coin") )
-		{
+    @Override
+    public boolean onCommand (CommandSender sender, Command cmd, String l, String[] args)
+    {
+        if (l.equalsIgnoreCase("coins") || l.equalsIgnoreCase("coin"))
+        {
             if (args.length >= 1)
             {
                 switch (args[0])
@@ -46,21 +48,24 @@ class Cmds implements CommandExecutor
                             Settings.remove();
                             Extras.resetMultiplier();
                             boolean success = Settings.enums();
-                            sender.sendMessage(color(Messages.RELOAD_SUCCESS.toString().replace("{0}", Long.toString(System.currentTimeMillis() - ms) )));
+                            sender.sendMessage(color(Messages.RELOAD_SUCCESS.toString()
+                                    .replace("{0}", Long.toString(System.currentTimeMillis() - ms))));
                             if (!success)
-                                sender.sendMessage(color( Messages.MINOR_ISSUES.toString() ));
+                                sender.sendMessage(color(Messages.MINOR_ISSUES.toString()));
                             else
-                                sender.sendMessage(color( Messages.CHECK_SETTINGS.toString() ));
+                                sender.sendMessage(color(Messages.CHECK_SETTINGS.toString()));
                         }
-                        else noPerm(sender);
+                        else
+                            noPerm(sender);
                         break;
                     case "settings":
                         if (sender.hasPermission("coins.admin"))
                         {
                             String settings = Settings.getSettings();
-                            sender.sendMessage( color(settings) );
+                            sender.sendMessage(color(settings));
                         }
-                        else noPerm(sender);
+                        else
+                            noPerm(sender);
                         break;
                     case "drop":
                         if (sender.hasPermission("coins.drop"))
@@ -82,7 +87,7 @@ class Cmds implements CommandExecutor
                     case "update":
                         if (sender.hasPermission("coins.admin"))
                         {
-                            String version = Coins.update;
+                            String version = Coins.getUpdate();
                             String current = Coins.getInstance().getDescription().getVersion();
                             sender.sendMessage(color("&eVersion currently installed: &f" + current));
                             sender.sendMessage(color("&eLatest released version: &f" + version));
@@ -101,7 +106,9 @@ class Cmds implements CommandExecutor
                 }
 
 
-            } else sendHelp(sender);
+            }
+            else
+                sendHelp(sender);
 
             return true;
         }
@@ -117,11 +124,11 @@ class Cmds implements CommandExecutor
                 return true;
             }
 
-            for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds) )
+            for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds))
             {
-                if ( ((Player)sender).getWorld().getName().equalsIgnoreCase(world) )
+                if (((Player) sender).getWorld().getName().equalsIgnoreCase(world))
                 {
-                    sender.sendMessage( color(Messages.COINS_DISABLED.toString()) );
+                    sender.sendMessage(color(Messages.COINS_DISABLED.toString()));
                     return true;
                 }
             }
@@ -135,7 +142,7 @@ class Cmds implements CommandExecutor
                 try { amount = Integer.parseInt(args[0]); }
                 catch (NumberFormatException e)
                 {
-                    sender.sendMessage(color( Messages.INVALID_AMOUNT.toString() ));
+                    sender.sendMessage(color(Messages.INVALID_AMOUNT.toString()));
                     return true;
                 }
 
@@ -146,23 +153,20 @@ class Cmds implements CommandExecutor
                         p.sendMessage(color(Messages.INVENTORY_FULL.toString()));
                         return true;
                     }
-                    p.getInventory().addItem( new Coin().withdraw(amount).item() );
+                    p.getInventory().addItem(new Coin().withdraw(amount).item());
                     Coins.getEconomy().withdrawPlayer(p, amount);
                     p.sendMessage(color(Messages.WITHDRAW_COINS.toString().replace("{0}", Long.toString(amount))));
-                    new ActionBar(Settings.hS.get(Config.STRING.deathMessage)
-                            .replace("%amount%", String.valueOf( amount )).replace("{$}", Settings.hS.get(Config.STRING.currencySymbol))).send(p);
+                    new ActionBar(Settings.hS.get(Config.STRING.deathMessage).replace("%amount%", String.valueOf(amount))
+                            .replace("{$}", Settings.hS.get(Config.STRING.currencySymbol))).send(p);
                 }
-                else p.sendMessage(color ( Messages.NOT_THAT_MUCH.toString()) );
+                else p.sendMessage(color(Messages.NOT_THAT_MUCH.toString()));
             }
-
-            else p.sendMessage(color( Messages.WITHDRAW_USAGE.toString()));
-
+            else p.sendMessage(color(Messages.WITHDRAW_USAGE.toString()));
         }
-		
-		return false;
-	}
+        return false;
+    }
 
-	private void dropCoins (CommandSender sender, String[] args)
+    private void dropCoins (CommandSender sender, String[] args)
     {
         if (args.length >= 3)
         {
@@ -176,7 +180,7 @@ class Cmds implements CommandExecutor
                 return;
             }
 
-            int radius = amount/20;
+            int radius = amount / 20;
             if (radius < 2)
                 radius = 2;
 
@@ -208,13 +212,13 @@ class Cmds implements CommandExecutor
                         double y = Double.parseDouble(coords[1]);
                         double z = Double.parseDouble(coords[2]);
 
-                        location = new Location( coords.length == 4 ?
-                                Bukkit.getWorld(coords[3]) : ( sender instanceof Player ? ((Player) sender).getWorld() : Bukkit.getWorlds().get(0) ), x, y, z );
+                        location = new Location(coords.length == 4? Bukkit.getWorld(coords[3]) : (sender instanceof Player? ((Player) sender)
+                                .getWorld() : Bukkit.getWorlds().get(0)), x, y, z);
                         name = x + ", " + y + ", " + z;
                     }
                     catch (NumberFormatException | ArrayIndexOutOfBoundsException | NullPointerException e)
                     {
-                        sender.sendMessage( color(Messages.COORDS_NOT_FOUND.toString()) );
+                        sender.sendMessage(color(Messages.COORDS_NOT_FOUND.toString()));
                         return;
                     }
                 }
@@ -229,13 +233,13 @@ class Cmds implements CommandExecutor
             if (p != null || sender instanceof Player)
             {
                 if (p == null)
-                    p = (Player)sender;
+                    p = (Player) sender;
 
-                for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds) )
+                for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds))
                 {
                     if (p.getWorld().getName().equalsIgnoreCase(world))
                     {
-                        sender.sendMessage( color(Messages.COINS_DISABLED.toString()) );
+                        sender.sendMessage(color(Messages.COINS_DISABLED.toString()));
                         return;
                     }
                 }
@@ -243,22 +247,23 @@ class Cmds implements CommandExecutor
 
             if (radius < 1 || radius > 80)
             {
-                sender.sendMessage( color(Messages.INVALID_RADIUS.toString()) );
+                sender.sendMessage(color(Messages.INVALID_RADIUS.toString()));
                 return;
             }
 
             if (amount < 1 || amount > 1000)
             {
-                sender.sendMessage( color(Messages.INVALID_AMOUNT.toString()) );
+                sender.sendMessage(color(Messages.INVALID_AMOUNT.toString()));
                 return;
             }
 
-            Coins.particles (location, radius, amount);
-            sender.sendMessage( color(Messages.SPAWNED_COINS.toString())
-                    .replace("{0}", Long.toString(amount)).replace("{1}", Long.toString(radius)).replace("{2}", name)  );
+            Coins.particles(location, radius, amount);
+            sender.sendMessage(color(Messages.SPAWNED_COINS.toString()).replace("{0}", Long.toString(amount)).replace("{1}", Long.toString(radius))
+                    .replace("{2}", name));
 
         }
-        else sender.sendMessage ( color(Messages.DROP_USAGE.toString()) );
+        else
+            sender.sendMessage(color(Messages.DROP_USAGE.toString()));
 
     }
 
@@ -272,7 +277,11 @@ class Cmds implements CommandExecutor
             if (!args[1].equalsIgnoreCase("all"))
             {
                 try {r = Integer.parseInt(args[1]);}
-                catch (NumberFormatException e) { sender.sendMessage( color(Messages.INVALID_RADIUS.toString()) ); return; }
+                catch (NumberFormatException e)
+                {
+                    sender.sendMessage(color(Messages.INVALID_RADIUS.toString()));
+                    return;
+                }
                 if (r < 1 || r > 80)
                 {
                     sender.sendMessage(color(Messages.INVALID_RADIUS.toString()));
@@ -286,7 +295,8 @@ class Cmds implements CommandExecutor
         {
             Player p = (Player) sender;
             mobs = p.getWorld().getEntities();
-            if (r != 0) mobs = new ArrayList<>(p.getWorld().getNearbyEntities(p.getLocation(), r, r, r));
+            if (r != 0)
+                mobs = new ArrayList<>(p.getWorld().getNearbyEntities(p.getLocation(), r, r, r));
         }
 
         long amount = 0;
@@ -296,57 +306,63 @@ class Cmds implements CommandExecutor
             {
                 Item i = (Item) m;
                 if (i.getItemStack().getItemMeta() != null && i.getItemStack().getItemMeta().hasDisplayName())
-                    if (i.getItemStack().getItemMeta().getDisplayName().equals(
-                            ( color(Settings.hS.get(Config.STRING.nameOfCoin)) ) ))
+                {
+                    if (i.getItemStack().getItemMeta().getDisplayName().equals((color(Settings.hS.get(Config.STRING.nameOfCoin)))))
                     {
-                        amount ++;
-                        double random = (Math.random()*3);
+                        amount++;
+                        double random = (Math.random() * 3);
                         long rand = (long) random * 5;
                         i.setVelocity(new Vector(0, random, 0));
-                        new BukkitRunnable() {
+                        new BukkitRunnable()
+                        {
                             int a = 0;
-                            public void run() {
+
+                            public void run ()
+                            {
                                 a += 1;
-                                if (a >= 1) {
+                                if (a >= 1)
+                                {
                                     i.remove();
                                     this.cancel();
                                 }
                             }
                         }.runTaskTimer(Coins.getInstance(), rand, rand);
                     }
+                }
             }
-
         }
-        sender.sendMessage( color(Messages.REMOVED_COINS.toString().replace("{0}", Long.toString(amount)) ) );
+        sender.sendMessage(color(Messages.REMOVED_COINS.toString().replace("{0}", Long.toString(amount))));
     }
 
     private void sendHelp (CommandSender sender)
     {
         String version = Coins.getInstance().getDescription().getVersion();
-        String update = Coins.update;
+        String update = Coins.getUpdate();
         String notice = "";
-        if (!update.equals(version)) notice = " (outdated; /coins update)";
-        sender.sendMessage( color(Messages.COINS_HELP.toString() + " " + version + notice) );
+        if (!update.equals(version))
+            notice = " (outdated; /coins update)";
+
+        sender.sendMessage(color(Messages.COINS_HELP.toString() + " " + version + notice));
 
         if (sender.hasPermission("coins.drop"))
-            sender.sendMessage( color(Messages.DROP_USAGE.toString()) );
+            sender.sendMessage(color(Messages.DROP_USAGE.toString()));
 
         if (sender.hasPermission("coins.remove"))
-            sender.sendMessage( color(Messages.REMOVE_USAGE.toString()) );
+            sender.sendMessage(color(Messages.REMOVE_USAGE.toString()));
 
         if (sender.hasPermission("coins.admin"))
         {
-            sender.sendMessage( color(Messages.SETTINGS_USAGE.toString()) );
-            sender.sendMessage( color(Messages.RELOAD_USAGE.toString()) );
-            sender.sendMessage( color(Messages.VERSION_CHECK.toString() ));
+            sender.sendMessage(color(Messages.SETTINGS_USAGE.toString()));
+            sender.sendMessage(color(Messages.RELOAD_USAGE.toString()));
+            sender.sendMessage(color(Messages.VERSION_CHECK.toString()));
         }
 
         if (Settings.hB.get(Config.BOOLEAN.enableWithdraw) && sender.hasPermission("coins.withdraw"))
-            sender.sendMessage( color(Messages.WITHDRAW_USAGE.toString()) );
+            sender.sendMessage(color(Messages.WITHDRAW_USAGE.toString()));
     }
 
     private void noPerm (CommandSender sender)
     {
-        sender.sendMessage( color( Messages.NO_PERMISSION.toString()));
+        sender.sendMessage(color(Messages.NO_PERMISSION.toString()));
     }
 }

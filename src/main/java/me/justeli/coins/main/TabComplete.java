@@ -20,7 +20,7 @@ public class TabComplete
         implements TabCompleter
 {
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args)
+    public List<String> onTabComplete (CommandSender sender, Command command, String alias, String[] args)
     {
         if (alias.equalsIgnoreCase("withdraw") && args.length == 1)
         {
@@ -38,7 +38,11 @@ public class TabComplete
                 if (sender.hasPermission("coins.drop"))
                     list.add("drop");
                 if (sender.hasPermission("coins.admin"))
-                { list.add("reload"); list.add("settings"); list.add("version"); }
+                {
+                    list.add("reload");
+                    list.add("settings");
+                    list.add("version");
+                }
                 if (sender.hasPermission("coins.remove"))
                     list.add("remove");
             }

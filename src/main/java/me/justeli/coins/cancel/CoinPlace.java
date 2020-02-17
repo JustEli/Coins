@@ -14,10 +14,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 /**
  * Created by Eli on 2/4/2017.
- *
  */
 
-public class CoinPlace implements Listener
+public class CoinPlace
+        implements Listener
 {
     @EventHandler
     public void coinPlace (PlayerInteractEvent e)
@@ -25,7 +25,7 @@ public class CoinPlace implements Listener
         if (!e.getAction().equals(Action.PHYSICAL)
                 && e.getItem() != null
                 && e.getItem().hasItemMeta()
-                && e.getItem().getItemMeta()!= null
+                && e.getItem().getItemMeta() != null
                 && e.getItem().getItemMeta().hasDisplayName())
         {
             Player p = e.getPlayer();

@@ -1,10 +1,10 @@
 package me.justeli.coins.events;
 
+import me.justeli.coins.Coins;
 import me.justeli.coins.api.Extras;
 import me.justeli.coins.api.Title;
 import me.justeli.coins.cancel.PreventSpawner;
 import me.justeli.coins.item.Coin;
-import me.justeli.coins.main.Coins;
 import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Settings;
 import org.bukkit.Location;
@@ -19,17 +19,18 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 
-public class DropCoin implements Listener
+public class DropCoin
+        implements Listener
 {
     private static final HashMap<Location, Integer> locationTracker = new HashMap<>();
 
     // Drop coins when mob is killed.
-	@EventHandler
-	public void onDeath (EntityDeathEvent e)
+    @EventHandler
+    public void onDeath (EntityDeathEvent e)
     {
-		Entity m = e.getEntity();
+        Entity m = e.getEntity();
 
-        for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds) )
+        for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds))
             if (m.getWorld().getName().equalsIgnoreCase(world))
                 return;
 
@@ -40,8 +41,7 @@ public class DropCoin implements Listener
             int killAmount = locationTracker.getOrDefault(location, 0);
             locationTracker.put(location, killAmount + 1);
 
-            Coins.later(144000, () ->
-                    locationTracker.put(location, locationTracker.getOrDefault(location, 0) - 1)); // subtract an hour later
+            Coins.later(144000, () -> locationTracker.put(location, locationTracker.getOrDefault(location, 0) - 1)); // subtract an hour later
 
             if (killAmount > setLimit)
                 return;
@@ -49,43 +49,36 @@ public class DropCoin implements Listener
 
         if (e.getEntity().getKiller() != null)
         {
-            if (
-                    (m instanceof Monster || m instanceof Slime || m instanceof Ghast || m instanceof EnderDragon ||
-                            (!Settings.hB.get(Config.BOOLEAN.olderServer) && m instanceof Shulker) ||
-                            (Settings.hB.get(Config.BOOLEAN.newerServer) && m instanceof Phantom)
-                    )
-
-                    || ( (m instanceof Animals || m instanceof Squid || m instanceof Snowman || m instanceof IronGolem
-                            || m instanceof Villager || m instanceof Ambient) && Settings.hB.get(Config.BOOLEAN.passiveDrop) )
-
-                    || (m instanceof Player && Settings.hB.get(Config.BOOLEAN.playerDrop) && Coins.getEconomy().getBalance((Player)m) >= 0)
-                )
-
+            if ((m instanceof Monster || m instanceof Slime || m instanceof Ghast || m instanceof EnderDragon
+                    || (!Settings.hB.get(Config.BOOLEAN.olderServer) && m instanceof Shulker)
+                    || (Settings.hB.get(Config.BOOLEAN.newerServer) && m instanceof Phantom))
+                    || ((m instanceof Animals || m instanceof Squid || m instanceof Snowman || m instanceof IronGolem
+                    || m instanceof Villager || m instanceof Ambient) && Settings.hB.get(Config.BOOLEAN.passiveDrop))
+                    || (m instanceof Player && Settings.hB.get(Config.BOOLEAN.playerDrop) && Coins.getEconomy().getBalance((Player) m) >= 0))
             { dropMobCoin(m, e.getEntity().getKiller()); }
-
         }
 
-        if ( m instanceof Player && Settings.hB.get(Config.BOOLEAN.loseOnDeath) )
+        if (m instanceof Player && Settings.hB.get(Config.BOOLEAN.loseOnDeath))
         {
             double second = Settings.hD.get(Config.DOUBLE.moneyTaken_from);
             double first = Settings.hD.get(Config.DOUBLE.moneyTaken_to) - second;
 
             Player p = (Player) e.getEntity();
             double random = Math.random() * first + second;
-            double take = Settings.hB.get(Config.BOOLEAN.takePercentage)? (random/100)*Coins.getEconomy().getBalance(p) : random;
+            double take = Settings.hB.get(Config.BOOLEAN.takePercentage)? (random / 100) * Coins.getEconomy().getBalance(p) : random;
 
             if (take > 0 && Coins.getEconomy().withdrawPlayer(p, (long) take).transactionSuccess())
             {
-                Title.sendSubTitle(p, 20, 100, 20, Settings.hS.get(Config.STRING.deathMessage)
-                        .replace("%amount%", String.valueOf( (long)take )).replace("{$}", Settings.hS.get(Config.STRING.currencySymbol)));
+                Title.sendSubTitle(p, 20, 100, 20, Settings.hS.get(Config.STRING.deathMessage).replace("%amount%", String.valueOf((long) take))
+                        .replace("{$}", Settings.hS.get(Config.STRING.currencySymbol)));
 
                 if (Settings.hB.get(Config.BOOLEAN.dropOnDeath) && p.getLocation().getWorld() != null)
-                    p.getWorld().dropItem(p.getLocation(), new Coin().withdraw((long)take).item());
+                    p.getWorld().dropItem(p.getLocation(), new Coin().withdraw((long) take).item());
             }
         }
-	}
+    }
 
-	private void dropMobCoin (Entity m, Player p)
+    private void dropMobCoin (Entity m, Player p)
     {
         if (m instanceof Player && Settings.hB.get(Config.BOOLEAN.preventAlts))
         {
@@ -111,10 +104,14 @@ public class DropCoin implements Listener
                 dropCoin(amount, p, m.getLocation());
             }
         }
-        else PreventSpawner.removeFromList(m);
+        else
+        {
+            PreventSpawner.removeFromList(m);
+        }
     }
 
-    @EventHandler (ignoreCancelled = true, priority = EventPriority.MONITOR)
+    @EventHandler (ignoreCancelled = true,
+                   priority = EventPriority.MONITOR)
     public void onMine (BlockBreakEvent e)
     {
         if (!Settings.hB.get(Config.BOOLEAN.onlyExperienceBlocks))
@@ -130,7 +127,7 @@ public class DropCoin implements Listener
     private static void dropBlockCoin (Block block, Player p)
     {
         if (Math.random() <= Settings.hD.get(Config.DOUBLE.minePercentage))
-            Coins.later(1, () -> dropCoin (1, p, block.getLocation().clone().add(0.5, 0.5, 0.5)));
+            Coins.later(1, () -> dropCoin(1, p, block.getLocation().clone().add(0.5, 0.5, 0.5)));
     }
 
     private static void dropCoin (int amount, Player p, Location location)
@@ -138,15 +135,15 @@ public class DropCoin implements Listener
         if (Settings.hB.get(Config.BOOLEAN.dropEachCoin))
         {
             int second = Settings.hD.get(Config.DOUBLE.moneyAmount_from).intValue();
-            int first = Settings.hD.get(Config.DOUBLE.moneyAmount_to).intValue()+1 - second;
+            int first = Settings.hD.get(Config.DOUBLE.moneyAmount_to).intValue() + 1 - second;
 
-            amount *= ( Math.random() * first + second );
+            amount *= (Math.random() * first + second);
         }
 
         amount *= Extras.getMultiplier(p);
 
         boolean stack = !Settings.hB.get(Config.BOOLEAN.dropEachCoin) && Settings.hB.get(Config.BOOLEAN.stackCoins);
-        for (int i = 0; i < amount; i ++)
+        for (int i = 0; i < amount; i++)
         {
             ItemStack coin = new Coin().stack(stack).item();
             location.getWorld().dropItem(location, coin);

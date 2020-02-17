@@ -19,7 +19,8 @@ public class Coin
     {
         String texture = Settings.hS.get(Config.STRING.skullTexture);
         this.coin = texture == null || texture.isEmpty()?
-                new ItemStack(Material.valueOf(Settings.hS.get(Config.STRING.coinItem))) : SkullValue.get(texture);
+                new ItemStack(Material.valueOf(Settings.hS.get(Config.STRING.coinItem)))
+                : SkullValue.get(texture);
 
         if (coin != null)
         {
@@ -39,7 +40,8 @@ public class Coin
     public Coin unique ()
     {
         ItemMeta meta = this.coin.getItemMeta();
-        if (meta != null) meta.setLore(Collections.singletonList(String.valueOf(Math.random())));
+        if (meta != null)
+            meta.setLore(Collections.singletonList(String.valueOf(Math.random())));
         this.coin.setItemMeta(meta);
 
         return this;
@@ -56,8 +58,9 @@ public class Coin
     public Coin withdraw (long amount)
     {
         ItemMeta meta = this.coin.getItemMeta();
-        if (meta != null) meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&e" + amount + " &r"
-                + Settings.hS.get(Config.STRING.nameOfCoin) + Settings.hS.get(Config.STRING.multiSuffix)));
+        if (meta != null)
+            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&e" + amount + " &r" +
+                    Settings.hS.get(Config.STRING.nameOfCoin) + Settings.hS.get(Config.STRING.multiSuffix)));
         this.coin.setItemMeta(meta);
 
         return this;

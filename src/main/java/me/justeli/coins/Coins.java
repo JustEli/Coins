@@ -1,4 +1,4 @@
-package me.justeli.coins.main;
+package me.justeli.coins;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -10,6 +10,9 @@ import me.justeli.coins.cancel.PreventSpawner;
 import me.justeli.coins.events.CoinsPickup;
 import me.justeli.coins.events.DropCoin;
 import me.justeli.coins.item.CoinParticles;
+import me.justeli.coins.main.Cmds;
+import me.justeli.coins.main.Metrics;
+import me.justeli.coins.main.TabComplete;
 import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Settings;
 import net.milkbowl.vault.economy.Economy;
@@ -22,7 +25,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,21 +35,27 @@ import java.util.Locale;
 
 /**
  * Created by Eli on 12/13/2016.
- *
  */
 
-public class Coins extends JavaPlugin
+public class Coins
+        extends JavaPlugin
 {
     private static Coins main;
     private static Economy eco;
 
-    static String update;
+    private static String update;
+
+    public static String getUpdate ()
+    {
+        return update;
+    }
 
     // todo add NBT-tags for coins
     // todo able to pickup with inventory full
     // todo support for standalone Vault
     // todo an option to require the majority of player damage to drop coins
     // todo add option to not let balance go negative (with dropOnDeath: true)
+    // todo coin and/or bill textures using NBT data and a resource pack
 
     // todo https://www.spigotmc.org/threads/fake-item-pickup-playerpickupitemevent-with-full-inventory.156983/#post-2062690
     // https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/meta/tags/CustomItemTagContainer.html
@@ -68,18 +76,20 @@ public class Coins extends JavaPlugin
             String version;
             try
             {
-                URL           url     = new URL("https://api.github.com/repos/JustEli/Coins/releases/latest");
+                URL url = new URL("https://api.github.com/repos/JustEli/Coins/releases/latest");
                 URLConnection request = url.openConnection();
                 request.connect();
 
-                JsonParser  jp      = new JsonParser();
-                JsonElement root    = jp.parse(new InputStreamReader((InputStream) request.getContent()));
-                JsonObject  rootobj = root.getAsJsonObject();
+                JsonParser jp = new JsonParser();
+                JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
+                JsonObject rootobj = root.getAsJsonObject();
                 version = rootobj.get("tag_name").getAsString();
 
             }
             catch (IOException ex)
-            { version = getDescription().getVersion(); }
+            {
+                version = getDescription().getVersion();
+            }
 
             Coins.update = version;
 
@@ -97,7 +107,7 @@ public class Coins extends JavaPlugin
 
             metrics.add("language", WordUtils.capitalize(Settings.getLanguage()));
             metrics.add("currencySymbol", Settings.hS.get(Config.STRING.currencySymbol));
-            metrics.add("dropChance", Settings.hD.get(Config.DOUBLE.dropChance)*100 + "%");
+            metrics.add("dropChance", Settings.hD.get(Config.DOUBLE.dropChance) * 100 + "%");
             metrics.add("dropEachCoin", String.valueOf(Settings.hB.get(Config.BOOLEAN.dropEachCoin)));
             metrics.add("pickupSound", Settings.hS.get(Config.STRING.soundName));
             metrics.add("enableWithdraw", String.valueOf(Settings.hB.get(Config.BOOLEAN.enableWithdraw)));
@@ -113,8 +123,8 @@ public class Coins extends JavaPlugin
             metrics.add("spawnerDrop", String.valueOf(Settings.hB.get(Config.BOOLEAN.spawnerDrop)));
             metrics.add("preventSplits", String.valueOf(Settings.hB.get(Config.BOOLEAN.preventSplits)));
 
-            metrics.add("moneyAmount", ( String.valueOf((Settings.hD.get(Config.DOUBLE.moneyAmount_from)
-                    + Settings.hD.get(Config.DOUBLE.moneyAmount_to))/2) ));
+            metrics.add("moneyAmount", (String.valueOf((Settings.hD.get(Config.DOUBLE.moneyAmount_from) +
+                    Settings.hD.get(Config.DOUBLE.moneyAmount_to)) / 2)));
             metrics.add("usingSkullTexture", String.valueOf(texture != null && !texture.isEmpty()));
         });
 
@@ -181,30 +191,28 @@ public class Coins extends JavaPlugin
         Settings.enums();
     }
 
-    private static int async (Runnable runnable)
+    private static void async (Runnable runnable)
     {
-        BukkitTask task = new BukkitRunnable()
+        new BukkitRunnable()
         {
             @Override
-            public void run()
+            public void run ()
             {
                 runnable.run();
             }
         }.runTaskAsynchronously(getInstance());
-        return task.getTaskId();
     }
 
-    public static int later (final int ticks, Runnable runnable)
+    public static void later (final int ticks, Runnable runnable)
     {
-        BukkitTask task = new BukkitRunnable()
+        new BukkitRunnable()
         {
             @Override
-            public void run()
+            public void run ()
             {
                 runnable.run();
             }
         }.runTaskLater(getInstance(), ticks);
-        return task.getTaskId();
     }
 
     public enum LogType
@@ -219,10 +227,18 @@ public class Coins extends JavaPlugin
         ChatColor color;
         switch (type)
         {
-            case INFO:      color = ChatColor.AQUA;     break;
-            case ERROR:     color = ChatColor.RED;      break;
-            case WARNING:   color = ChatColor.YELLOW;   break;
-            default:        color = ChatColor.WHITE;    break;
+            case INFO:
+                color = ChatColor.AQUA;
+                break;
+            case ERROR:
+                color = ChatColor.RED;
+                break;
+            case WARNING:
+                color = ChatColor.YELLOW;
+                break;
+            default:
+                color = ChatColor.WHITE;
+                break;
         }
         Bukkit.getConsoleSender().sendMessage(color + "=" + type.name() + "= " + message);
     }

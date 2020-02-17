@@ -1,3 +1,3 @@
 # Coins
-[1.7 to 1.15!] Configurable coins for mob/player kills, with a withdraw system and for drop parties.
+[1.8 to 1.15!] Configurable coins for killing and mining, with a withdraw system & for drop parties.
 https://www.spigotmc.org/resources/coins.33382/

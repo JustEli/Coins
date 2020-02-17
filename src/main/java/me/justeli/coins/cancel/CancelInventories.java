@@ -18,7 +18,8 @@ import org.bukkit.inventory.ItemStack;
  * Created by Eli on 2 mei 2019.
  * spigotPlugins: me.justeli.coins.cancel
  */
-public class CancelInventories implements Listener
+public class CancelInventories
+        implements Listener
 {
     @EventHandler
     public void avoidCraftingTable (CraftItemEvent e)
@@ -27,8 +28,8 @@ public class CancelInventories implements Listener
         {
             if (stack != null && stack.getItemMeta() != null && stack.getItemMeta().hasDisplayName())
             {
-                if (stack.getItemMeta().getDisplayName().contains(
-                        ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin))))
+                if (stack.getItemMeta().getDisplayName()
+                        .contains(ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin))))
                 {
                     e.setCancelled(true);
                 }
@@ -39,14 +40,14 @@ public class CancelInventories implements Listener
     @EventHandler (ignoreCancelled = true)
     public void coinInventory (InventoryClickEvent e)
     {
-        for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds) )
+        for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds))
             if (e.getWhoClicked().getWorld().getName().equalsIgnoreCase(world))
                 return;
 
         if (e.getWhoClicked() instanceof Player)
         {
             ItemStack item = e.getCurrentItem();
-            if (item != null && item.hasItemMeta() && item.getItemMeta()!=null && item.getItemMeta().hasDisplayName())
+            if (item != null && item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasDisplayName())
             {
                 String name = item.getItemMeta().getDisplayName();
                 String configName = ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin));
@@ -66,7 +67,7 @@ public class CancelInventories implements Listener
     @EventHandler (ignoreCancelled = true)
     public void onMiddleClick (InventoryClickEvent e)
     {
-        for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds) )
+        for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds))
             if (e.getWhoClicked().getWorld().getName().equalsIgnoreCase(world))
                 return;
 
@@ -78,7 +79,7 @@ public class CancelInventories implements Listener
     @EventHandler (ignoreCancelled = true)
     public void onMiddleClick2 (InventoryCreativeEvent e)
     {
-        for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds) )
+        for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds))
             if (e.getWhoClicked().getWorld().getName().equalsIgnoreCase(world))
                 return;
 

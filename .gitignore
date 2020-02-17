@@ -1,4 +1,3 @@
-#IntelliJ
 .idea
 *.iml
 META-INF
@@ -6,20 +5,10 @@ META-INF
 bin
 .gif
 pictures
-
-# Compiled class file
 *.class
-
-# Log file
 *.log
-
-# BlueJ files
 *.ctxt
-
-# Mobile Tools for Java (J2ME)
 .mtj.tmp/
-
-# Package Files #
 *.jar
 *.war
 *.nar
@@ -27,8 +16,11 @@ pictures
 *.zip
 *.tar.gz
 *.rar
-
-# virtual machine crash logs
 hs_err_pid*
-
-.docx
+.gitattributes
+*.docx
+.git
+*.xlsx
+target/
+test/
+*.lnk

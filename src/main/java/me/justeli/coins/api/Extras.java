@@ -30,7 +30,7 @@ public class Extras
             for (PermissionAttachmentInfo permissionInfo : p.getEffectivePermissions())
             {
                 String permission = permissionInfo.getPermission();
-                if (permission.startsWith ("coins.multiplier."))
+                if (permission.startsWith("coins.multiplier."))
                 {
                     String number = permission.replace("coins.multiplier.", "");
                     permissions.add(Double.parseDouble(number));
