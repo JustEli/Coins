@@ -120,7 +120,7 @@ public class DropCoin
             return;
         }
 
-        if (e.getExpToDrop() != 0)
+        if (e.getExpToDrop() > 0)
             dropBlockCoin(e.getBlock(), e.getPlayer());
     }
 
