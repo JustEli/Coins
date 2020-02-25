@@ -19,15 +19,17 @@ public class CancelHopper
         if (e.getInventory().getType().equals(InventoryType.HOPPER))
         {
             ItemStack item = e.getItem().getItemStack();
-            if (item.getItemMeta() != null && item.getItemMeta().hasDisplayName() && item.getItemMeta().hasLore())
+            if (item.getItemMeta() != null && item.getItemMeta().hasDisplayName())
             {
                 String pickupName = item.getItemMeta().getDisplayName();
                 String coinName = ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin));
 
                 if (pickupName.equals(coinName))
-                    e.getItem().setItemStack(new ItemStack(new Coin().item()));
+                {
+                    if (Settings.hB.get(Config.BOOLEAN.disableHoppers)) e.setCancelled(true);
+                    else if (item.getItemMeta().hasLore()) e.getItem().setItemStack(new ItemStack(new Coin().item()));
+                }
             }
         }
     }
-
 }

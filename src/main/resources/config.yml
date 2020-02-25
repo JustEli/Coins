@@ -32,6 +32,10 @@ pickupMessage: "&2+ &a{$}%amount%"
 # set that a mob should drop 'moneyAmount's AMOUNT of coins, with each coin being worth $1.
 dropEachCoin: false
 
+# Also drop coins when the mob is NOT killed by a player?
+# That means that any death cause will cause the mob to drop coins, not just players!
+dropWithAnyDeath: false
+
 # The amount of money one coin is worth. Creates a random number between
 # 'from' and 'to' which - as money - will be given to the player on pickup.
 # However, if 'dropEachCoin' is set to true, killed mobs will drop 'from' to 'to' coins,
@@ -50,6 +54,9 @@ moneyDecimals: 1
 # Not stacking coins is just for a cooler effect.
 # This setting will be ignored (and set to false) if 'dropEachCoin' is set to true.
 stackCoins: false
+
+# Disable hoppers to pick up any kind of coins.
+disableHoppers: false
 
 # Put the amount of coins dropped for a specific mob here, by default: mobs drop one coin.
 # ENDER_DRAGON is added by default, meaning that on kill of Ender Dragon, 64 coins drop.

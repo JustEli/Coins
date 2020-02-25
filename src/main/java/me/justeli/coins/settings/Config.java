@@ -25,6 +25,8 @@ public enum Config
         takePercentage,
         dropOnDeath,
         onlyExperienceBlocks,
+        disableHoppers,
+        dropWithAnyDeath
     }
 
     public enum STRING

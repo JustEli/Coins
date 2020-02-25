@@ -52,11 +52,15 @@ public class DropCoin
             if ((m instanceof Monster || m instanceof Slime || m instanceof Ghast || m instanceof EnderDragon
                     || (!Settings.hB.get(Config.BOOLEAN.olderServer) && m instanceof Shulker)
                     || (Settings.hB.get(Config.BOOLEAN.newerServer) && m instanceof Phantom))
+
                     || ((m instanceof Animals || m instanceof Squid || m instanceof Snowman || m instanceof IronGolem
                     || m instanceof Villager || m instanceof Ambient) && Settings.hB.get(Config.BOOLEAN.passiveDrop))
+
                     || (m instanceof Player && Settings.hB.get(Config.BOOLEAN.playerDrop) && Coins.getEconomy().getBalance((Player) m) >= 0))
             { dropMobCoin(m, e.getEntity().getKiller()); }
         }
+        else if (Settings.hB.get(Config.BOOLEAN.dropWithAnyDeath))
+            dropMobCoin(m, null);
 
         if (m instanceof Player && Settings.hB.get(Config.BOOLEAN.loseOnDeath))
         {
@@ -80,7 +84,7 @@ public class DropCoin
 
     private void dropMobCoin (Entity m, Player p)
     {
-        if (m instanceof Player && Settings.hB.get(Config.BOOLEAN.preventAlts))
+        if (p != null && m instanceof Player && Settings.hB.get(Config.BOOLEAN.preventAlts))
         {
             Player player = (Player) m;
             if (p.getAddress().getAddress().getHostAddress().equals(player.getAddress().getAddress().getHostAddress()))
@@ -93,7 +97,9 @@ public class DropCoin
             return;
         }
 
-        if (!PreventSpawner.fromSpawner(m) || p.hasPermission("coins.spawner"))
+        if (!PreventSpawner.fromSpawner(m)
+                || (p == null && Settings.hB.get(Config.BOOLEAN.spawnerDrop))
+                || (p != null && p.hasPermission("coins.spawner")) )
         {
             if (Math.random() <= Settings.hD.get(Config.DOUBLE.dropChance))
             {
@@ -140,7 +146,8 @@ public class DropCoin
             amount *= (Math.random() * first + second);
         }
 
-        amount *= Extras.getMultiplier(p);
+        if (p != null)
+            amount *= Extras.getMultiplier(p);
 
         boolean stack = !Settings.hB.get(Config.BOOLEAN.dropEachCoin) && Settings.hB.get(Config.BOOLEAN.stackCoins);
         for (int i = 0; i < amount; i++)

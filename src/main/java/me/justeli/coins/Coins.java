@@ -56,6 +56,7 @@ public class Coins
     // todo an option to require the majority of player damage to drop coins
     // todo add option to not let balance go negative (with dropOnDeath: true)
     // todo coin and/or bill textures using NBT data and a resource pack
+    // todo Can you add config for specific blocks for mining?
 
     // todo https://www.spigotmc.org/threads/fake-item-pickup-playerpickupitemevent-with-full-inventory.156983/#post-2062690
     // https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/meta/tags/CustomItemTagContainer.html
@@ -126,6 +127,8 @@ public class Coins
             metrics.add("moneyAmount", (String.valueOf((Settings.hD.get(Config.DOUBLE.moneyAmount_from) +
                     Settings.hD.get(Config.DOUBLE.moneyAmount_to)) / 2)));
             metrics.add("usingSkullTexture", String.valueOf(texture != null && !texture.isEmpty()));
+            metrics.add("disableHoppers", String.valueOf(Settings.hB.get(Config.BOOLEAN.disableHoppers)));
+            metrics.add("dropWithAnyDeath", String.valueOf(Settings.hB.get(Config.BOOLEAN.dropWithAnyDeath)));
         });
 
         if (getServer().getPluginManager().getPlugin("Vault") == null)
