@@ -8,16 +8,21 @@ import me.justeli.coins.item.Coin;
 import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Settings;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attributable;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 public class DropCoin
         implements Listener
@@ -46,6 +51,12 @@ public class DropCoin
             if (killAmount > setLimit)
                 return;
         }
+
+        AttributeInstance maxHealth = ((Attributable) m).getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        double hitSetting = Settings.hD.get(Config.DOUBLE.percentagePlayerHit);
+
+        if (hitSetting > 0 && maxHealth != null && getPlayerDamage(m.getUniqueId())/maxHealth.getValue() < hitSetting)
+            return;
 
         if (e.getEntity().getKiller() != null)
         {
@@ -155,5 +166,28 @@ public class DropCoin
             ItemStack coin = new Coin().stack(stack).item();
             location.getWorld().dropItem(location, coin);
         }
+    }
+
+    private static final HashMap<UUID, Double> damages = new HashMap<>();
+
+    private static Double getPlayerDamage (UUID uuid)
+    {
+        return damages.getOrDefault(uuid, 0D);
+    }
+
+    @EventHandler
+    public void registerHits (EntityDamageByEntityEvent e)
+    {
+        if (!(e.getDamager() instanceof Player))
+            return;
+
+        double playerDamage = damages.getOrDefault(e.getEntity().getUniqueId(), 0D);
+        damages.put(e.getEntity().getUniqueId(), playerDamage + e.getFinalDamage());
+    }
+
+    @EventHandler (priority = EventPriority.MONITOR)
+    public void unregisterHits (EntityDeathEvent e)
+    {
+        damages.remove(e.getEntity().getUniqueId());
     }
 }

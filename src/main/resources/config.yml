@@ -55,6 +55,11 @@ moneyDecimals: 1
 # This setting will be ignored (and set to false) if 'dropEachCoin' is set to true.
 stackCoins: false
 
+# The minimum percentage of damage a player needs to deal to a mob to drop coins.
+# This can be useful for one-hit mob grinders that damage mobs by i.e. fall damage.
+# Value from 0.0 to 1.0: 0.0 meaning 0%, 1.0 meaning 100% (so 0.9 meaning 90%).
+percentagePlayerHit: 0.9
+
 # Disable hoppers to pick up any kind of coins.
 disableHoppers: false
 

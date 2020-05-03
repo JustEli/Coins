@@ -53,10 +53,12 @@ public class Coins
     // todo add NBT-tags for coins
     // todo able to pickup with inventory full
     // todo support for standalone Vault
-    // todo an option to require the majority of player damage to drop coins
+    // todo !!an option to require the majority of player damage to drop coins
     // todo add option to not let balance go negative (with dropOnDeath: true)
     // todo coin and/or bill textures using NBT data and a resource pack
     // todo Can you add config for specific blocks for mining?
+    // todo set different materials as different worths, ex: you could have bronze, silver and gold coins
+    // todo generating of coins in dungeons chests
 
     // todo https://www.spigotmc.org/threads/fake-item-pickup-playerpickupitemevent-with-full-inventory.156983/#post-2062690
     // https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/meta/tags/CustomItemTagContainer.html

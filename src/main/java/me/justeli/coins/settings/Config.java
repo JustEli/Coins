@@ -55,6 +55,7 @@ public enum Config
         pickupPitch,
         pickupVolume,
         limitForLocation,
+        percentagePlayerHit,
     }
 
     public enum ARRAY
