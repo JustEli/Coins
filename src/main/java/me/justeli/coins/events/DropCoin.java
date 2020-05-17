@@ -52,11 +52,14 @@ public class DropCoin
                 return;
         }
 
-        AttributeInstance maxHealth = ((Attributable) m).getAttribute(Attribute.GENERIC_MAX_HEALTH);
-        double hitSetting = Settings.hD.get(Config.DOUBLE.percentagePlayerHit);
+        if (!Settings.hB.get(Config.BOOLEAN.olderServer))
+        {
+            AttributeInstance maxHealth = ((Attributable) m).getAttribute(Attribute.GENERIC_MAX_HEALTH);
+            double hitSetting = Settings.hD.get(Config.DOUBLE.percentagePlayerHit);
 
-        if (hitSetting > 0 && maxHealth != null && getPlayerDamage(m.getUniqueId())/maxHealth.getValue() < hitSetting)
-            return;
+            if (hitSetting > 0 && maxHealth != null && getPlayerDamage(m.getUniqueId())/maxHealth.getValue() < hitSetting)
+                return;
+        }
 
         if (e.getEntity().getKiller() != null)
         {
@@ -178,7 +181,7 @@ public class DropCoin
     @EventHandler
     public void registerHits (EntityDamageByEntityEvent e)
     {
-        if (!(e.getDamager() instanceof Player))
+        if (!(e.getDamager() instanceof Player) || Settings.hB.get(Config.BOOLEAN.olderServer))
             return;
 
         double playerDamage = damages.getOrDefault(e.getEntity().getUniqueId(), 0D);
@@ -188,6 +191,7 @@ public class DropCoin
     @EventHandler (priority = EventPriority.MONITOR)
     public void unregisterHits (EntityDeathEvent e)
     {
-        damages.remove(e.getEntity().getUniqueId());
+        if (!Settings.hB.get(Config.BOOLEAN.olderServer))
+            damages.remove(e.getEntity().getUniqueId());
     }
 }
