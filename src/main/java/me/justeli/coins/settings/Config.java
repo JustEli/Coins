@@ -26,7 +26,8 @@ public enum Config
         dropOnDeath,
         onlyExperienceBlocks,
         disableHoppers,
-        dropWithAnyDeath
+        dropWithAnyDeath,
+        enchantedCoin,
     }
 
     public enum STRING
@@ -52,8 +53,8 @@ public enum Config
         moneyTaken_to,
         moneyDecimals,
         minePercentage,
-        pickupPitch,
-        pickupVolume,
+        soundPitch,
+        soundVolume,
         limitForLocation,
         percentagePlayerHit,
     }

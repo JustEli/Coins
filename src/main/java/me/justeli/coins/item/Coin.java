@@ -5,6 +5,7 @@ import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Settings;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -29,6 +30,8 @@ public class Coin
             {
                 meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin)));
                 meta.setLore(new ArrayList<>());
+                if (Settings.hB.get(Config.BOOLEAN.enchantedCoin))
+                    meta.addEnchant(Enchantment.DURABILITY, 1, true);
             }
             this.coin.setItemMeta(meta);
         }

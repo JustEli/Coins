@@ -6,7 +6,7 @@
 
     <groupId>me.justeli.coins</groupId>
     <artifactId>Coins</artifactId>
-    <version>1.9.4</version>
+    <version>1.9.5</version>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>

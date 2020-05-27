@@ -18,6 +18,9 @@ multiSuffix: "s"
 # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
 coinItem: coin     # coin = sunflower
 
+# Should the coin have an enchanted effect?
+enchantedCoin: false
+
 # You can also set a custom texture for the coin, as skull. Filling this will disable 'coinItem'.
 # Find textures here (example): https://minecraft-heads.com/custom-heads/decoration/3005-money-bag
 # Input the string from "Other > Value" at the bottom of the page, it's a 'texture value'.

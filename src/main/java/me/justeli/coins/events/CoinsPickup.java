@@ -93,8 +93,8 @@ public class CoinsPickup
                         Sound playSound = Sound.valueOf(Settings.hB.get(Config.BOOLEAN.olderServer) && (sound.equals("BLOCK_LAVA_POP") || sound
                                 .equals("ITEM_ARMOR_EQUIP_GOLD"))? "NOTE_STICKS" : sound.toUpperCase());
 
-                        float volume = Settings.hD.get(Config.DOUBLE.pickupVolume).floatValue();
-                        float pitch = Settings.hD.get(Config.DOUBLE.pickupPitch).floatValue();
+                        float volume = Settings.hD.get(Config.DOUBLE.soundVolume).floatValue();
+                        float pitch = Settings.hD.get(Config.DOUBLE.soundPitch).floatValue();
 
                         p.playSound(p.getEyeLocation(), playSound, volume == 0? 0.3f : volume, pitch == 0? 0.3f : pitch);
                     }
