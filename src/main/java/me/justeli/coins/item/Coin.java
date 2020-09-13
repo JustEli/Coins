@@ -14,7 +14,7 @@ import java.util.Collections;
 
 public class Coin
 {
-    private ItemStack coin;
+    private final ItemStack coin;
 
     public Coin ()
     {
@@ -30,9 +30,16 @@ public class Coin
             {
                 meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin)));
                 meta.setLore(new ArrayList<>());
-                meta.setCustomModelData(1);
+
+                if (Settings.hD.get(Config.DOUBLE.customModelData) > 0)
+                {
+                    meta.setCustomModelData(Settings.hD.get(Config.DOUBLE.customModelData).intValue());
+                }
+
                 if (Settings.hB.get(Config.BOOLEAN.enchantedCoin))
+                {
                     meta.addEnchant(Enchantment.DURABILITY, 1, true);
+                }
             }
             this.coin.setItemMeta(meta);
         }

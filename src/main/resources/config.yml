@@ -120,7 +120,11 @@ limitForLocation: 1
 #    disabledWorlds:
 #    - plots
 #    - creative
-disabledWorlds:
+disabledWorlds: []
+
+# This value sets the Custom Model Data value for the coin. This can be used for custom textures.
+# Default: 0 (disables the feature) You are probably only interested if you use a custom texture pack.
+customModelData: 0
 
 # Lets players use /withdraw <amount> to get a coin "<amount> <coin name>s": for example "53 Coins".
 # This allows players to store the coins in chests, but won't be easier to give to others.

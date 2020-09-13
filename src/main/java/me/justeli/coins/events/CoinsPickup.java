@@ -28,8 +28,7 @@ public class CoinsPickup
     private final static HashMap<UUID, Double> pickup = new HashMap<>();
 
     @EventHandler (ignoreCancelled = true)
-    @SuppressWarnings ("deprecation")
-    public void onPickup (PlayerPickupItemEvent e)
+    public void onPickup (PickupEvent e)
     {
         for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds))
             if (e.getPlayer().getWorld().getName().equalsIgnoreCase(world))
@@ -48,7 +47,7 @@ public class CoinsPickup
                 Player p = e.getPlayer();
 
                 if (!p.hasPermission("coins.disable") || p.isOp() || p.hasPermission("*"))
-                    giveCoin(item, e.getPlayer(), 0);
+                    giveCoin(item, p, 0);
             }
             else if (pickupName.endsWith(coinName + Settings.hS.get(Config.STRING.multiSuffix)))
             {
@@ -64,10 +63,11 @@ public class CoinsPickup
     private static void giveCoin (Item item, Player p, long randomMoney)
     {
         ItemMeta meta = item.getItemStack().getItemMeta();
+        if (meta == null)
+            return;
 
-        if (meta != null && meta.getLore() != null)
-            if (thrown.containsKey(meta.getLore().get(0)))
-                return;
+        if (meta.getLore() != null && thrown.containsKey(meta.getLore().get(0)))
+            return;
 
         String random = String.valueOf(Math.random());
         meta.setLore(Collections.singletonList(random));
@@ -81,31 +81,31 @@ public class CoinsPickup
             {
                 item.remove();
                 thrown.remove(meta.getLore().get(0));
-                if (randomMoney == 0) giveReward(item.getItemStack(), p);
-                else addMoney(p, (double) randomMoney, 0);
-
-                if (Settings.hB.get(Config.BOOLEAN.pickupSound))
-                {
-                    try
-                    {
-                        String sound = Settings.hS.get(Config.STRING.soundName);
-
-                        Sound playSound = Sound.valueOf(Settings.hB.get(Config.BOOLEAN.olderServer) && (sound.equals("BLOCK_LAVA_POP") || sound
-                                .equals("ITEM_ARMOR_EQUIP_GOLD"))? "NOTE_STICKS" : sound.toUpperCase());
-
-                        float volume = Settings.hD.get(Config.DOUBLE.soundVolume).floatValue();
-                        float pitch = Settings.hD.get(Config.DOUBLE.soundPitch).floatValue();
-
-                        p.playSound(p.getEyeLocation(), playSound, volume == 0? 0.3f : volume, pitch == 0? 0.3f : pitch);
-                    }
-                    catch (IllegalArgumentException e)
-                    {
-                        Settings.errorMessage(Settings.Msg.NO_SUCH_SOUND, new String[]{e.getMessage()});
-                    }
-                }
             }
         }.runTaskLater(Coins.getInstance(), 2);
 
+        if (randomMoney == 0) giveReward(item.getItemStack(), p);
+        else addMoney(p, (double) randomMoney, 0);
+
+        if (Settings.hB.get(Config.BOOLEAN.pickupSound))
+        {
+            try
+            {
+                String sound = Settings.hS.get(Config.STRING.soundName);
+
+                Sound playSound = Sound.valueOf(Settings.hB.get(Config.BOOLEAN.olderServer) && (sound.equals("BLOCK_LAVA_POP") || sound
+                        .equals("ITEM_ARMOR_EQUIP_GOLD"))? "NOTE_STICKS" : sound.toUpperCase());
+
+                float volume = Settings.hD.get(Config.DOUBLE.soundVolume).floatValue();
+                float pitch = Settings.hD.get(Config.DOUBLE.soundPitch).floatValue();
+
+                p.playSound(p.getEyeLocation(), playSound, volume == 0? 0.3f : volume, pitch == 0? 0.3f : pitch);
+            }
+            catch (IllegalArgumentException e)
+            {
+                Settings.errorMessage(Settings.Msg.NO_SUCH_SOUND, new String[]{e.getMessage()});
+            }
+        }
     }
 
     public static void giveReward (ItemStack item, Player p)

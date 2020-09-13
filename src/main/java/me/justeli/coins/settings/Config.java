@@ -57,6 +57,7 @@ public enum Config
         soundVolume,
         limitForLocation,
         percentagePlayerHit,
+        customModelData,
     }
 
     public enum ARRAY

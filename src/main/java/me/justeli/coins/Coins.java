@@ -7,8 +7,10 @@ import me.justeli.coins.cancel.CancelHopper;
 import me.justeli.coins.cancel.CancelInventories;
 import me.justeli.coins.cancel.CoinPlace;
 import me.justeli.coins.cancel.PreventSpawner;
+import me.justeli.coins.events.BukkitEvents;
 import me.justeli.coins.events.CoinsPickup;
 import me.justeli.coins.events.DropCoin;
+import me.justeli.coins.events.PaperEvents;
 import me.justeli.coins.item.CoinParticles;
 import me.justeli.coins.main.Cmds;
 import me.justeli.coins.main.Metrics;
@@ -101,6 +103,12 @@ public class Coins
                 Coins.console(LogType.INFO, "A new version of Coins was released (" + version + ")!");
                 Coins.console(LogType.INFO, "https://www.spigotmc.org/resources/coins.33382/");
             }
+
+            if (!getServer().getVersion().contains("Paper"))
+            {
+                getLogger().warning(ChatColor.YELLOW.toString() + ChatColor.UNDERLINE + "The plugin Coins recommends to use Paper instead of " +
+                        "Spigot as server software. Coins can be picked up with a full inventory when Paper (MC version 1.13 and up) is used.");
+            }
         });
 
         later(1, () ->
@@ -131,6 +139,7 @@ public class Coins
             metrics.add("usingSkullTexture", String.valueOf(texture != null && !texture.isEmpty()));
             metrics.add("disableHoppers", String.valueOf(Settings.hB.get(Config.BOOLEAN.disableHoppers)));
             metrics.add("dropWithAnyDeath", String.valueOf(Settings.hB.get(Config.BOOLEAN.dropWithAnyDeath)));
+            metrics.add("usingPaper", String.valueOf(getServer().getVersion().contains("Paper")));
         });
 
         if (getServer().getPluginManager().getPlugin("Vault") == null)
@@ -171,6 +180,16 @@ public class Coins
     private void registerEvents ()
     {
         PluginManager manager = getServer().getPluginManager();
+
+        String v = Bukkit.getVersion();
+        boolean invalidVersion = v.contains("1.8") || v.contains("1.9") || v.contains("1.10") || v.contains("1.11") || v.contains("1.12");
+        boolean validPaper = v.contains("Paper") && !invalidVersion;
+
+        getLogger().info("Coins detected Paper 1.13+. We're now going to register some events from Paper, " +
+                "which supports coin pickup with full inventory!");
+
+        manager.registerEvents(validPaper? new PaperEvents() : new BukkitEvents(), this);
+
         manager.registerEvents(new CancelHopper(), this);
         manager.registerEvents(new PreventSpawner(), this);
         manager.registerEvents(new CoinsPickup(), this);
