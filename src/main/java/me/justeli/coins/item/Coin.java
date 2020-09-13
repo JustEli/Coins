@@ -30,6 +30,7 @@ public class Coin
             {
                 meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin)));
                 meta.setLore(new ArrayList<>());
+                meta.setCustomModelData(1);
                 if (Settings.hB.get(Config.BOOLEAN.enchantedCoin))
                     meta.addEnchant(Enchantment.DURABILITY, 1, true);
             }
