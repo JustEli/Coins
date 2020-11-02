@@ -52,7 +52,7 @@ public class DropCoin
                 return;
         }
 
-        if (!Settings.hB.get(Config.BOOLEAN.olderServer))
+        if (!Settings.hB.get(Config.BOOLEAN.olderServer) && !Settings.hB.get(Config.BOOLEAN.dropWithAnyDeath))
         {
             AttributeInstance maxHealth = ((Attributable) m).getAttribute(Attribute.GENERIC_MAX_HEALTH);
             double hitSetting = Settings.hD.get(Config.DOUBLE.percentagePlayerHit);

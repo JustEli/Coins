@@ -1,0 +1,28 @@
+{
+  "LOADED_SETTINGS" : "&3&oImpostazioni attualmente caricate della configurazione Coins.",
+  "NO_PERMISSION" : "&4Non hai accesso a quel comando.",
+  "RELOAD_SUCCESS" : "&eConfigurazione di &6Coins &eè stato ricaricato &a{0}ms&e.",
+  "MINOR_ISSUES" : "&c&oCi sono stati alcuni errori durante il ricaricamento, controlla la console.",
+  "CHECK_SETTINGS" : "&e&oÈ possibile controllare le impostazioni caricate con &f&o/coins settings&e&o.",
+  "WITHDRAW_COINS" : "&e&oAi prelevato &f&o{$}{0} &e&oe ricevuto &f&o{0} coins&e&o per questo.",
+  "NOT_THAT_MUCH" : "&cNon ti è permesso prelevare così tanto.",
+  "COINS_DISABLED" : "&cCoins sono disattivati in questo mondo.",
+  "SPAWNED_COINS" : "&9Generato {0} coins nel raggio {1} in torno a {2}.",
+  "REMOVED_COINS" : "&9Rimosso un totale di {0} coins.",
+  "INVENTORY_FULL" : "&cNon puoi ritirare quando il tuo inventario è pieno!",
+
+  "PLAYER_NOT_FOUND" : "&4Il giocatore non è stato trovato.",
+  "COORDS_NOT_FOUND" : "&4Non è stato possibile trovare le coordinate o il mondo.",
+
+  "INVALID_AMOUNT" : "&cQuesto è un importo non valido.",
+  "INVALID_NUMBER" : "&cQuesto è un numero non valido.",
+  "INVALID_RADIUS" : "&cQuesto è un raggio non valido.",
+
+  "COINS_HELP" : "&4:: Info Coins",
+  "DROP_USAGE" : "&c/coins drop <player|x,y,z[,Mondo]> <amount> [Raggio]",
+  "REMOVE_USAGE" : "&c/coins remove [radius/all] &7- Rimuove coins nel raggio",
+  "SETTINGS_USAGE" : "&c/coins settings &7- Elenca le impostazioni attualmenti",
+  "RELOAD_USAGE" : "&c/coins reload &7- Ricarica la config.yml",
+  "VERSION_CHECK" : "&c/coins version &7- Controlla se c'è una nuova versione",
+  "WITHDRAW_USAGE" : "&c/withdraw <coins> &7- Ritirare dei soldi in coins"
+}
