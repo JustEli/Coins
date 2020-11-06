@@ -4,6 +4,7 @@ import me.justeli.coins.events.CoinsPickup;
 import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Settings;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.block.Container;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -48,6 +49,23 @@ public class CoinPlace
 
                     double amount = Integer.parseInt(ChatColor.stripColor(pickupName.split(" ")[0]));
                     CoinsPickup.addMoney(p, amount * multi, 0);
+
+                    try
+                    {
+                        String sound = Settings.hS.get(Config.STRING.soundName);
+
+                        Sound playSound = Sound.valueOf(Settings.hB.get(Config.BOOLEAN.olderServer) && (sound.equals("BLOCK_LAVA_POP") || sound
+                                .equals("ITEM_ARMOR_EQUIP_GOLD"))? "NOTE_STICKS" : sound.toUpperCase());
+
+                        float volume = Settings.hD.get(Config.DOUBLE.soundVolume).floatValue();
+                        float pitch = Settings.hD.get(Config.DOUBLE.soundPitch).floatValue();
+
+                        p.playSound(p.getEyeLocation(), playSound, volume == 0? 0.3f : volume, pitch == 0? 0.3f : pitch);
+                    }
+                    catch (IllegalArgumentException ex)
+                    {
+                        Settings.errorMessage(Settings.Msg.NO_SUCH_SOUND, new String[]{ex.getMessage()});
+                    }
                 }
             }
         }
