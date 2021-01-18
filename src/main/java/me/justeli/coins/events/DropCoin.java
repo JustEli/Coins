@@ -8,7 +8,6 @@ import me.justeli.coins.item.Coin;
 import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Settings;
 import org.bukkit.Location;
-import org.bukkit.attribute.Attributable;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
@@ -18,9 +17,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.projectiles.ProjectileSource;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -31,18 +33,21 @@ public class DropCoin
 
     // Drop coins when mob is killed.
     @EventHandler
-    public void onDeath (EntityDeathEvent e)
+    public void ordinaryDeath (EntityDeathEvent e)
     {
-        Entity m = e.getEntity();
+        onDeath(e.getEntity(), e.getEntity().getKiller());
+    }
 
+    public void onDeath (LivingEntity entity, Player killer)
+    {
         for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds))
-            if (m.getWorld().getName().equalsIgnoreCase(world))
+            if (entity.getWorld().getName().equalsIgnoreCase(world))
                 return;
 
         int setLimit = Settings.hD.get(Config.DOUBLE.limitForLocation).intValue();
         if (setLimit >= 1)
         {
-            final Location location = m.getLocation().getBlock().getLocation().clone();
+            final Location location = entity.getLocation().getBlock().getLocation().clone();
             int killAmount = locationTracker.getOrDefault(location, 0);
             locationTracker.put(location, killAmount + 1);
 
@@ -54,47 +59,81 @@ public class DropCoin
 
         if (!Settings.hB.get(Config.BOOLEAN.olderServer) && !Settings.hB.get(Config.BOOLEAN.dropWithAnyDeath))
         {
-            AttributeInstance maxHealth = ((Attributable) m).getAttribute(Attribute.GENERIC_MAX_HEALTH);
+            AttributeInstance maxHealth = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH);
             double hitSetting = Settings.hD.get(Config.DOUBLE.percentagePlayerHit);
 
-            if (hitSetting > 0 && maxHealth != null && getPlayerDamage(m.getUniqueId())/maxHealth.getValue() < hitSetting)
+            if (hitSetting > 0 && maxHealth != null && getPlayerDamage(entity.getUniqueId())/maxHealth.getValue() < hitSetting)
                 return;
         }
 
-        if (e.getEntity().getKiller() != null)
+        if (killer != null)
         {
-            if ((m instanceof Monster || m instanceof Slime || m instanceof Ghast || m instanceof EnderDragon
-                    || (!Settings.hB.get(Config.BOOLEAN.olderServer) && m instanceof Shulker)
-                    || (Settings.hB.get(Config.BOOLEAN.newerServer) && m instanceof Phantom))
+            if ((entity instanceof Monster || entity instanceof Slime || entity instanceof Ghast || entity instanceof EnderDragon
+                    || (!Settings.hB.get(Config.BOOLEAN.olderServer) && entity instanceof Shulker)
+                    || (Settings.hB.get(Config.BOOLEAN.newerServer) && entity instanceof Phantom))
 
-                    || ((m instanceof Animals || m instanceof Squid || m instanceof Snowman || m instanceof IronGolem
-                    || m instanceof Villager || m instanceof Ambient) && Settings.hB.get(Config.BOOLEAN.passiveDrop))
+                    || ((entity instanceof Animals || entity instanceof Squid || entity instanceof Snowman || entity instanceof IronGolem
+                    || entity instanceof Villager || entity instanceof Ambient) && Settings.hB.get(Config.BOOLEAN.passiveDrop))
 
-                    || (m instanceof Player && Settings.hB.get(Config.BOOLEAN.playerDrop) && Coins.getEconomy().getBalance((Player) m) >= 0))
-            { dropMobCoin(m, e.getEntity().getKiller()); }
+                    || (entity instanceof Player && Settings.hB.get(Config.BOOLEAN.playerDrop) && Coins.getEconomy().getBalance((Player) entity) >= 0))
+            { dropMobCoin(entity, killer); }
         }
         else if (Settings.hB.get(Config.BOOLEAN.dropWithAnyDeath))
-            dropMobCoin(m, null);
+            dropMobCoin(entity, null);
 
-        if (m instanceof Player && Settings.hB.get(Config.BOOLEAN.loseOnDeath))
+        if (entity instanceof Player && Settings.hB.get(Config.BOOLEAN.loseOnDeath))
         {
             double second = Settings.hD.get(Config.DOUBLE.moneyTaken_from);
             double first = Settings.hD.get(Config.DOUBLE.moneyTaken_to) - second;
 
-            Player p = (Player) e.getEntity();
+            Player player = (Player) entity;
             double random = Math.random() * first + second;
-            double take = Settings.hB.get(Config.BOOLEAN.takePercentage)? (random / 100) * Coins.getEconomy().getBalance(p) : random;
+            double take = Settings.hB.get(Config.BOOLEAN.takePercentage)? (random / 100) * Coins.getEconomy().getBalance(player) : random;
 
-            if (take > 0 && Coins.getEconomy().withdrawPlayer(p, (long) take).transactionSuccess())
+            if (take > 0 && Coins.getEconomy().withdrawPlayer(player, (long) take).transactionSuccess())
             {
-                Title.sendSubTitle(p, 20, 100, 20, Settings.hS.get(Config.STRING.deathMessage).replace("%amount%", String.valueOf((long) take))
-                        .replace("{$}", Settings.hS.get(Config.STRING.currencySymbol)));
+                Title.sendSubTitle(player, 20, 100, 20, Settings.hS.get(Config.STRING.deathMessage).replace("%amount%",
+                        String.valueOf((long) take)).replace("{$}", Settings.hS.get(Config.STRING.currencySymbol)));
 
-                if (Settings.hB.get(Config.BOOLEAN.dropOnDeath) && p.getLocation().getWorld() != null)
-                    p.getWorld().dropItem(p.getLocation(), new Coin().withdraw((long) take).item());
+                if (Settings.hB.get(Config.BOOLEAN.dropOnDeath) && player.getLocation().getWorld() != null)
+                    player.getWorld().dropItem(player.getLocation(), new Coin().withdraw((long) take).item());
             }
         }
     }
+
+    // Bow & Trident Section
+
+    @Nullable
+    public Projectile resolveProjectileOrNull(EntityDamageByEntityEvent event)
+    {
+        Entity damager = event.getDamager();
+        return  (damager instanceof Projectile) ? (Projectile) damager : null;
+    }
+
+
+    @Nullable
+    public Player resolvePlayerShooterOrNull(EntityDamageByEntityEvent event)
+    {
+        Projectile projectile = resolveProjectileOrNull(event);
+        if (projectile == null) { return null; }
+
+        ProjectileSource shooter = projectile.getShooter();
+        return (shooter instanceof Player) ? (Player) shooter : null;
+    }
+
+    @EventHandler
+    public void onEntityDeath(EntityDeathEvent event)
+    {
+        LivingEntity dead = event.getEntity();
+        EntityDamageEvent damageCause = dead.getLastDamageCause();
+
+        if (!(damageCause instanceof EntityDamageByEntityEvent)) { return; }
+
+        EntityDamageByEntityEvent damageCausedByEntity = (EntityDamageByEntityEvent) damageCause;
+        onDeath(dead, resolvePlayerShooterOrNull(damageCausedByEntity));
+    }
+
+    // End of Bow & Trident Section
 
     private void dropMobCoin (Entity m, Player p)
     {

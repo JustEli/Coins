@@ -24,6 +24,7 @@ public class SkullValue
     //  # and custom texture signature at http://mineskin.org
 
     private static final HashMap<String, ItemStack> coin = new HashMap<>();
+    private static final UUID SKULL_UUID = UUID.fromString("00000001-0001-0001-0001-000000000002");
 
     public static ItemStack get (String texture)
     {
@@ -38,7 +39,7 @@ public class SkullValue
 
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
 
-        GameProfile profile = new GameProfile(UUID.randomUUID(), "randomCoin");
+        GameProfile profile = new GameProfile(SKULL_UUID, "randomCoin");
         profile.getProperties().put("textures", new Property("textures", texture));
 
         Field profileField;

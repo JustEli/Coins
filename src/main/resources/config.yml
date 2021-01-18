@@ -27,6 +27,8 @@ enchantedCoin: false
 # In case of the example, that would be the one starting with "eyJ0ZXh0dXJl[...]".
 skullTexture: ""
 
+# In case you need the UUID of the skull, it is: 00000001-0001-0001-0001-000000000002
+
 # This message is sent as action bar, telling the player how much money they have picked up.
 # The variable {$} will be replaced by the 'currencySymbol', default: $.
 pickupMessage: "&2+ &a{$}%amount%"
