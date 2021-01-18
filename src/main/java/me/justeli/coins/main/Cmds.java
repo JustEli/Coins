@@ -17,6 +17,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -124,46 +125,60 @@ public class Cmds
                 return true;
             }
 
-            for (String world : Settings.hA.get(Config.ARRAY.disabledWorlds))
+            Player player = (Player) sender;
+            if (Settings.hA.get(Config.ARRAY.disabledWorlds).contains(player.getWorld().getName()))
             {
-                if (((Player) sender).getWorld().getName().equalsIgnoreCase(world))
-                {
-                    sender.sendMessage(color(Messages.COINS_DISABLED.toString()));
-                    return true;
-                }
+                sender.sendMessage(color(Messages.COINS_DISABLED.toString()));
+                return true;
             }
 
-            Player p = (Player) sender;
-
-            if (args.length >= 1)
+            if (player.getInventory().firstEmpty() == -1)
             {
-                long amount;
-
-                try { amount = Integer.parseInt(args[0]); }
-                catch (NumberFormatException e)
-                {
-                    sender.sendMessage(color(Messages.INVALID_AMOUNT.toString()));
-                    return true;
-                }
-
-                if (amount > 0 && amount <= Settings.hD.get(Config.DOUBLE.maxWithdrawAmount) && Coins.getEconomy().getBalance(p) >= amount)
-                {
-                    if (p.getInventory().firstEmpty() == -1)
-                    {
-                        p.sendMessage(color(Messages.INVENTORY_FULL.toString()));
-                        return true;
-                    }
-                    p.getInventory().addItem(new Coin().withdraw(amount).item());
-                    Coins.getEconomy().withdrawPlayer(p, amount);
-                    p.sendMessage(color(Messages.WITHDRAW_COINS.toString().replace("{0}", Long.toString(amount))));
-                    new ActionBar(Settings.hS.get(Config.STRING.deathMessage).replace("%amount%", String.valueOf(amount))
-                            .replace("{$}", Settings.hS.get(Config.STRING.currencySymbol))).send(p);
-                }
-                else p.sendMessage(color(Messages.NOT_THAT_MUCH.toString()));
+                player.sendMessage(color(Messages.INVENTORY_FULL.toString()));
+                return true;
             }
-            else p.sendMessage(color(Messages.WITHDRAW_USAGE.toString()));
+
+            if (args.length == 0)
+            {
+                player.sendMessage(color(Messages.WITHDRAW_USAGE.toString()));
+                return true;
+            }
+
+            int worth = parseInt(args[0]);
+            int amount = args.length >= 2? parseInt(args[1]) : 1;
+            int total = worth * amount;
+
+            if (worth < 1 || amount < 1 || total < 1 || amount > 64)
+            {
+                sender.sendMessage(color(Messages.INVALID_AMOUNT.toString()));
+                return true;
+            }
+
+            if (worth <= Settings.hD.get(Config.DOUBLE.maxWithdrawAmount) && Coins.getEconomy().getBalance(player) >= total)
+            {
+                ItemStack coin = new Coin().withdraw(worth).item();
+                coin.setAmount(amount);
+
+                player.getInventory().addItem(coin);
+                Coins.getEconomy().withdrawPlayer(player, total);
+
+                player.sendMessage(color(Messages.WITHDRAW_COINS.toString().replace("{0}", Long.toString(total))));
+
+                new ActionBar(Settings.hS.get(Config.STRING.deathMessage).replace("%amount%", String.valueOf(total))
+                        .replace("{$}", Settings.hS.get(Config.STRING.currencySymbol))).send(player);
+            }
+            else
+            {
+                player.sendMessage(color(Messages.NOT_THAT_MUCH.toString()));
+            }
         }
         return false;
+    }
+
+    private int parseInt (String arg)
+    {
+        try { return Integer.parseInt(arg); }
+        catch (NumberFormatException e) { return 0; }
     }
 
     private void dropCoins (CommandSender sender, String[] args)

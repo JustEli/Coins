@@ -24,5 +24,5 @@
   "SETTINGS_USAGE" : "&c/coins settings &7- geef actuele instellingen weer",
   "RELOAD_USAGE" : "&c/coins reload &7- herlaad instellingen van config.yml",
   "VERSION_CHECK" : "&c/coins version &7- kijk of er een update is",
-  "WITHDRAW_USAGE" : "&c/withdraw <coins> &7- verander geld in munten"
+  "WITHDRAW_USAGE" : "&c/withdraw <worth> [amount] &7- verander geld in munten"
 }

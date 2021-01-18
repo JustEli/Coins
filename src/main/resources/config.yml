@@ -52,7 +52,7 @@ moneyAmount:
 # How many decimals should money have? Set to 0 for integers/rounded money (i.e. $3 $6 $8).
 # Value 1 (default) means i.e. $2.3 $5.8 $8.0, value of 2 means i.e. $5.23, $3.70, $6.99, etc.
 # This setting will be ignored (and set to 0) if 'dropEachCoin' is set to true.
-moneyDecimals: 1
+moneyDecimals: 2
 
 # Should coins be stacked? (Or should a coin be one on its own?)
 # Stacked coins don't act like one coin. The stack is counted and the worth is multiplied.
@@ -62,9 +62,9 @@ stackCoins: false
 
 # The minimum percentage of damage a player needs to deal to a mob to drop coins.
 # This can be useful for one-hit mob grinders that damage mobs by i.e. fall damage.
-# Value from 0.0 to 1.0: 0.0 meaning 0%, 1.0 meaning 100% (so 0.9 meaning 90%).
+# Value from 0.0 to 1.0: 0.0 meaning 0%, 1.0 meaning 100% (so 0.8 meaning 80%).
 # This feature does not work for Minecraft version 1.8.x.
-percentagePlayerHit: 0.9
+percentagePlayerHit: 0.8
 
 # Disable hoppers to pick up any kind of coins.
 disableHoppers: false
