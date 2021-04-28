@@ -45,6 +45,8 @@ public class TabComplete
                 }
                 if (sender.hasPermission("coins.remove"))
                     list.add("remove");
+                if (sender.hasPermission("coins.toggle"))
+                    list.add("toggle");
             }
             else if (args.length == 2)
             {
