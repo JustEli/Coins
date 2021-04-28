@@ -112,7 +112,7 @@ public class Cmds
                         if (sender.hasPermission("coins.toggle"))
                         {
                             String abled = Coins.toggleDisabled()? "&aenabled" : "&cdisabled";
-                            sender.sendMessage(color("&eCoins has been globally " + abled + "&e. Toggle with /coins toggle."));
+                            sender.sendMessage(color("&eCoins has been globally " + abled + "&e. Toggle with &f/coins toggle&e."));
                             if (Coins.isDisabled())
                             {
                                 sender.sendMessage(color("&eWhen disabled, coins will not drop and withdrawing coins isn't possible. Picking up coins " +

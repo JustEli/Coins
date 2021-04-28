@@ -17,6 +17,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
@@ -48,14 +49,18 @@ public class CoinsPickup
                 Player p = e.getPlayer();
 
                 if (!p.hasPermission("coins.disable") || p.isOp() || p.hasPermission("*"))
+                {
                     giveCoin(item, p, 0);
+                }
             }
             else if (pickupName.endsWith(Settings.getCoinName() + Settings.hS.get(Config.STRING.multiSuffix)))
             {
                 e.setCancelled(true);
                 int amount = Integer.parseInt(ChatColor.stripColor(pickupName.split(" ")[0]));
                 if (!e.getPlayer().hasPermission("coins.disable") || e.getPlayer().isOp() || e.getPlayer().hasPermission("*"))
+                {
                     giveCoin(item, e.getPlayer(), item.getItemStack().getAmount() * amount);
+                }
             }
         }
 

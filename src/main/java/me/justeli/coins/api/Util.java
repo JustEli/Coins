@@ -24,7 +24,7 @@ public class Util
         while (matcher.find())
         {
             String color = msg.substring(matcher.start(), matcher.end());
-            String hex = color.replace("&", "");
+            String hex = color.replace("&", "").toUpperCase();
             msg = msg.replace(color, ChatColor.of(hex).toString());
             matcher = rgbColor.matcher(msg);
         }

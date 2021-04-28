@@ -141,13 +141,14 @@ minePercentage: 0.3
 onlyExperienceBlocks: true
 
 # Put the amount of coins dropped for a specific block type here, by default: blocks drop one coin.
-# EMERALD_ORE is added by default, meaning that on mine of Emerald Ore, 3 coins drop.
+# Keep in mind that this is only for the blocks that drop experience if 'onlyExperienceBlocks' is true.
 # Set a block type to 0 (i.e. 'COAL_ORE: 0') to disable coins for that specific type.
-# You can find block material types via this URL (types that aren't materials will be ignored):
+# You can find block material types via this URL (input types that aren't blocks will be ignored):
 # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
 blockMultiplier:
-  EMERALD_ORE: 3
+  EMERALD_ORE: 2
   DIAMOND_ORE: 2
+  SPAWNER: 5
 
 # Should players lose money on death?
 # It shows a title (in the middle of the screen) how much they lost on death.
