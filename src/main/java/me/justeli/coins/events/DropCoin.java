@@ -165,8 +165,8 @@ public class DropCoin
             if (Math.random() <= Settings.hD.get(Config.DOUBLE.dropChance))
             {
                 int amount = 1;
-                if (Settings.multiplier.containsKey(victim.getType()))
-                    amount = Settings.multiplier.get(victim.getType());
+                if (Settings.mobMultipliers.containsKey(victim.getType()))
+                    amount = Settings.mobMultipliers.get(victim.getType());
 
                 dropCoin(amount, killer, victim.getLocation());
             }
@@ -190,7 +190,13 @@ public class DropCoin
     private void dropBlockCoin (Block block, Player player)
     {
         if (Math.random() <= Settings.hD.get(Config.DOUBLE.minePercentage))
-            Coins.later(1, () -> dropCoin(1, player, block.getLocation().clone().add(0.5, 0.5, 0.5)));
+        {
+            int amount = 1;
+            if (Settings.blockMultipliers.containsKey(block.getType()))
+                amount = Settings.blockMultipliers.get(block.getType());
+            int finalAmount = amount;
+            Coins.later(1, () -> dropCoin(finalAmount, player, block.getLocation().clone().add(0.5, 0.5, 0.5)));
+        }
     }
 
     private void dropCoin (int amount, Player player, Location location)

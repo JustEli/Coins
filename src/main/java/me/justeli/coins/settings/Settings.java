@@ -33,7 +33,8 @@ public class Settings
     public final static HashMap<Config.ARRAY, List<String>> hA = new HashMap<>();
 
     final static HashMap<Messages, String> language = new HashMap<>();
-    public final static HashMap<EntityType, Integer> multiplier = new HashMap<>();
+    public final static HashMap<EntityType, Integer> mobMultipliers = new HashMap<>();
+    public final static HashMap<Material, Integer> blockMultipliers = new HashMap<>();
 
     private static FileConfiguration getFile ()
     {
@@ -107,17 +108,29 @@ public class Settings
             for (Config.ARRAY s : Config.ARRAY.values())
                 hA.put(s, file.getStringList(s.name()));
 
-            Set<String> keys = file.getConfigurationSection(Config.STRING.mobMultiplier.name()).getKeys(false);
-            for (String key : keys)
+            for (String key : file.getConfigurationSection(Config.STRING.mobMultiplier.name()).getKeys(false))
             {
                 try
                 {
                     EntityType type = EntityType.valueOf(key.toUpperCase());
-                    multiplier.put(type, file.getInt(Config.STRING.mobMultiplier.name() + "." + key));
+                    mobMultipliers.put(type, file.getInt(Config.STRING.mobMultiplier.name() + "." + key));
                 }
                 catch (IllegalArgumentException e)
                 {
                     errorMessage(Msg.NO_SUCH_ENTITY, new String[]{key.toUpperCase()});
+                    return false;
+                }
+            }
+            for (String key : file.getConfigurationSection(Config.STRING.blockMultiplier.name()).getKeys(false))
+            {
+                try
+                {
+                    Material type = Material.matchMaterial(key);
+                    blockMultipliers.put(type, file.getInt(Config.STRING.blockMultiplier.name() + "." + key));
+                }
+                catch (IllegalArgumentException e)
+                {
+                    errorMessage(Msg.NO_SUCH_MATERIAL, new String[]{key.toUpperCase()});
                     return false;
                 }
             }
@@ -137,7 +150,8 @@ public class Settings
 
     public static void remove ()
     {
-        multiplier.clear();
+        mobMultipliers.clear();
+        blockMultipliers.clear();
         hB.clear();
         hS.clear();
         hD.clear();
