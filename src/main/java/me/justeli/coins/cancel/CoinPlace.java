@@ -1,9 +1,10 @@
 package me.justeli.coins.cancel;
 
+import me.justeli.coins.api.Util;
 import me.justeli.coins.events.CoinsPickup;
 import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Settings;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.block.Container;
 import org.bukkit.entity.Player;
@@ -31,9 +32,7 @@ public class CoinPlace
             Player p = e.getPlayer();
 
             String pickupName = e.getItem().getItemMeta().getDisplayName();
-            String coinName = ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin));
-
-            if (pickupName.endsWith(coinName + Settings.hS.get(Config.STRING.multiSuffix)))
+            if (pickupName.endsWith(Settings.getCoinName() + Settings.hS.get(Config.STRING.multiSuffix)))
             {
                 if (Settings.hB.get(Config.BOOLEAN.olderServer) || !p.hasPermission("coins.withdraw"))
                 {

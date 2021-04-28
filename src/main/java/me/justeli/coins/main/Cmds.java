@@ -4,12 +4,12 @@ import me.justeli.coins.Coins;
 import me.justeli.coins.api.ActionBar;
 import me.justeli.coins.api.Complete;
 import me.justeli.coins.api.Extras;
+import me.justeli.coins.api.Util;
 import me.justeli.coins.item.Coin;
 import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Messages;
 import me.justeli.coins.settings.Settings;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -32,7 +32,7 @@ public class Cmds
 
     private static String color (String message)
     {
-        return ChatColor.translateAlternateColorCodes('&', message);
+        return Util.color(message);
     }
 
     @Override
@@ -325,7 +325,7 @@ public class Cmds
                 Item i = (Item) m;
                 if (i.getItemStack().getItemMeta() != null && i.getItemStack().getItemMeta().hasDisplayName())
                 {
-                    if (i.getItemStack().getItemMeta().getDisplayName().equals((color(Settings.hS.get(Config.STRING.nameOfCoin)))))
+                    if (i.getItemStack().getItemMeta().getDisplayName().equals(Settings.getCoinName()))
                     {
                         amount++;
                         double random = (RANDOM.nextDouble() * 3);

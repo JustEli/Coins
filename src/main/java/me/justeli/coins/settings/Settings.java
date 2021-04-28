@@ -1,6 +1,8 @@
 package me.justeli.coins.settings;
 
+import io.papermc.lib.PaperLib;
 import me.justeli.coins.Coins;
+import me.justeli.coins.api.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -19,7 +21,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Eli on 12/14/2016.
@@ -35,6 +36,13 @@ public class Settings
     final static HashMap<Messages, String> language = new HashMap<>();
     public final static HashMap<EntityType, Integer> mobMultipliers = new HashMap<>();
     public final static HashMap<Material, Integer> blockMultipliers = new HashMap<>();
+
+    private static String COIN_NAME;
+
+    public static String getCoinName ()
+    {
+        return COIN_NAME;
+    }
 
     private static FileConfiguration getFile ()
     {
@@ -54,10 +62,10 @@ public class Settings
             for (Config.BOOLEAN s : Config.BOOLEAN.values())
                 hB.put(s, file.getBoolean(s.name()));
 
-            String v = Bukkit.getVersion();
-            if (v.contains("1.8") || v.contains("1.7"))
+            int version = PaperLib.getMinecraftVersion();
+            if (version < 9)
                 hB.put(Config.BOOLEAN.olderServer, true);
-            if (v.contains("1.14") || v.contains("1.13") || v.contains("1.15") || v.contains("1.16"))
+            if (version > 12)
                 hB.put(Config.BOOLEAN.newerServer, true);
 
             for (Config.STRING s : Config.STRING.values())
@@ -140,6 +148,8 @@ public class Settings
             errorMessage(Msg.OUTDATED_CONFIG, null);
             return false;
         }
+
+        COIN_NAME = Util.color(Settings.hS.get(Config.STRING.nameOfCoin));
 
         boolean langErr = setLanguage();
         if (!langErr)

@@ -21,7 +21,7 @@ import me.justeli.coins.settings.Settings;
 import net.milkbowl.vault.economy.Economy;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.PluginManager;
@@ -179,9 +179,7 @@ public class Coins
     {
         PluginManager manager = getServer().getPluginManager();
 
-        String v = Bukkit.getVersion();
-        boolean invalidVersion = v.contains("1.8") || v.contains("1.9") || v.contains("1.10") || v.contains("1.11") || v.contains("1.12");
-        boolean validPaper = PaperLib.isPaper() && !invalidVersion;
+        boolean validPaper = PaperLib.isPaper() && PaperLib.getMinecraftVersion() > 12;
 
         if (validPaper) getLogger().info("Coins detected Paper 1.13+. We're now going to register some events from Paper, " +
                 "which supports coin pickup with full inventory!");

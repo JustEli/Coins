@@ -1,9 +1,10 @@
 package me.justeli.coins.item;
 
 import me.justeli.coins.api.SkullValue;
+import me.justeli.coins.api.Util;
 import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Settings;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -11,7 +12,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
 import java.util.UUID;
 
 public class Coin
@@ -30,7 +30,7 @@ public class Coin
             ItemMeta meta = this.coin.getItemMeta();
             if (meta != null)
             {
-                meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin)));
+                meta.setDisplayName(Settings.getCoinName());
                 meta.setLore(new ArrayList<>());
 
                 if (Settings.hD.get(Config.DOUBLE.customModelData) > 0)

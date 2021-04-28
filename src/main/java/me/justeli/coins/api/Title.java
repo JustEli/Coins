@@ -1,7 +1,6 @@
 package me.justeli.coins.api;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -38,7 +37,7 @@ public class Title
 
     public static void sendSubTitle (Player player, Integer fadeIn, Integer stay, Integer fadeOut, String subtitle)
     {
-        subtitle = ChatColor.translateAlternateColorCodes('&', subtitle);
+        subtitle = Util.color(subtitle);
         try
         {
             Object e;

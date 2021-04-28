@@ -4,7 +4,6 @@ import io.papermc.lib.PaperLib;
 import me.justeli.coins.Coins;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 
@@ -14,7 +13,7 @@ public class ActionBar
 
     public ActionBar (String text)
     {
-        this.text = ChatColor.translateAlternateColorCodes('&', text);
+        this.text = Util.color(text);
     }
 
     @SuppressWarnings ("unchecked")

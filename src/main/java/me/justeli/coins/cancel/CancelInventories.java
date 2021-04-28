@@ -1,9 +1,9 @@
 package me.justeli.coins.cancel;
 
+import me.justeli.coins.api.Util;
 import me.justeli.coins.events.CoinsPickup;
 import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Settings;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -28,8 +28,7 @@ public class CancelInventories
         {
             if (stack != null && stack.getItemMeta() != null && stack.getItemMeta().hasDisplayName())
             {
-                if (stack.getItemMeta().getDisplayName()
-                        .contains(ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin))))
+                if (stack.getItemMeta().getDisplayName().contains(Settings.getCoinName()))
                 {
                     e.setCancelled(true);
                 }
@@ -50,8 +49,7 @@ public class CancelInventories
             if (item != null && item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasDisplayName())
             {
                 String name = item.getItemMeta().getDisplayName();
-                String configName = ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin));
-                if (name.equals(configName))
+                if (name.equals(Settings.getCoinName()))
                 {
                     Player p = (Player) e.getWhoClicked();
 
@@ -94,8 +92,7 @@ public class CancelInventories
         if (item != null && item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasDisplayName())
         {
             String name = item.getItemMeta().getDisplayName();
-            String configName = ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin));
-            if (name.contains(configName))
+            if (name.contains(Settings.getCoinName()))
             {
                 e.setCancelled(true);
 

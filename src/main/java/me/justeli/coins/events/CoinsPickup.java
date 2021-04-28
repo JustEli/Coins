@@ -2,10 +2,11 @@ package me.justeli.coins.events;
 
 import me.justeli.coins.Coins;
 import me.justeli.coins.api.ActionBar;
+import me.justeli.coins.api.Util;
 import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Settings;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -41,9 +42,7 @@ public class CoinsPickup
         if (item.getItemStack().getItemMeta() != null && item.getItemStack().getItemMeta().hasDisplayName())
         {
             String pickupName = item.getItemStack().getItemMeta().getDisplayName();
-            String coinName = ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin));
-
-            if (pickupName.equals(coinName))
+            if (pickupName.equals(Settings.getCoinName()))
             {
                 e.setCancelled(true);
                 Player p = e.getPlayer();
@@ -51,7 +50,7 @@ public class CoinsPickup
                 if (!p.hasPermission("coins.disable") || p.isOp() || p.hasPermission("*"))
                     giveCoin(item, p, 0);
             }
-            else if (pickupName.endsWith(coinName + Settings.hS.get(Config.STRING.multiSuffix)))
+            else if (pickupName.endsWith(Settings.getCoinName() + Settings.hS.get(Config.STRING.multiSuffix)))
             {
                 e.setCancelled(true);
                 int amount = Integer.parseInt(ChatColor.stripColor(pickupName.split(" ")[0]));
