@@ -79,12 +79,12 @@ public class DropCoin
                 return;
         }
 
-        if (!Settings.hB.get(Config.BOOLEAN.olderServer) && !Settings.hB.get(Config.BOOLEAN.dropWithAnyDeath))
+        if (!Settings.hB.get(Config.BOOLEAN.olderServer) && !Settings.hB.get(Config.BOOLEAN.dropWithAnyDeath) && killer != null)
         {
             AttributeInstance maxHealth = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH);
             double hitSetting = Settings.hD.get(Config.DOUBLE.percentagePlayerHit);
 
-            if (hitSetting > 0 && maxHealth != null && getPlayerDamage(entity.getUniqueId())/maxHealth.getValue() < hitSetting)
+            if (hitSetting > 0 && maxHealth != null && getPlayerDamage(entity.getUniqueId()) / maxHealth.getValue() < hitSetting)
                 return;
         }
 

@@ -58,12 +58,6 @@
                                 <exclude>META-INF/**</exclude>
                             </excludes>
                         </filter>
-                        <filter>
-                            <artifact>io.papermc:paperlib</artifact>
-                            <excludes>
-                                <exclude>io/papermc/lib/features/**</exclude>
-                            </excludes>
-                        </filter>
                     </filters>
                 </configuration>
                 <executions>
