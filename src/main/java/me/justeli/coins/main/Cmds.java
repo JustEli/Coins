@@ -23,10 +23,13 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Cmds
         implements CommandExecutor
 {
+    private final static Random RANDOM = new Random();
+
     private static String color (String message)
     {
         return ChatColor.translateAlternateColorCodes('&', message);
@@ -325,7 +328,7 @@ public class Cmds
                     if (i.getItemStack().getItemMeta().getDisplayName().equals((color(Settings.hS.get(Config.STRING.nameOfCoin)))))
                     {
                         amount++;
-                        double random = (Math.random() * 3);
+                        double random = (RANDOM.nextDouble() * 3);
                         long rand = (long) random * 5;
                         i.setVelocity(new Vector(0, random, 0));
                         new BukkitRunnable()

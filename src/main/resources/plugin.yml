@@ -1,8 +1,8 @@
-main: "${project.groupId}.${project.artifactId}"
+main: "${project.groupId}.${project.name}"
 name: "${project.name}"
 version: "${project.version}"
 author: JustEli
-website: "https://www.spigotmc.org/resources/coins.33382/"
+website: "${project.url}"
 softdepend: [Vault, WorldGuard, mcMMO]
 api-version: "1.13"
 commands:

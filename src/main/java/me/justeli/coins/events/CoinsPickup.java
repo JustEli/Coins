@@ -11,7 +11,6 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -19,6 +18,7 @@ import org.bukkit.util.Vector;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.UUID;
 
 public class CoinsPickup
@@ -26,6 +26,8 @@ public class CoinsPickup
 {
     private final static HashMap<String, Boolean> thrown = new HashMap<>();
     private final static HashMap<UUID, Double> pickup = new HashMap<>();
+
+    private final static Random RANDOM = new Random();
 
     @EventHandler (ignoreCancelled = true)
     public void onPickup (PickupEvent e)
@@ -69,7 +71,7 @@ public class CoinsPickup
         if (meta.getLore() != null && thrown.containsKey(meta.getLore().get(0)))
             return;
 
-        String random = String.valueOf(Math.random());
+        String random = String.valueOf(RANDOM.nextDouble());
         meta.setLore(Collections.singletonList(random));
         thrown.put(random, true);
         item.getItemStack().setItemMeta(meta);
@@ -120,7 +122,7 @@ public class CoinsPickup
         double first = Settings.hD.get(Config.DOUBLE.moneyAmount_to) - second;
 
         int amount = item.getAmount();
-        Double total = amount * (Math.random() * first + second);
+        Double total = amount * (RANDOM.nextDouble() * first + second);
 
         addMoney(p, total, Settings.hD.get(Config.DOUBLE.moneyDecimals).intValue());
     }

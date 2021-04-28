@@ -29,6 +29,7 @@ import org.bukkit.projectiles.ProjectileSource;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.UUID;
 
 public class DropCoin
@@ -109,7 +110,7 @@ public class DropCoin
             double first = Settings.hD.get(Config.DOUBLE.moneyTaken_to) - second;
 
             Player player = (Player) entity;
-            double random = Math.random() * first + second;
+            double random = RANDOM.nextDouble() * first + second;
             double take = Settings.hB.get(Config.BOOLEAN.takePercentage)? (random / 100) * Coins.getEconomy().getBalance(player) : random;
 
             if (take > 0 && Coins.getEconomy().withdrawPlayer(player, (long) take).transactionSuccess())
@@ -162,12 +163,9 @@ public class DropCoin
                 || (killer == null && Settings.hB.get(Config.BOOLEAN.spawnerDrop))
                 || (killer != null && killer.hasPermission("coins.spawner")) )
         {
-            if (Math.random() <= Settings.hD.get(Config.DOUBLE.dropChance))
+            if (RANDOM.nextDouble() <= Settings.hD.get(Config.DOUBLE.dropChance))
             {
-                int amount = 1;
-                if (Settings.mobMultipliers.containsKey(victim.getType()))
-                    amount = Settings.mobMultipliers.get(victim.getType());
-
+                final int amount = Settings.mobMultipliers.computeIfAbsent(victim.getType(), empty -> 1);
                 dropCoin(amount, killer, victim.getLocation());
             }
         }
@@ -187,15 +185,14 @@ public class DropCoin
             dropBlockCoin(event.getBlock(), event.getPlayer());
     }
 
+    private static final Random RANDOM = new Random();
+
     private void dropBlockCoin (Block block, Player player)
     {
-        if (Math.random() <= Settings.hD.get(Config.DOUBLE.minePercentage))
+        if (RANDOM.nextDouble() <= Settings.hD.get(Config.DOUBLE.minePercentage))
         {
-            int amount = 1;
-            if (Settings.blockMultipliers.containsKey(block.getType()))
-                amount = Settings.blockMultipliers.get(block.getType());
-            int finalAmount = amount;
-            Coins.later(1, () -> dropCoin(finalAmount, player, block.getLocation().clone().add(0.5, 0.5, 0.5)));
+            final int amount = Settings.blockMultipliers.computeIfAbsent(block.getType(), empty -> 1);
+            Coins.later(1, () -> dropCoin(amount, player, block.getLocation().clone().add(0.5, 0.5, 0.5)));
         }
     }
 
@@ -206,13 +203,17 @@ public class DropCoin
             int second = Settings.hD.get(Config.DOUBLE.moneyAmount_from).intValue();
             int first = Settings.hD.get(Config.DOUBLE.moneyAmount_to).intValue() + 1 - second;
 
-            amount *= (Math.random() * first + second);
+            amount *= RANDOM.nextDouble() * first + second;
         }
 
         if (player != null)
             amount *= Extras.getMultiplier(player);
 
         boolean stack = !Settings.hB.get(Config.BOOLEAN.dropEachCoin) && Settings.hB.get(Config.BOOLEAN.stackCoins);
+
+        if (location.getWorld() == null)
+            return;
+
         for (int i = 0; i < amount; i++)
         {
             ItemStack coin = new Coin().stack(stack).item();

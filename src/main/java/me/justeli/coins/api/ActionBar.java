@@ -1,14 +1,16 @@
 package me.justeli.coins.api;
 
+import io.papermc.lib.PaperLib;
 import me.justeli.coins.Coins;
-import org.bukkit.Bukkit;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 
 public class ActionBar
 {
-    private String text;
+    private final String text;
 
     public ActionBar (String text)
     {
@@ -18,39 +20,49 @@ public class ActionBar
     @SuppressWarnings ("unchecked")
     public void send (Player player)
     {
-        String v = Bukkit.getVersion();
-        if (v.contains("1.8") || v.contains("1.9") || v.contains("1.10") || v.contains("1.11"))
+        switch (PaperLib.getMinecraftVersion())
         {
-            JSONObject json = new JSONObject();
-            json.put("text", this.text);
-            try
+            case 7:
             {
-                Object handle = player.getClass().getMethod("getHandle").invoke(player),
-                        connection = handle.getClass().getField("playerConnection").get(handle),
-                        component = ServerPackage.MINECRAFT.getClass("IChatBaseComponent$ChatSerializer").getMethod("a", String.class).invoke(null, json.toString()),
-                        packet = ServerPackage.MINECRAFT.getClass("PacketPlayOutChat").getConstructor(ServerPackage.MINECRAFT.getClass("IChatBaseComponent"), byte.class).newInstance(component, (byte) 2);
-                connection.getClass().getMethod("sendPacket", ServerPackage.MINECRAFT.getClass("Packet")).invoke(connection, packet);
+                player.sendMessage(this.text);
+                return;
             }
-            catch (Throwable e)
+            case 8:
+            case 9:
+            case 10:
+            case 11:
             {
-                throw new RuntimeException(e);
+                JSONObject json = new JSONObject();
+                json.put("text", this.text);
+                try
+                {
+                    Object handle = player.getClass().getMethod("getHandle").invoke(player), connection = handle.getClass()
+                            .getField("playerConnection").get(handle), component = ServerPackage.MINECRAFT
+                            .getClass("IChatBaseComponent$ChatSerializer").getMethod("a", String.class)
+                            .invoke(null, json.toString()), packet = ServerPackage.MINECRAFT.getClass("PacketPlayOutChat")
+                            .getConstructor(ServerPackage.MINECRAFT.getClass("IChatBaseComponent"), byte.class)
+                            .newInstance(component, (byte) 2);
+                    connection.getClass().getMethod("sendPacket", ServerPackage.MINECRAFT.getClass("Packet"))
+                            .invoke(connection, packet);
+                }
+                catch (Throwable e)
+                {
+                    throw new RuntimeException(e);
+                }
+                return;
             }
-        }
-        else if (v.contains("1.7"))
-        {
-            player.sendMessage(this.text);
-        }
-        else
-        {
-            try
+            default:
             {
-                Bars.sendAction(player, this.text);
-            }
-            catch (NoClassDefFoundError e)
-            {
-                Coins.console(Coins.LogType.ERROR, "You seem to be using Bukkit, but the plugin Coins requires Spigot! This prevents the " +
-                        "plugin from showing the amount of money players pick up. Please use Spigot. Moving from Bukkit to Spigot will NOT " +
-                        "cause any problems with other plugins, since Spigot only adds more features to Bukkit.");
+                try
+                {
+                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(this.text));
+                }
+                catch (NoClassDefFoundError e)
+                {
+                    Coins.console(Coins.LogType.ERROR, "You seem to be using Bukkit, but the plugin Coins requires at least Spigot! " +
+                            "This prevents the plugin from showing the amount of money players pick up. Please use Spigot. Moving from Bukkit to " +
+                            "Spigot will NOT cause any problems with other plugins, since Spigot only adds more features to Bukkit.");
+                }
             }
         }
     }

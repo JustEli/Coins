@@ -6,14 +6,21 @@
 
     <groupId>me.justeli.coins</groupId>
     <artifactId>Coins</artifactId>
-    <version>1.10.2</version>
+    <version>b1.10.3</version>
+    <name>Coins</name>
+    <url>https://www.spigotmc.org/resources/coins.33382/</url>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
     <repositories>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
         <repository>
             <id>mojang</id>
             <url>https://libraries.minecraft.net/</url>
@@ -27,8 +34,9 @@
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
     </repositories>
+
     <build>
-        <finalName>${project.name}</finalName>
+        <finalName>${project.name}-${project.version}</finalName>
         <sourceDirectory>src/main/java</sourceDirectory>
         <plugins>
             <plugin>
@@ -43,6 +51,20 @@
                             <shadedPattern>me.justeli.coins.paperlib</shadedPattern>
                         </relocation>
                     </relocations>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/**</exclude>
+                            </excludes>
+                        </filter>
+                        <filter>
+                            <artifact>io.papermc:paperlib</artifact>
+                            <excludes>
+                                <exclude>io/papermc/lib/features/**</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
                 </configuration>
                 <executions>
                     <execution>
@@ -62,8 +84,8 @@
             </resource>
         </resources>
     </build>
+
     <dependencies>
-        <!-- BuildTools.jar is ran and this will work. -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
@@ -73,7 +95,7 @@
         <dependency>
             <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.16.5-R0.1-SNAPSHOT</version>
+            <version>1.13.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

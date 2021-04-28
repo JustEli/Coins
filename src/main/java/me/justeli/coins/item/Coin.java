@@ -11,6 +11,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
+import java.util.UUID;
 
 public class Coin
 {
@@ -52,7 +54,7 @@ public class Coin
     {
         ItemMeta meta = this.coin.getItemMeta();
         if (meta != null)
-            meta.setLore(Collections.singletonList(String.valueOf(Math.random())));
+            meta.setLore(Collections.singletonList(UUID.randomUUID().toString()));
         this.coin.setItemMeta(meta);
 
         return this;

@@ -16,19 +16,19 @@ public class CancelHopper
     @EventHandler (ignoreCancelled = true)
     public void itemHopper (InventoryPickupItemEvent e)
     {
-        if (e.getInventory().getType().equals(InventoryType.HOPPER))
-        {
-            ItemStack item = e.getItem().getItemStack();
-            if (item.getItemMeta() != null && item.getItemMeta().hasDisplayName())
-            {
-                String pickupName = item.getItemMeta().getDisplayName();
-                String coinName = ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin));
+        if (e.getInventory().getType() != InventoryType.HOPPER)
+            return;
 
-                if (pickupName.equals(coinName))
-                {
-                    if (Settings.hB.get(Config.BOOLEAN.disableHoppers)) e.setCancelled(true);
-                    else if (item.getItemMeta().hasLore()) e.getItem().setItemStack(new ItemStack(new Coin().item()));
-                }
+        ItemStack item = e.getItem().getItemStack();
+        if (item.getItemMeta() != null && item.getItemMeta().hasDisplayName())
+        {
+            String pickupName = item.getItemMeta().getDisplayName();
+            String coinName = ChatColor.translateAlternateColorCodes('&', Settings.hS.get(Config.STRING.nameOfCoin));
+
+            if (pickupName.equals(coinName))
+            {
+                if (Settings.hB.get(Config.BOOLEAN.disableHoppers)) e.setCancelled(true);
+                else if (item.getItemMeta().hasLore()) e.getItem().setItemStack(new ItemStack(new Coin().item()));
             }
         }
     }

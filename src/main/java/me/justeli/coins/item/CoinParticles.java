@@ -9,9 +9,13 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.Collections;
+import java.util.Random;
+import java.util.UUID;
 
 public class CoinParticles
 {
+    private static final Random RANDOM = new Random();
+
     public static void dropCoins (Location location, int radius, int amount)
     {
         Location l = location.add(0.0, 0.5, 0.0);
@@ -22,11 +26,11 @@ public class CoinParticles
         {
             later(i, () ->
             {
-                meta.setLore(Collections.singletonList(String.valueOf(Math.random())));
+                meta.setLore(Collections.singletonList(UUID.randomUUID().toString()));
                 coin.setItemMeta(meta);
                 Item item = l.getWorld().dropItem(l, coin);
                 item.setPickupDelay(30);
-                item.setVelocity(new Vector((Math.random() - 0.5) * radius / 10, Math.random() * radius / 5, (Math.random() - 0.5) * radius / 10));
+                item.setVelocity(new Vector((RANDOM.nextDouble() - 0.5) * radius / 10, RANDOM.nextDouble() * radius / 5, (RANDOM.nextDouble() - 0.5) * radius / 10));
             });
         }
     }
