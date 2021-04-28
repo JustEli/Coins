@@ -103,6 +103,26 @@ public class Cmds
                                 sender.sendMessage("https://www.spigotmc.org/resources/coins.33382/");
                             }
                         }
+                        else
+                        {
+                            noPerm(sender);
+                        }
+                        break;
+                    case "toggle":
+                        if (sender.hasPermission("coins.toggle"))
+                        {
+                            String abled = Coins.toggleDisabled()? "&aenabled" : "&cdisabled";
+                            sender.sendMessage(color("&eCoins has been globally " + abled + "&e. Toggle with /coins toggle."));
+                            if (Coins.isDisabled())
+                            {
+                                sender.sendMessage(color("&eWhen disabled, coins will not drop and withdrawing coins isn't possible. Picking up coins " +
+                                        "that were already on the ground and depositing coins is still possible."));
+                            }
+                        }
+                        else
+                        {
+                            noPerm(sender);
+                        }
                         break;
                     default:
                         sendHelp(sender);
@@ -119,6 +139,12 @@ public class Cmds
 
         else if (l.equalsIgnoreCase("withdraw"))
         {
+            if (Coins.isDisabled())
+            {
+                sender.sendMessage(color(Messages.COINS_DISABLED.toString()));
+                return true;
+            }
+
             if (!Settings.hB.get(Config.BOOLEAN.enableWithdraw))
                 return false;
 
@@ -357,16 +383,22 @@ public class Cmds
         String version = Coins.getInstance().getDescription().getVersion();
         String update = Coins.getUpdate();
         String notice = "";
-        if (!update.equals(version))
-            notice = " (outdated; /coins update)";
+        if (Coins.isDisabled())
+            notice = " :: CURRENTLY GLOBALLY DISABLED ::";
+        else if (!update.equals(version))
+            notice = " (outdated -> /coins update)";
 
         sender.sendMessage(color(Messages.COINS_HELP.toString() + " " + version + notice));
 
         if (sender.hasPermission("coins.drop"))
+        {
             sender.sendMessage(color(Messages.DROP_USAGE.toString()));
+        }
 
         if (sender.hasPermission("coins.remove"))
+        {
             sender.sendMessage(color(Messages.REMOVE_USAGE.toString()));
+        }
 
         if (sender.hasPermission("coins.admin"))
         {
@@ -375,8 +407,15 @@ public class Cmds
             sender.sendMessage(color(Messages.VERSION_CHECK.toString()));
         }
 
+        if (sender.hasPermission("coins.toggle"))
+        {
+            sender.sendMessage(color("&c/coins toggle &7- disable or enable Coins globally"));
+        }
+
         if (Settings.hB.get(Config.BOOLEAN.enableWithdraw) && sender.hasPermission("coins.withdraw"))
+        {
             sender.sendMessage(color(Messages.WITHDRAW_USAGE.toString()));
+        }
     }
 
     private void noPerm (CommandSender sender)

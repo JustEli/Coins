@@ -35,6 +35,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by Eli on 12/13/2016.
@@ -60,6 +61,18 @@ public class Coins
     // todo https://www.spigotmc.org/threads/fake-item-pickup-playerpickupitemevent-with-full-inventory.156983/#post-2062690
     // todo https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/meta/tags/CustomItemTagContainer.html
     // todo https://www.spigotmc.org/resources/pickupmoney.11334/
+
+    private static final AtomicBoolean DISABLED = new AtomicBoolean(false);
+
+    public static boolean isDisabled ()
+    {
+        return DISABLED.get();
+    }
+
+    public static boolean toggleDisabled ()
+    {
+        return DISABLED.getAndSet(!DISABLED.get());
+    }
 
     @Override
     public void onEnable ()

@@ -1,6 +1,5 @@
 package me.justeli.coins.cancel;
 
-import me.justeli.coins.api.Util;
 import me.justeli.coins.item.Coin;
 import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Settings;

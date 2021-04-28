@@ -41,6 +41,9 @@ public class DropCoin
     @EventHandler (priority = EventPriority.HIGH)
     public void onEntityDeath (EntityDeathEvent event)
     {
+        if (Coins.isDisabled())
+            return;
+
         LivingEntity dead = event.getEntity();
         EntityDamageEvent damageCause = dead.getLastDamageCause();
 
@@ -175,6 +178,9 @@ public class DropCoin
                    priority = EventPriority.MONITOR)
     public void onMine (BlockBreakEvent event)
     {
+        if (Coins.isDisabled())
+            return;
+
         if (!Settings.hB.get(Config.BOOLEAN.onlyExperienceBlocks))
         {
             dropBlockCoin(event.getBlock(), event.getPlayer());

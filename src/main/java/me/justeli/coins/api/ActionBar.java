@@ -54,7 +54,7 @@ public class ActionBar
             {
                 try
                 {
-                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(this.text));
+                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(this.text));
                 }
                 catch (NoClassDefFoundError e)
                 {
