@@ -1,5 +1,6 @@
 package me.justeli.coins.api;
 
+import io.papermc.lib.PaperLib;
 import net.md_5.bungee.api.ChatColor;
 
 import java.util.regex.Matcher;
@@ -20,14 +21,19 @@ public class Util
 
     private static String parseRGB (String msg)
     {
-        Matcher matcher = rgbColor.matcher(msg);
-        while (matcher.find())
+        if (PaperLib.getMinecraftVersion() >= 16)
         {
-            String color = msg.substring(matcher.start(), matcher.end());
-            String hex = color.replace("&", "").toUpperCase();
-            msg = msg.replace(color, ChatColor.of(hex).toString());
-            matcher = rgbColor.matcher(msg);
+            Matcher matcher = rgbColor.matcher(msg);
+            while (matcher.find())
+            {
+                String color = msg.substring(matcher.start(), matcher.end());
+                String hex = color.replace("&", "").toUpperCase();
+
+                msg = msg.replace(color, ChatColor.of(hex).toString());
+                matcher = rgbColor.matcher(msg);
+            }
         }
+
         return msg;
     }
 }

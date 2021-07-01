@@ -12,7 +12,6 @@ import me.justeli.coins.events.BukkitEvents;
 import me.justeli.coins.events.CoinsPickup;
 import me.justeli.coins.events.DropCoin;
 import me.justeli.coins.events.PaperEvents;
-import me.justeli.coins.item.CoinParticles;
 import me.justeli.coins.main.Cmds;
 import me.justeli.coins.main.Metrics;
 import me.justeli.coins.main.TabComplete;
@@ -20,10 +19,6 @@ import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Settings;
 import net.milkbowl.vault.economy.Economy;
 import org.apache.commons.lang.WordUtils;
-import org.bukkit.Bukkit;
-import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -36,6 +31,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
 
 /**
  * Created by Eli on 12/13/2016.
@@ -44,148 +40,165 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Coins
         extends JavaPlugin
 {
-    private static Coins main;
-    private static Economy eco;
+    // TODO
+    // - add option to not let balance go negative (with dropOnDeath: true)
 
-    private static String update;
+    private static Coins PLUGIN;
+    private static Economy ECONOMY;
+    private static String LATEST;
 
-    public static String getUpdate ()
+    public static Coins plugin ()
     {
-        return update;
+        return PLUGIN;
     }
 
-    // todo add option to not let balance go negative (with dropOnDeath: true)
-    // todo Can you add config for specific blocks for mining?
-    // todo generating of coins in dungeons chests
-
-    // todo https://www.spigotmc.org/threads/fake-item-pickup-playerpickupitemevent-with-full-inventory.156983/#post-2062690
-    // todo https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/meta/tags/CustomItemTagContainer.html
-    // todo https://www.spigotmc.org/resources/pickupmoney.11334/
-
-    private static final AtomicBoolean DISABLED = new AtomicBoolean(false);
-
-    public static boolean isDisabled ()
+    public static Economy economy ()
     {
-        return DISABLED.get();
+        return ECONOMY;
     }
 
-    public static boolean toggleDisabled ()
+    public static String latest ()
     {
-        return DISABLED.getAndSet(!DISABLED.get());
+        return LATEST;
     }
 
     @Override
     public void onEnable ()
     {
-        PaperLib.suggestPaper(this);
-        if (!PaperLib.isPaper())
+        Locale.setDefault(Locale.US);
+        PLUGIN = this;
+
+        if (PaperLib.getMinecraftVersion() < 8 || (PaperLib.getMinecraftVersion() == 8 && PaperLib.getMinecraftPatchVersion() < 8))
         {
-            getLogger().warning("Players with a full inventory can pick up coins when Paper 1.13+ is installed.");
+            line(Level.SEVERE);
+            getLogger().log(Level.SEVERE, "COINS ONLY SUPPORTS MINECRAFT VERSION 1.8.8 AND UP.");
+
+            disablePlugin();
+            return;
         }
 
-        main = this;
-        Locale.setDefault(Locale.US);
-
-        registerConfig();
-        registerEvents();
-        registerCommands();
-
-        async(() ->
+        if (!PaperLib.isSpigot() && !PaperLib.isPaper())
         {
-            String version;
-            try
-            {
-                URL url = new URL("https://api.github.com/repos/JustEli/Coins/releases/latest");
-                URLConnection request = url.openConnection();
-                request.connect();
+            line(Level.SEVERE);
+            getLogger().log(Level.SEVERE, "You seem to be using Bukkit, but the plugin Coins requires at least Spigot! " +
+                    "This prevents the plugin from showing the amount of money players pick up. Please use Spigot. Moving from Bukkit to " +
+                    "Spigot will NOT cause any problems with other plugins, since Spigot only adds more features to Bukkit.");
 
-                JsonParser jp = new JsonParser();
-                JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
-                JsonObject rootobj = root.getAsJsonObject();
-                version = rootobj.get("tag_name").getAsString();
-            }
-            catch (IOException ex)
-            {
-                version = getDescription().getVersion();
-            }
-
-            Coins.update = version;
-
-            if (!getDescription().getVersion().equals(version))
-            {
-                Coins.console(LogType.INFO, "A new version of Coins was released (" + version + ")!");
-                Coins.console(LogType.INFO, "https://www.spigotmc.org/resources/coins.33382/");
-            }
-        });
-
-        later(1, () ->
-        {
-            Metrics metrics = new Metrics(this);
-            String texture = Settings.hS.get(Config.STRING.skullTexture);
-
-            metrics.add("language", WordUtils.capitalize(Settings.getLanguage()));
-            metrics.add("currencySymbol", Settings.hS.get(Config.STRING.currencySymbol));
-            metrics.add("dropChance", Settings.hD.get(Config.DOUBLE.dropChance) * 100 + "%");
-            metrics.add("dropEachCoin", String.valueOf(Settings.hB.get(Config.BOOLEAN.dropEachCoin)));
-            metrics.add("pickupSound", Settings.hS.get(Config.STRING.soundName));
-            metrics.add("enableWithdraw", String.valueOf(Settings.hB.get(Config.BOOLEAN.enableWithdraw)));
-            metrics.add("loseOnDeath", String.valueOf(Settings.hB.get(Config.BOOLEAN.loseOnDeath)));
-            metrics.add("passiveDrop", String.valueOf(Settings.hB.get(Config.BOOLEAN.passiveDrop)));
-
-            metrics.add("nameOfCoin", Settings.hS.get(Config.STRING.nameOfCoin));
-            metrics.add("coinItem", Settings.hS.get(Config.STRING.coinItem));
-            metrics.add("pickupMessage", Settings.hS.get(Config.STRING.pickupMessage));
-            metrics.add("moneyDecimals", String.valueOf(Settings.hD.get(Config.DOUBLE.moneyDecimals).intValue()));
-            metrics.add("stackCoins", String.valueOf(Settings.hB.get(Config.BOOLEAN.stackCoins)));
-            metrics.add("playerDrop", String.valueOf(Settings.hB.get(Config.BOOLEAN.playerDrop)));
-            metrics.add("spawnerDrop", String.valueOf(Settings.hB.get(Config.BOOLEAN.spawnerDrop)));
-            metrics.add("preventSplits", String.valueOf(Settings.hB.get(Config.BOOLEAN.preventSplits)));
-
-            metrics.add("moneyAmount", (String.valueOf((Settings.hD.get(Config.DOUBLE.moneyAmount_from) +
-                    Settings.hD.get(Config.DOUBLE.moneyAmount_to)) / 2)));
-            metrics.add("usingSkullTexture", String.valueOf(texture != null && !texture.isEmpty()));
-            metrics.add("disableHoppers", String.valueOf(Settings.hB.get(Config.BOOLEAN.disableHoppers)));
-            metrics.add("dropWithAnyDeath", String.valueOf(Settings.hB.get(Config.BOOLEAN.dropWithAnyDeath)));
-            metrics.add("usingPaper", String.valueOf(PaperLib.isPaper()));
-        });
+            disablePlugin();
+            return;
+        }
 
         if (getServer().getPluginManager().getPlugin("Vault") == null)
         {
+            line(Level.SEVERE);
             Settings.errorMessage(Settings.Msg.NO_ECONOMY_SUPPORT, new String[]{""});
-            getServer().getPluginManager().disablePlugin(this);
+
+            disablePlugin();
             return;
         }
 
         try
         {
-            RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-            eco = rsp.getProvider();
+            RegisteredServiceProvider<Economy> service = getServer().getServicesManager().getRegistration(Economy.class);
+            ECONOMY = service.getProvider();
         }
         catch (NullPointerException | NoClassDefFoundError e)
         {
+            line(Level.SEVERE);
             Settings.errorMessage(Settings.Msg.NO_ECONOMY_SUPPORT, new String[]{""});
-            Bukkit.getPluginManager().disablePlugin(this);
+
+            disablePlugin();
+            return;
+        }
+
+        if (PaperLib.getMinecraftVersion() >= 13 && !PaperLib.isPaper())
+        {
+            PaperLib.suggestPaper(this);
+            getLogger().warning("Players with a full inventory will be able to pick up coins when Paper is installed.");
+        }
+
+        Settings.load();
+        registerEvents();
+        registerCommands();
+
+        async(this::versionChecker);
+        async(this::metrics);
+    }
+
+    private void line (Level type)
+    {
+        getLogger().log(type, "------------------------------------------------------------------");
+    }
+
+    private void disablePlugin ()
+    {
+        line(Level.SEVERE);
+        getLogger().log(Level.SEVERE, "PLUGIN 'COINS' WILL BE DISABLED NOW!");
+        line(Level.SEVERE);
+
+        getServer().getPluginManager().disablePlugin(this);
+    }
+
+    private void versionChecker ()
+    {
+        String version;
+        try
+        {
+            URL url = new URL("https://api.github.com/repos/JustEli/Coins/releases/latest");
+            URLConnection request = url.openConnection();
+            request.connect();
+
+            JsonParser jp = new JsonParser();
+            JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
+            JsonObject rootobj = root.getAsJsonObject();
+            version = rootobj.get("tag_name").getAsString();
+        }
+        catch (IOException ex)
+        {
+            version = getDescription().getVersion();
+        }
+
+        Coins.LATEST = version;
+
+        if (!getDescription().getVersion().equals(version))
+        {
+            line(Level.WARNING);
+            getLogger().warning("   You're running an outdated version of Coins 1.x.");
+            getLogger().warning("   The version installed is " + getDescription().getVersion() + ", while " + version + " is out!");
+            getLogger().warning("   https://www.spigotmc.org/resources/coins.33382/");
+            line(Level.WARNING);
         }
     }
 
-    public static Economy getEconomy ()
+    private void metrics ()
     {
-        return eco;
-    }
+        Metrics metrics = new Metrics(this);
+        String texture = Settings.hS.get(Config.STRING.skullTexture);
 
-    public static void particles (Location location, int radius, int amount)
-    {
-        CoinParticles.dropCoins(location, radius, amount);
-    }
+        metrics.add("language", WordUtils.capitalize(Settings.getLanguage()));
+        metrics.add("currencySymbol", Settings.hS.get(Config.STRING.currencySymbol));
+        metrics.add("dropChance", Settings.hD.get(Config.DOUBLE.dropChance) * 100 + "%");
+        metrics.add("dropEachCoin", String.valueOf(Settings.hB.get(Config.BOOLEAN.dropEachCoin)));
+        metrics.add("pickupSound", Settings.hS.get(Config.STRING.soundName));
+        metrics.add("enableWithdraw", String.valueOf(Settings.hB.get(Config.BOOLEAN.enableWithdraw)));
+        metrics.add("loseOnDeath", String.valueOf(Settings.hB.get(Config.BOOLEAN.loseOnDeath)));
+        metrics.add("passiveDrop", String.valueOf(Settings.hB.get(Config.BOOLEAN.passiveDrop)));
 
-    public static Coins getInstance ()
-    {
-        return main;
-    }
+        metrics.add("nameOfCoin", Settings.hS.get(Config.STRING.nameOfCoin));
+        metrics.add("coinItem", Settings.hS.get(Config.STRING.coinItem));
+        metrics.add("pickupMessage", Settings.hS.get(Config.STRING.pickupMessage));
+        metrics.add("moneyDecimals", String.valueOf(Settings.hD.get(Config.DOUBLE.moneyDecimals).intValue()));
+        metrics.add("stackCoins", String.valueOf(Settings.hB.get(Config.BOOLEAN.stackCoins)));
+        metrics.add("playerDrop", String.valueOf(Settings.hB.get(Config.BOOLEAN.playerDrop)));
+        metrics.add("spawnerDrop", String.valueOf(Settings.hB.get(Config.BOOLEAN.spawnerDrop)));
+        metrics.add("preventSplits", String.valueOf(Settings.hB.get(Config.BOOLEAN.preventSplits)));
 
-    public static boolean mobFromSpawner (Entity entity)
-    {
-        return PreventSpawner.fromSpawner(entity);
+        metrics.add("moneyAmount", (String.valueOf((Settings.hD.get(Config.DOUBLE.moneyAmount_from) +
+                Settings.hD.get(Config.DOUBLE.moneyAmount_to)) / 2)));
+        metrics.add("usingSkullTexture", String.valueOf(texture != null && !texture.isEmpty()));
+        metrics.add("disableHoppers", String.valueOf(Settings.hB.get(Config.BOOLEAN.disableHoppers)));
+        metrics.add("dropWithAnyDeath", String.valueOf(Settings.hB.get(Config.BOOLEAN.dropWithAnyDeath)));
+        metrics.add("usingPaper", String.valueOf(PaperLib.isPaper()));
     }
 
     private void registerEvents ()
@@ -193,9 +206,6 @@ public class Coins
         PluginManager manager = getServer().getPluginManager();
 
         boolean validPaper = PaperLib.isPaper() && PaperLib.getMinecraftVersion() > 12;
-
-        if (validPaper) getLogger().info("Coins detected Paper 1.13+. We're now going to register some events from Paper, " +
-                "which supports coin pickup with full inventory!");
 
         manager.registerEvents(validPaper? new PaperEvents() : new BukkitEvents(), this);
 
@@ -219,11 +229,6 @@ public class Coins
         }
     }
 
-    private void registerConfig ()
-    {
-        Settings.enums();
-    }
-
     private static void async (Runnable runnable)
     {
         new BukkitRunnable()
@@ -233,7 +238,7 @@ public class Coins
             {
                 runnable.run();
             }
-        }.runTaskAsynchronously(getInstance());
+        }.runTaskAsynchronously(PLUGIN);
     }
 
     public static void later (final int ticks, Runnable runnable)
@@ -245,34 +250,23 @@ public class Coins
             {
                 runnable.run();
             }
-        }.runTaskLater(getInstance(), ticks);
+        }.runTaskLater(PLUGIN, ticks);
     }
 
-    public enum LogType
+    public static void console (Level type, String message)
     {
-        ERROR,
-        WARNING,
-        INFO
+        PLUGIN.getLogger().log(type, message);
     }
 
-    public static void console (LogType type, String message)
+    private static final AtomicBoolean DISABLED = new AtomicBoolean(false);
+
+    public static boolean isDisabled ()
     {
-        ChatColor color;
-        switch (type)
-        {
-            case INFO:
-                color = ChatColor.AQUA;
-                break;
-            case ERROR:
-                color = ChatColor.RED;
-                break;
-            case WARNING:
-                color = ChatColor.YELLOW;
-                break;
-            default:
-                color = ChatColor.WHITE;
-                break;
-        }
-        Bukkit.getConsoleSender().sendMessage(color + "=" + type.name() + "= " + message);
+        return DISABLED.get();
+    }
+
+    public static boolean toggleDisabled ()
+    {
+        return DISABLED.getAndSet(!DISABLED.get());
     }
 }

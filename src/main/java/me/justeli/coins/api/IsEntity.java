@@ -1,5 +1,6 @@
 package me.justeli.coins.api;
 
+import io.papermc.lib.PaperLib;
 import org.bukkit.entity.*;
 
 
@@ -11,8 +12,12 @@ public class IsEntity
 {
     public static boolean hostile (Entity entity)
     {
-        return entity instanceof Monster || entity instanceof Boss || entity instanceof Flying || entity instanceof Slime ||
-                (entity instanceof Golem && !(entity instanceof Snowman)) || entity instanceof Wolf;
+        return entity instanceof Monster
+                || entity instanceof Flying
+                || entity instanceof Slime
+                || (entity instanceof Golem && !(entity instanceof Snowman))
+                || entity instanceof Wolf
+                || (PaperLib.getMinecraftVersion() >= 14? entity instanceof Boss : entity instanceof EnderDragon);
     }
 
     public static boolean player (Entity entity)
@@ -22,6 +27,8 @@ public class IsEntity
 
     public static boolean passive (Entity entity)
     {
-        return !hostile(entity) && !player(entity) && entity instanceof Mob;
+        return !hostile(entity)
+                && !player(entity)
+                && entity instanceof Mob;
     }
 }

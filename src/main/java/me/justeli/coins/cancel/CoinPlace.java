@@ -1,6 +1,6 @@
 package me.justeli.coins.cancel;
 
-import me.justeli.coins.api.Util;
+import io.papermc.lib.PaperLib;
 import me.justeli.coins.events.CoinsPickup;
 import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Settings;
@@ -34,7 +34,8 @@ public class CoinPlace
             String pickupName = e.getItem().getItemMeta().getDisplayName();
             if (pickupName.endsWith(Settings.getCoinName() + Settings.hS.get(Config.STRING.multiSuffix)))
             {
-                if (Settings.hB.get(Config.BOOLEAN.olderServer) || !p.hasPermission("coins.withdraw"))
+                // because of .setAmount(0), drop coin instead
+                if (PaperLib.getMinecraftVersion() < 9 || !p.hasPermission("coins.withdraw"))
                 {
                     e.setCancelled(true);
                     return;
@@ -44,29 +45,36 @@ public class CoinPlace
                 {
                     e.setCancelled(true);
                     int multi = e.getItem().getAmount();
+
+                    // doesn't work on 1.8
                     e.getItem().setAmount(0);
 
                     double amount = Integer.parseInt(ChatColor.stripColor(pickupName.split(" ")[0]));
                     CoinsPickup.addMoney(p, amount * multi, 0);
 
-                    try
-                    {
-                        String sound = Settings.hS.get(Config.STRING.soundName);
-
-                        Sound playSound = Sound.valueOf(Settings.hB.get(Config.BOOLEAN.olderServer) && (sound.equals("BLOCK_LAVA_POP") || sound
-                                .equals("ITEM_ARMOR_EQUIP_GOLD"))? "NOTE_STICKS" : sound.toUpperCase());
-
-                        float volume = Settings.hD.get(Config.DOUBLE.soundVolume).floatValue();
-                        float pitch = Settings.hD.get(Config.DOUBLE.soundPitch).floatValue();
-
-                        p.playSound(p.getEyeLocation(), playSound, volume == 0? 0.3f : volume, pitch == 0? 0.3f : pitch);
-                    }
-                    catch (IllegalArgumentException ex)
-                    {
-                        Settings.errorMessage(Settings.Msg.NO_SUCH_SOUND, new String[]{ex.getMessage()});
-                    }
+                    playSound(p);
                 }
             }
+        }
+    }
+
+    public static void playSound (Player p)
+    {
+        try
+        {
+            String sound = Settings.hS.get(Config.STRING.soundName);
+
+            Sound playSound = Sound.valueOf(PaperLib.getMinecraftVersion() < 9 && (sound.equals("BLOCK_LAVA_POP") || sound
+                    .equals("ITEM_ARMOR_EQUIP_GOLD"))? "NOTE_STICKS" : sound.toUpperCase());
+
+            float volume = Settings.hD.get(Config.DOUBLE.soundVolume).floatValue();
+            float pitch = Settings.hD.get(Config.DOUBLE.soundPitch).floatValue();
+
+            p.playSound(p.getEyeLocation(), playSound, volume == 0? 0.3f : volume, pitch == 0? 0.3f : pitch);
+        }
+        catch (IllegalArgumentException ex)
+        {
+            Settings.errorMessage(Settings.Msg.NO_SUCH_SOUND, new String[]{ex.getMessage()});
         }
     }
 

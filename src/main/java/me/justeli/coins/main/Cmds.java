@@ -1,15 +1,18 @@
 package me.justeli.coins.main;
 
+import io.papermc.lib.PaperLib;
 import me.justeli.coins.Coins;
 import me.justeli.coins.api.ActionBar;
 import me.justeli.coins.api.Complete;
 import me.justeli.coins.api.Extras;
 import me.justeli.coins.api.Util;
 import me.justeli.coins.item.Coin;
+import me.justeli.coins.item.CoinParticles;
 import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Messages;
 import me.justeli.coins.settings.Settings;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -51,7 +54,7 @@ public class Cmds
                             Settings.remove();
                             Settings.remove();
                             Extras.resetMultiplier();
-                            boolean success = Settings.enums();
+                            boolean success = Settings.load();
                             sender.sendMessage(color(Messages.RELOAD_SUCCESS.toString()
                                     .replace("{0}", Long.toString(System.currentTimeMillis() - ms))));
                             if (!success)
@@ -91,8 +94,8 @@ public class Cmds
                     case "update":
                         if (sender.hasPermission("coins.admin"))
                         {
-                            String version = Coins.getUpdate();
-                            String current = Coins.getInstance().getDescription().getVersion();
+                            String version = Coins.latest();
+                            String current = Coins.plugin().getDescription().getVersion();
                             sender.sendMessage(color("&eVersion currently installed: &f" + current));
                             sender.sendMessage(color("&eLatest released version: &f" + version));
                             if (version.equals(current))
@@ -183,13 +186,13 @@ public class Cmds
                 return true;
             }
 
-            if (worth <= Settings.hD.get(Config.DOUBLE.maxWithdrawAmount) && Coins.getEconomy().getBalance(player) >= total)
+            if (worth <= Settings.hD.get(Config.DOUBLE.maxWithdrawAmount) && Coins.economy().getBalance(player) >= total)
             {
                 ItemStack coin = new Coin().withdraw(worth).item();
                 coin.setAmount(amount);
 
                 player.getInventory().addItem(coin);
-                Coins.getEconomy().withdrawPlayer(player, total);
+                Coins.economy().withdrawPlayer(player, total);
 
                 player.sendMessage(color(Messages.WITHDRAW_COINS.toString().replace("{0}", Long.toString(total))));
 
@@ -301,7 +304,7 @@ public class Cmds
                 return;
             }
 
-            Coins.particles(location, radius, amount);
+            CoinParticles.dropCoins(location, radius, amount);
             sender.sendMessage(color(Messages.SPAWNED_COINS.toString()).replace("{0}", Long.toString(amount)).replace("{1}", Long.toString(radius))
                     .replace("{2}", name));
 
@@ -313,7 +316,6 @@ public class Cmds
 
     private void removeCoins (CommandSender sender, String[] args)
     {
-
         double r = 0;
         List<Entity> mobs = Bukkit.getWorlds().get(0).getEntities();
         if (args.length >= 2 && sender instanceof Player)
@@ -339,8 +341,14 @@ public class Cmds
         {
             Player p = (Player) sender;
             mobs = p.getWorld().getEntities();
-            if (r != 0)
+            if (PaperLib.getMinecraftVersion() < 10)
+            {
+                sender.sendMessage(ChatColor.RED + "Radius is not supported with Minecraft version below 1.10. Clearing all coins in the entire world now.");
+            }
+            else if (r != 0)
+            {
                 mobs = new ArrayList<>(p.getWorld().getNearbyEntities(p.getLocation(), r, r, r));
+            }
         }
 
         long amount = 0;
@@ -370,7 +378,7 @@ public class Cmds
                                     this.cancel();
                                 }
                             }
-                        }.runTaskTimer(Coins.getInstance(), rand, rand);
+                        }.runTaskTimer(Coins.plugin(), rand, rand);
                     }
                 }
             }
@@ -380,8 +388,8 @@ public class Cmds
 
     private void sendHelp (CommandSender sender)
     {
-        String version = Coins.getInstance().getDescription().getVersion();
-        String update = Coins.getUpdate();
+        String version = Coins.plugin().getDescription().getVersion();
+        String update = Coins.latest();
         String notice = "";
         if (Coins.isDisabled())
             notice = " :: CURRENTLY GLOBALLY DISABLED ::";

@@ -3,7 +3,6 @@ package me.justeli.coins.settings;
 import io.papermc.lib.PaperLib;
 import me.justeli.coins.Coins;
 import me.justeli.coins.api.Util;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -21,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Created by Eli on 12/14/2016.
@@ -46,13 +46,13 @@ public class Settings
 
     private static FileConfiguration getFile ()
     {
-        File config = new File(Coins.getInstance().getDataFolder() + File.separator + "config.yml");
+        File config = new File(Coins.plugin().getDataFolder() + File.separator + "config.yml");
         if (!config.exists())
-            Coins.getInstance().saveDefaultConfig();
+            Coins.plugin().saveDefaultConfig();
         return YamlConfiguration.loadConfiguration(config);
     }
 
-    public static boolean enums ()
+    public static boolean load ()
     {
         FileConfiguration file = getFile();
         int errors = 0;
@@ -61,12 +61,6 @@ public class Settings
         {
             for (Config.BOOLEAN s : Config.BOOLEAN.values())
                 hB.put(s, file.getBoolean(s.name()));
-
-            int version = PaperLib.getMinecraftVersion();
-            if (version < 9)
-                hB.put(Config.BOOLEAN.olderServer, true);
-            if (version > 12)
-                hB.put(Config.BOOLEAN.newerServer, true);
 
             for (Config.STRING s : Config.STRING.values())
             {
@@ -82,7 +76,7 @@ public class Settings
                         try
                         {
                             String material = file.getString(s.name()).toUpperCase().replace(" ", "_");
-                            material = material.replace("COIN", hB.get(Config.BOOLEAN.newerServer)? "SUNFLOWER" : "DOUBLE_PLANT");
+                            material = material.replace("COIN", PaperLib.getMinecraftVersion() > 12? "SUNFLOWER" : "DOUBLE_PLANT");
 
                             Material coin = Material.valueOf(material);
                             hS.put(s, coin.name());
@@ -176,9 +170,7 @@ public class Settings
                 message.append(s.toString()).append(" &7\u00BB &8").append(hS.get(s)).append("\n&r");
 
         for (Config.BOOLEAN s : Config.BOOLEAN.values())
-            if (!s.equals(Config.BOOLEAN.olderServer))
-                message.append(s.toString()).append(" &7\u00BB ").append(hB.get(s).toString().replace("true", "&atrue").replace("false", "&cfalse"))
-                        .append("\n&r");
+            message.append(s.toString()).append(" &7\u00BB ").append(hB.get(s).toString().replace("true", "&atrue").replace("false", "&cfalse")).append("\n&r");
 
         for (Config.DOUBLE s : Config.DOUBLE.values())
             message.append(s.toString().replace("_", " &o")).append(" &7\u00BB &e").append(hD.get(s)).append("\n&r");
@@ -192,8 +184,8 @@ public class Settings
     private static boolean setLanguage ()
     {
         for (String lang : new String[]{"english", "dutch", "spanish", "german", "french", "swedish", "chinese", "hungarian"})
-            if (!new File(Coins.getInstance().getDataFolder() + File.separator + "language" + File.separator + lang + ".json").exists())
-                Coins.getInstance().saveResource("language/" + lang + ".json", false);
+            if (!new File(Coins.plugin().getDataFolder() + File.separator + "language" + File.separator + lang + ".json").exists())
+                Coins.plugin().saveResource("language/" + lang + ".json", false);
 
         FileConfiguration file = getFile();
         String lang = getLanguage();
@@ -208,7 +200,7 @@ public class Settings
         try
         {
             JSONParser parser = new JSONParser();
-            Object object = parser.parse(new InputStreamReader(new FileInputStream(Coins.getInstance()
+            Object object = parser.parse(new InputStreamReader(new FileInputStream(Coins.plugin()
                     .getDataFolder() + File.separator + "language" + File.separator + lang + ".json"), StandardCharsets.UTF_8));
             JSONObject json = (JSONObject) object;
             for (Messages m : Messages.values())
@@ -273,37 +265,38 @@ public class Settings
         switch (msg)
         {
             case OUTDATED_CONFIG:
-                Coins.console(Coins.LogType.ERROR, "Your config of Coins is outdated, update the Coins config.yml.");
-                Coins.console(Coins.LogType.ERROR, "You can copy it from here: https://github.com/JustEli/Coins/blob/master/src/config.yml");
-                Coins.console(Coins.LogType.ERROR, "Use /coins reload afterwards. You could also remove the config if you haven't configured it.");
+                Coins.console(Level.WARNING, "Your config of Coins is outdated, update the Coins config.yml.");
+                Coins.console(Level.WARNING, "You can copy it from here: https://github.com/JustEli/Coins/blob/master/src/config.yml");
+                Coins.console(Level.WARNING, "Use /coins reload afterwards. You could also remove the config if you haven't configured it.");
                 if (input != null)
-                    Coins.console(Coins.LogType.ERROR, "This option is probably missing (add it): " + Arrays.toString(input));
+                {
+                    Coins.console(Level.WARNING, "This option is probably missing (add it): " + Arrays.toString(input));
+                }
                 break;
             case LANG_NOT_FOUND:
-                Coins.console(Coins.LogType.ERROR, "The language '" + input[0] + "' that you set in your config does not exist.");
-                Coins.console(Coins.LogType.ERROR, "Check all available languages in the folder 'Coins/language'.");
+                Coins.console(Level.WARNING, "The language '" + input[0] + "' that you set in your config does not exist.");
+                Coins.console(Level.WARNING, "Check all available languages in the folder 'Coins/language'.");
                 break;
             case NO_SUCH_ENTITY:
-                Coins.console(Coins.LogType.ERROR, "There is no entity with the name '" + input[0] + "', please change the Coins config.");
-                Coins.console(Coins.LogType.ERROR, "Get types from here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html");
+                Coins.console(Level.WARNING, "There is no entity with the name '" + input[0] + "', please change the Coins config.");
+                Coins.console(Level.WARNING, "Get types from here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html");
                 break;
             case NO_SUCH_MATERIAL:
-                Coins.console(Coins.LogType.ERROR, "There is no material with the name '" + input[0] + "', please change the Coins config.");
-                Coins.console(Coins.LogType.ERROR, "Get materials from here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html");
+                Coins.console(Level.WARNING, "There is no material with the name '" + input[0] + "', please change the Coins config.");
+                Coins.console(Level.WARNING, "Get materials from here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html");
                 break;
             case NO_SUCH_SOUND:
-                Coins.console(Coins.LogType.ERROR, "The sound '" + input[0] + "' does not exist. Change it in the Coins config.");
-                Coins.console(Coins.LogType.ERROR, "Please use a sound from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html");
+                Coins.console(Level.WARNING, "The sound '" + input[0] + "' does not exist. Change it in the Coins config.");
+                Coins.console(Level.WARNING, "Please use a sound from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html");
                 break;
             case NO_ECONOMY_SUPPORT:
-                Coins.console(Coins.LogType.ERROR, "There seems to be no Vault or economy supportive plugin installed.");
-                Coins.console(Coins.LogType.ERROR, "Please install Vault and an economy supportive plugin like Essentials.");
-                Coins.console(Coins.LogType.ERROR, "Coins will be disabled now..");
+                Coins.console(Level.SEVERE, "There seems to be no Vault or economy supportive plugin installed.");
+                Coins.console(Level.SEVERE, "Please install Vault and an economy supportive plugin like Essentials.");
                 break;
             case NO_TRANSLATION:
-                Coins.console(Coins.LogType.ERROR, "The translation for '" + input[0] + "' was not found.");
-                Coins.console(Coins.LogType.ERROR, "Please add it to the {language}.json file.");
-                Coins.console(Coins.LogType.ERROR, "Or delete your /language/ folder in /Coins/. RECOMMENDED");
+                Coins.console(Level.WARNING, "The translation for '" + input[0] + "' was not found.");
+                Coins.console(Level.WARNING, "Please add it to the {language}.json file.");
+                Coins.console(Level.WARNING, "Or delete your /language/ folder in /Coins/. RECOMMENDED");
                 break;
         }
 

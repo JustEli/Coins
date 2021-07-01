@@ -1,10 +1,10 @@
 package me.justeli.coins.item;
 
+import io.papermc.lib.PaperLib;
 import me.justeli.coins.api.SkullValue;
 import me.justeli.coins.api.Util;
 import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Settings;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -33,7 +33,7 @@ public class Coin
                 meta.setDisplayName(Settings.getCoinName());
                 meta.setLore(new ArrayList<>());
 
-                if (Settings.hD.get(Config.DOUBLE.customModelData) > 0)
+                if (Settings.hD.get(Config.DOUBLE.customModelData) > 0 && PaperLib.getMinecraftVersion() >= 14)
                 {
                     meta.setCustomModelData(Settings.hD.get(Config.DOUBLE.customModelData).intValue());
                 }

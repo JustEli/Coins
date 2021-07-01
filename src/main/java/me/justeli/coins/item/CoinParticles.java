@@ -5,7 +5,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.Collections;
@@ -24,7 +23,7 @@ public class CoinParticles
 
         for (int i = 0; i < amount; i++)
         {
-            later(i, () ->
+            Coins.later(i, () ->
             {
                 meta.setLore(Collections.singletonList(UUID.randomUUID().toString()));
                 coin.setItemMeta(meta);
@@ -34,17 +33,4 @@ public class CoinParticles
             });
         }
     }
-
-    private static void later (int ticks, Runnable runnable)
-    {
-        new BukkitRunnable()
-        {
-            @Override
-            public void run ()
-            {
-                runnable.run();
-            }
-        }.runTaskLater(Coins.getInstance(), ticks);
-    }
-
 }

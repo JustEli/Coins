@@ -1,5 +1,6 @@
 package me.justeli.coins.events;
 
+import io.papermc.lib.PaperLib;
 import me.justeli.coins.Coins;
 import me.justeli.coins.api.Extras;
 import me.justeli.coins.api.IsEntity;
@@ -82,7 +83,7 @@ public class DropCoin
                 return;
         }
 
-        if (!Settings.hB.get(Config.BOOLEAN.olderServer) && !Settings.hB.get(Config.BOOLEAN.dropWithAnyDeath) && killer != null)
+        if (PaperLib.getMinecraftVersion() >= 10 && !Settings.hB.get(Config.BOOLEAN.dropWithAnyDeath) && killer != null)
         {
             AttributeInstance maxHealth = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH);
             double hitSetting = Settings.hD.get(Config.DOUBLE.percentagePlayerHit);
@@ -96,7 +97,7 @@ public class DropCoin
             if (
                     IsEntity.hostile(entity) ||
                     (IsEntity.passive(entity) && Settings.hB.get(Config.BOOLEAN.passiveDrop)) ||
-                    (IsEntity.player(entity) && Settings.hB.get(Config.BOOLEAN.playerDrop) && Coins.getEconomy().getBalance((Player) entity) >= 0)
+                    (IsEntity.player(entity) && Settings.hB.get(Config.BOOLEAN.playerDrop) && Coins.economy().getBalance((Player) entity) >= 0)
             )
             {
                 dropMobCoin(entity, killer);
@@ -114,9 +115,9 @@ public class DropCoin
 
             Player player = (Player) entity;
             double random = RANDOM.nextDouble() * first + second;
-            double take = Settings.hB.get(Config.BOOLEAN.takePercentage)? (random / 100) * Coins.getEconomy().getBalance(player) : random;
+            double take = Settings.hB.get(Config.BOOLEAN.takePercentage)? (random / 100) * Coins.economy().getBalance(player) : random;
 
-            if (take > 0 && Coins.getEconomy().withdrawPlayer(player, (long) take).transactionSuccess())
+            if (take > 0 && Coins.economy().withdrawPlayer(player, (long) take).transactionSuccess())
             {
                 Title.sendSubTitle(player, 20, 100, 20, Settings.hS.get(Config.STRING.deathMessage).replace("%amount%",
                         String.valueOf((long) take)).replace("{$}", Settings.hS.get(Config.STRING.currencySymbol)));
@@ -237,7 +238,8 @@ public class DropCoin
     @EventHandler (priority = EventPriority.LOW)
     public void registerHits (EntityDamageByEntityEvent event)
     {
-        if (Settings.hB.get(Config.BOOLEAN.olderServer))
+        // getAttribute (line 88) not working < 1.10
+        if (PaperLib.getMinecraftVersion() < 10)
             return;
 
         if (!(event.getDamager() instanceof Player) && resolvePlayerShooterOrNull(event) == null)

@@ -38,7 +38,7 @@ public class Title
 
     public static void sendSubTitle (Player player, Integer fadeIn, Integer stay, Integer fadeOut, String subtitle)
     {
-        if (PaperLib.getMinecraftVersion() > 11)
+        if (PaperLib.getMinecraftVersion() >= 11)
         {
             player.sendTitle("", Util.color(subtitle), fadeIn, stay, fadeOut);
         }

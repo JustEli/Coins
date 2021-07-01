@@ -2,8 +2,7 @@ package me.justeli.coins.api;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import me.justeli.coins.settings.Config;
-import me.justeli.coins.settings.Settings;
+import io.papermc.lib.PaperLib;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -34,7 +33,7 @@ public class SkullValue
         if (texture.isEmpty())
             return null;
 
-        ItemStack skull = Settings.hB.get(Config.BOOLEAN.newerServer)? new ItemStack(Material.PLAYER_HEAD)
+        ItemStack skull = PaperLib.getMinecraftVersion() >= 13? new ItemStack(Material.PLAYER_HEAD)
                 : new ItemStack(Material.matchMaterial("SKULL_ITEM"), 1, (short) 3);
 
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();

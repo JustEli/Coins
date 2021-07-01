@@ -2,12 +2,11 @@ package me.justeli.coins.events;
 
 import me.justeli.coins.Coins;
 import me.justeli.coins.api.ActionBar;
-import me.justeli.coins.api.Util;
+import me.justeli.coins.cancel.CoinPlace;
 import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Settings;
 import org.bukkit.Bukkit;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Sound;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,7 +16,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
@@ -88,29 +86,14 @@ public class CoinsPickup
                 item.remove();
                 thrown.remove(meta.getLore().get(0));
             }
-        }.runTaskLater(Coins.getInstance(), 2);
+        }.runTaskLater(Coins.plugin(), 2);
 
         if (randomMoney == 0) giveReward(item.getItemStack(), p);
         else addMoney(p, (double) randomMoney, 0);
 
         if (Settings.hB.get(Config.BOOLEAN.pickupSound))
         {
-            try
-            {
-                String sound = Settings.hS.get(Config.STRING.soundName);
-
-                Sound playSound = Sound.valueOf(Settings.hB.get(Config.BOOLEAN.olderServer) && (sound.equals("BLOCK_LAVA_POP") || sound
-                        .equals("ITEM_ARMOR_EQUIP_GOLD"))? "NOTE_STICKS" : sound.toUpperCase());
-
-                float volume = Settings.hD.get(Config.DOUBLE.soundVolume).floatValue();
-                float pitch = Settings.hD.get(Config.DOUBLE.soundPitch).floatValue();
-
-                p.playSound(p.getEyeLocation(), playSound, volume == 0? 0.3f : volume, pitch == 0? 0.3f : pitch);
-            }
-            catch (IllegalArgumentException e)
-            {
-                Settings.errorMessage(Settings.Msg.NO_SUCH_SOUND, new String[]{e.getMessage()});
-            }
+            CoinPlace.playSound(p);
         }
     }
 
@@ -134,7 +117,7 @@ public class CoinsPickup
     public static void addMoney (Player p, Double a, int integer)
     {
         final double amount = format(a, integer);
-        Coins.getEconomy().depositPlayer(p, amount);
+        Coins.economy().depositPlayer(p, amount);
 
         final UUID u = p.getUniqueId();
 
@@ -146,7 +129,7 @@ public class CoinsPickup
             if (pickup.containsKey(u) && format(pickup.get(u), integer).equals(newAmount))
                 pickup.remove(u);
         };
-        Bukkit.getScheduler().runTaskLater(Coins.getInstance(), task, Settings.hB.get(Config.BOOLEAN.dropEachCoin)? 30L : 10L);
+        Bukkit.getScheduler().runTaskLater(Coins.plugin(), task, Settings.hB.get(Config.BOOLEAN.dropEachCoin)? 30L : 10L);
 
         new ActionBar(Settings.hS.get(Config.STRING.pickupMessage).replace("%amount%", String.format("%." + integer + "f", newAmount))
                 .replace("{$}", Settings.hS.get(Config.STRING.currencySymbol))).send(p);
