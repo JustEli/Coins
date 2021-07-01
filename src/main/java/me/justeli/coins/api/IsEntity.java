@@ -29,6 +29,6 @@ public class IsEntity
     {
         return !hostile(entity)
                 && !player(entity)
-                && entity instanceof Mob;
+                && entity instanceof LivingEntity;
     }
 }

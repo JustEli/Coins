@@ -34,7 +34,7 @@ public class CoinPlace
             String pickupName = e.getItem().getItemMeta().getDisplayName();
             if (pickupName.endsWith(Settings.getCoinName() + Settings.hS.get(Config.STRING.multiSuffix)))
             {
-                // because of .setAmount(0), drop coin instead
+                // because of .setAmount(0) AND Container, have to drop coin instead
                 if (PaperLib.getMinecraftVersion() < 9 || !p.hasPermission("coins.withdraw"))
                 {
                     e.setCancelled(true);

@@ -1,6 +1,5 @@
 package me.justeli.coins.main;
 
-import io.papermc.lib.PaperLib;
 import me.justeli.coins.Coins;
 import me.justeli.coins.api.ActionBar;
 import me.justeli.coins.api.Complete;
@@ -12,7 +11,6 @@ import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Messages;
 import me.justeli.coins.settings.Settings;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -341,11 +339,12 @@ public class Cmds
         {
             Player p = (Player) sender;
             mobs = p.getWorld().getEntities();
-            if (PaperLib.getMinecraftVersion() < 10)
+            /*if (PaperLib.getMinecraftVersion() < 10)
             {
                 sender.sendMessage(ChatColor.RED + "Radius is not supported with Minecraft version below 1.10. Clearing all coins in the entire world now.");
             }
-            else if (r != 0)
+            else */
+                if (r != 0)
             {
                 mobs = new ArrayList<>(p.getWorld().getNearbyEntities(p.getLocation(), r, r, r));
             }
