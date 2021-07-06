@@ -15,6 +15,7 @@ import me.justeli.coins.events.PaperEvents;
 import me.justeli.coins.main.Cmds;
 import me.justeli.coins.main.Metrics;
 import me.justeli.coins.main.TabComplete;
+import me.justeli.coins.mythicmobs.MythicMobsHook;
 import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Settings;
 import net.milkbowl.vault.economy.Economy;
@@ -117,9 +118,18 @@ public class Coins
             getLogger().warning("Players with a full inventory will be able to pick up coins when Paper is installed.");
         }
 
+        if (getServer().getPluginManager().getPlugin("MythicMobs") != null)
+        {
+            enableMythicMobs();
+        }
+        else {
+            getLogger().info("MythicMobsHook not Enabled");
+        }
+
         Settings.load();
         registerEvents();
         registerCommands();
+
 
         async(this::versionChecker);
         async(this::metrics);
@@ -215,6 +225,9 @@ public class Coins
         manager.registerEvents(new DropCoin(), this);
         manager.registerEvents(new CoinPlace(), this);
         manager.registerEvents(new CancelInventories(), this);
+
+        if(hasMythMobs())
+            new MythicMobsHook().Enable(this);
     }
 
     private void registerCommands ()
@@ -265,8 +278,10 @@ public class Coins
         return DISABLED.get();
     }
 
-    public static boolean toggleDisabled ()
-    {
-        return DISABLED.getAndSet(!DISABLED.get());
-    }
+    public static boolean toggleDisabled () { return DISABLED.getAndSet(!DISABLED.get()); }
+    private static final AtomicBoolean MYTHICMOBS = new AtomicBoolean(false);
+
+    public static boolean hasMythMobs () { return MYTHICMOBS.get(); }
+
+    public static void enableMythicMobs () { MYTHICMOBS.set(true); }
 }

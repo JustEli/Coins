@@ -3,7 +3,7 @@ name: "${project.name}"
 version: "${project.version}"
 author: JustEli
 website: "${project.url}"
-softdepend: [Vault, WorldGuard, mcMMO]
+softdepend: [Vault, WorldGuard, mcMMO, MythicMobs]
 api-version: "1.13"
 commands:
   coins:
