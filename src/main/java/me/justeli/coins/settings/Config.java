@@ -26,6 +26,7 @@ public enum Config
         disableHoppers,
         dropWithAnyDeath,
         enchantedCoin,
+        disableMythicMobDrop,
     }
 
     public enum STRING

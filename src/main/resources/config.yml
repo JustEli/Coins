@@ -168,3 +168,7 @@ dropOnDeath: false
 
 # The message in the middle of their screen.
 deathMessage: "&4- &c{$}%amount%"
+
+# Disable handling Coin drops for MythicMobs.
+# Use MythicMobs drop: COIN
+disableMythicMobDrop: true
