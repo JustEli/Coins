@@ -2,6 +2,8 @@
 #   Configuration for Coins   #
 # # # # # # # # # # # # # # # #
 
+# Do not remove any key in this config. If you want to disable a feature, you can set it to false, "" or {}.
+
 # What language should the plugin use? And what is your server's currency?
 # All available languages can be found in folder 'languages' in the plugin folder.
 # Included languages by default: english, dutch, german, french, spanish, swedish, italian, chinese & hungarian.
@@ -74,6 +76,7 @@ disableHoppers: false
 # Set a mob type to 0 (i.e. 'BAT: 0') to disable coins for that specific type.
 # You can find mob types via this URL (types that aren't creatures will be ignored):
 # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
+# If you want to have no mob multipliers, you can set 'mobMultiplier: {}'
 mobMultiplier:
   ENDER_DRAGON: 50
   WITHER: 20
@@ -145,6 +148,7 @@ onlyExperienceBlocks: true
 # Set a block type to 0 (i.e. 'COAL_ORE: 0') to disable coins for that specific type.
 # You can find block material types via this URL (input types that aren't blocks will be ignored):
 # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+# If you want to have no block multipliers, you can set 'blockMultiplier: {}'
 blockMultiplier:
   EMERALD_ORE: 2
   DIAMOND_ORE: 2
