@@ -97,7 +97,13 @@ public class Cmds
                             sender.sendMessage(color("&eVersion currently installed: &f" + current));
                             sender.sendMessage(color("&eLatest released version: &f" + version));
                             if (version.equals(current))
+                            {
                                 sender.sendMessage(color("&aYou're up to date with version " + current + "."));
+                            }
+                            else if (version.equals("Unknown"))
+                            {
+                                sender.sendMessage(color("&cCouldn't get the latest version of Coins."));
+                            }
                             else
                             {
                                 sender.sendMessage(color("&cConsider updating the plugin to version " + version + "!"));
@@ -391,9 +397,13 @@ public class Cmds
         String update = Coins.latest();
         String notice = "";
         if (Coins.isDisabled())
+        {
             notice = " :: CURRENTLY GLOBALLY DISABLED ::";
-        else if (!update.equals(version))
+        }
+        else if (!update.equals("Unknown") && !update.equals(version))
+        {
             notice = " (outdated -> /coins update)";
+        }
 
         sender.sendMessage(color(Messages.COINS_HELP.toString() + " " + version + notice));
 

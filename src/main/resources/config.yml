@@ -150,6 +150,11 @@ blockMultiplier:
   DIAMOND_ORE: 2
   SPAWNER: 5
 
+# MythicMobs :: In the config of MythicMobs you can define custom coin drops. Use the drop called "COINS"
+# in the MythicMobs config to drop coins from this plugin. If you have set up custom drops in there, you
+# probably also want to disable coin drops for Mythic Mobs handled by this plugin, under here.
+disableMythicMobHandling: false
+
 # Should players lose money on death?
 # It shows a title (in the middle of the screen) how much they lost on death.
 loseOnDeath: true
@@ -168,7 +173,3 @@ dropOnDeath: false
 
 # The message in the middle of their screen.
 deathMessage: "&4- &c{$}%amount%"
-
-# Disable handling Coin drops for MythicMobs.
-# Use MythicMobs drop: COIN
-disableMythicMobDrop: true

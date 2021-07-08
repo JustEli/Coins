@@ -7,7 +7,6 @@ import me.justeli.coins.api.IsEntity;
 import me.justeli.coins.api.Title;
 import me.justeli.coins.cancel.PreventSpawner;
 import me.justeli.coins.item.Coin;
-import me.justeli.coins.mythicmobs.MythicMobsHook;
 import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Settings;
 import org.bukkit.Location;
@@ -46,12 +45,8 @@ public class DropCoin
         if (Coins.isDisabled())
             return;
 
-        if(Coins.hasMythMobs())
-            if (Settings.hB.get(Config.BOOLEAN.disableMythicMobDrop))
-                if(MythicMobsHook.isMythicMob(event.getEntity()))
-                    return;
-
-
+        if (Coins.hasMythicMobs() && Settings.hB.get(Config.BOOLEAN.disableMythicMobHandling) && MythicMobsHook.isMythicMob(event.getEntity()))
+            return;
 
         LivingEntity dead = event.getEntity();
         EntityDamageEvent damageCause = dead.getLastDamageCause();

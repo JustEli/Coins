@@ -15,7 +15,7 @@ import me.justeli.coins.events.PaperEvents;
 import me.justeli.coins.main.Cmds;
 import me.justeli.coins.main.Metrics;
 import me.justeli.coins.main.TabComplete;
-import me.justeli.coins.mythicmobs.MythicMobsHook;
+import me.justeli.coins.events.MythicMobsHook;
 import me.justeli.coins.settings.Config;
 import me.justeli.coins.settings.Settings;
 import net.milkbowl.vault.economy.Economy;
@@ -46,7 +46,7 @@ public class Coins
 
     private static Coins PLUGIN;
     private static Economy ECONOMY;
-    private static String LATEST;
+    private static String LATEST = "Unknown";
 
     public static Coins plugin ()
     {
@@ -82,7 +82,7 @@ public class Coins
         {
             line(Level.SEVERE);
             getLogger().log(Level.SEVERE, "You seem to be using Bukkit, but the plugin Coins requires at least Spigot! " +
-                    "This prevents the plugin from showing the amount of money players pick up. Please use Spigot. Moving from Bukkit to " +
+                    "This prevents the plugin from showing the amount of money players pick up. Please use Spigot or Paper. Moving from Bukkit to " +
                     "Spigot will NOT cause any problems with other plugins, since Spigot only adds more features to Bukkit.");
 
             disablePlugin();
@@ -122,14 +122,10 @@ public class Coins
         {
             enableMythicMobs();
         }
-        else {
-            getLogger().info("MythicMobsHook not Enabled");
-        }
 
         Settings.load();
         registerEvents();
         registerCommands();
-
 
         async(this::versionChecker);
         async(this::metrics);
@@ -151,7 +147,6 @@ public class Coins
 
     private void versionChecker ()
     {
-        String version;
         try
         {
             URL url = new URL("https://api.github.com/repos/JustEli/Coins/releases/latest");
@@ -161,20 +156,15 @@ public class Coins
             JsonParser jp = new JsonParser();
             JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
             JsonObject rootobj = root.getAsJsonObject();
-            version = rootobj.get("tag_name").getAsString();
+            Coins.LATEST = rootobj.get("tag_name").getAsString();
         }
-        catch (IOException ex)
-        {
-            version = getDescription().getVersion();
-        }
+        catch (IOException ignored) {}
 
-        Coins.LATEST = version;
-
-        if (!getDescription().getVersion().equals(version))
+        if (!Coins.LATEST.equals("Unknown") && !getDescription().getVersion().equals(Coins.LATEST))
         {
             line(Level.WARNING);
             getLogger().warning("   You're running an outdated version of Coins 1.x.");
-            getLogger().warning("   The version installed is " + getDescription().getVersion() + ", while " + version + " is out!");
+            getLogger().warning("   The version installed is " + getDescription().getVersion() + ", while " + Coins.LATEST + " is out!");
             getLogger().warning("   https://www.spigotmc.org/resources/coins.33382/");
             line(Level.WARNING);
         }
@@ -209,6 +199,7 @@ public class Coins
         metrics.add("disableHoppers", String.valueOf(Settings.hB.get(Config.BOOLEAN.disableHoppers)));
         metrics.add("dropWithAnyDeath", String.valueOf(Settings.hB.get(Config.BOOLEAN.dropWithAnyDeath)));
         metrics.add("usingPaper", String.valueOf(PaperLib.isPaper()));
+        metrics.add("usingMythicMobs", String.valueOf(hasMythicMobs()));
     }
 
     private void registerEvents ()
@@ -226,8 +217,10 @@ public class Coins
         manager.registerEvents(new CoinPlace(), this);
         manager.registerEvents(new CancelInventories(), this);
 
-        if(hasMythMobs())
-            new MythicMobsHook().Enable(this);
+        if (hasMythicMobs())
+        {
+            manager.registerEvents(new MythicMobsHook(), this);
+        }
     }
 
     private void registerCommands ()
@@ -278,10 +271,20 @@ public class Coins
         return DISABLED.get();
     }
 
-    public static boolean toggleDisabled () { return DISABLED.getAndSet(!DISABLED.get()); }
-    private static final AtomicBoolean MYTHICMOBS = new AtomicBoolean(false);
+    public static boolean toggleDisabled ()
+    {
+        return DISABLED.getAndSet(!DISABLED.get());
+    }
 
-    public static boolean hasMythMobs () { return MYTHICMOBS.get(); }
+    private static final AtomicBoolean MYTHIC_MOBS = new AtomicBoolean(false);
 
-    public static void enableMythicMobs () { MYTHICMOBS.set(true); }
+    public static boolean hasMythicMobs ()
+    {
+        return MYTHIC_MOBS.get();
+    }
+
+    public static void enableMythicMobs ()
+    {
+        MYTHIC_MOBS.set(true);
+    }
 }
