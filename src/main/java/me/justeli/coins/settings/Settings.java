@@ -266,7 +266,7 @@ public class Settings
         {
             case OUTDATED_CONFIG:
                 Coins.console(Level.WARNING, "Your config of Coins is outdated, update the Coins config.yml.");
-                Coins.console(Level.WARNING, "You can copy it from here: https://github.com/JustEli/Coins/blob/master/src/config.yml");
+                Coins.console(Level.WARNING, "You can copy it from here: https://github.com/JustEli/Coins/blob/master/src/main/resources/config.yml");
                 Coins.console(Level.WARNING, "Use /coins reload afterwards. You could also remove the config if you haven't configured it.");
                 if (input != null)
                 {
