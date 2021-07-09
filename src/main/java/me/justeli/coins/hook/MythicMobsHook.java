@@ -1,4 +1,4 @@
-package me.justeli.coins.events;
+package me.justeli.coins.hook;
 
 import io.lumine.xikage.mythicmobs.adapters.bukkit.BukkitItemStack;
 import io.lumine.xikage.mythicmobs.api.bukkit.BukkitAPIHelper;

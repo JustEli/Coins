@@ -4,26 +4,24 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.papermc.lib.PaperLib;
-import me.justeli.coins.cancel.CancelHopper;
-import me.justeli.coins.cancel.CancelInventories;
-import me.justeli.coins.cancel.CoinPlace;
-import me.justeli.coins.cancel.PreventSpawner;
-import me.justeli.coins.events.BukkitEvents;
-import me.justeli.coins.events.CoinsPickup;
-import me.justeli.coins.events.DropCoin;
-import me.justeli.coins.events.PaperEvents;
-import me.justeli.coins.main.Cmds;
-import me.justeli.coins.main.Metrics;
-import me.justeli.coins.main.TabComplete;
-import me.justeli.coins.events.MythicMobsHook;
-import me.justeli.coins.settings.Config;
-import me.justeli.coins.settings.Settings;
+import me.justeli.coins.handler.HopperHandler;
+import me.justeli.coins.handler.InventoryHandler;
+import me.justeli.coins.handler.InteractionHandler;
+import me.justeli.coins.handler.UnfairMobHandler;
+import me.justeli.coins.handler.listener.BukkitPickupEvent;
+import me.justeli.coins.handler.PickupHandler;
+import me.justeli.coins.handler.DropHandler;
+import me.justeli.coins.handler.listener.PaperPickupEvent;
+import me.justeli.coins.command.Commands;
+import me.justeli.coins.command.TabComplete;
+import me.justeli.coins.hook.MythicMobsHook;
+import me.justeli.coins.hook.bStatsMetrics;
+import me.justeli.coins.config.Config;
+import me.justeli.coins.config.Settings;
 import net.milkbowl.vault.economy.Economy;
-import org.apache.commons.lang.WordUtils;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -72,7 +70,7 @@ public class Coins
         if (PaperLib.getMinecraftVersion() < 8 || (PaperLib.getMinecraftVersion() == 8 && PaperLib.getMinecraftPatchVersion() < 8))
         {
             line(Level.SEVERE);
-            getLogger().log(Level.SEVERE, "COINS ONLY SUPPORTS MINECRAFT VERSION 1.8.8 AND UP.");
+            console(Level.SEVERE, "COINS ONLY SUPPORTS MINECRAFT VERSION 1.8.8 AND UP.");
 
             disablePlugin();
             return;
@@ -81,7 +79,7 @@ public class Coins
         if (!PaperLib.isSpigot() && !PaperLib.isPaper())
         {
             line(Level.SEVERE);
-            getLogger().log(Level.SEVERE, "You seem to be using Bukkit, but the plugin Coins requires at least Spigot! " +
+            console(Level.SEVERE, "You seem to be using Bukkit, but the plugin Coins requires at least Spigot! " +
                     "This prevents the plugin from showing the amount of money players pick up. Please use Spigot or Paper. Moving from Bukkit to " +
                     "Spigot will NOT cause any problems with other plugins, since Spigot only adds more features to Bukkit.");
 
@@ -91,10 +89,7 @@ public class Coins
 
         if (getServer().getPluginManager().getPlugin("Vault") == null)
         {
-            line(Level.SEVERE);
-            Settings.errorMessage(Settings.Msg.NO_ECONOMY_SUPPORT, new String[]{""});
-
-            disablePlugin();
+            noEconomySupport();
             return;
         }
 
@@ -103,19 +98,16 @@ public class Coins
             RegisteredServiceProvider<Economy> service = getServer().getServicesManager().getRegistration(Economy.class);
             ECONOMY = service.getProvider();
         }
-        catch (NullPointerException | NoClassDefFoundError e)
+        catch (NullPointerException | NoClassDefFoundError throwable)
         {
-            line(Level.SEVERE);
-            Settings.errorMessage(Settings.Msg.NO_ECONOMY_SUPPORT, new String[]{""});
-
-            disablePlugin();
+            noEconomySupport();
             return;
         }
 
         if (PaperLib.getMinecraftVersion() >= 13 && !PaperLib.isPaper())
         {
             PaperLib.suggestPaper(this);
-            getLogger().warning("Players with a full inventory will be able to pick up coins when Paper is installed.");
+            console(Level.WARNING, "Players with a full inventory will be able to pick up coins when Paper is installed.");
         }
 
         if (getServer().getPluginManager().getPlugin("MythicMobs") != null)
@@ -123,23 +115,32 @@ public class Coins
             enableMythicMobs();
         }
 
-        Settings.load();
+        Settings.init();
+
         registerEvents();
         registerCommands();
 
-        async(this::versionChecker);
-        async(this::metrics);
+        runAsync(this::versionChecker);
+        runAsync(bStatsMetrics::register);
+    }
+
+    private void noEconomySupport ()
+    {
+        line(Level.SEVERE);
+        console(Level.SEVERE, "There seems to be no Vault or economy supportive plugin installed. Please install Vault and an economy " +
+                "supportive plugin like Essentials.");
+        disablePlugin();
     }
 
     private void line (Level type)
     {
-        getLogger().log(type, "------------------------------------------------------------------");
+        console(type, "------------------------------------------------------------------");
     }
 
     private void disablePlugin ()
     {
         line(Level.SEVERE);
-        getLogger().log(Level.SEVERE, "PLUGIN 'COINS' WILL BE DISABLED NOW!");
+        console(Level.SEVERE, "PLUGIN 'COINS' WILL BE DISABLED NOW!");
         line(Level.SEVERE);
 
         getServer().getPluginManager().disablePlugin(this);
@@ -170,52 +171,20 @@ public class Coins
         }
     }
 
-    private void metrics ()
-    {
-        Metrics metrics = new Metrics(this);
-        String texture = Settings.hS.get(Config.STRING.skullTexture);
-
-        metrics.add("language", WordUtils.capitalize(Settings.getLanguage()));
-        metrics.add("currencySymbol", Settings.hS.get(Config.STRING.currencySymbol));
-        metrics.add("dropChance", Settings.hD.get(Config.DOUBLE.dropChance) * 100 + "%");
-        metrics.add("dropEachCoin", String.valueOf(Settings.hB.get(Config.BOOLEAN.dropEachCoin)));
-        metrics.add("pickupSound", Settings.hS.get(Config.STRING.soundName));
-        metrics.add("enableWithdraw", String.valueOf(Settings.hB.get(Config.BOOLEAN.enableWithdraw)));
-        metrics.add("loseOnDeath", String.valueOf(Settings.hB.get(Config.BOOLEAN.loseOnDeath)));
-        metrics.add("passiveDrop", String.valueOf(Settings.hB.get(Config.BOOLEAN.passiveDrop)));
-
-        metrics.add("nameOfCoin", Settings.hS.get(Config.STRING.nameOfCoin));
-        metrics.add("coinItem", Settings.hS.get(Config.STRING.coinItem));
-        metrics.add("pickupMessage", Settings.hS.get(Config.STRING.pickupMessage));
-        metrics.add("moneyDecimals", String.valueOf(Settings.hD.get(Config.DOUBLE.moneyDecimals).intValue()));
-        metrics.add("stackCoins", String.valueOf(Settings.hB.get(Config.BOOLEAN.stackCoins)));
-        metrics.add("playerDrop", String.valueOf(Settings.hB.get(Config.BOOLEAN.playerDrop)));
-        metrics.add("spawnerDrop", String.valueOf(Settings.hB.get(Config.BOOLEAN.spawnerDrop)));
-        metrics.add("preventSplits", String.valueOf(Settings.hB.get(Config.BOOLEAN.preventSplits)));
-
-        metrics.add("moneyAmount", (String.valueOf((Settings.hD.get(Config.DOUBLE.moneyAmount_from) +
-                Settings.hD.get(Config.DOUBLE.moneyAmount_to)) / 2)));
-        metrics.add("usingSkullTexture", String.valueOf(texture != null && !texture.isEmpty()));
-        metrics.add("disableHoppers", String.valueOf(Settings.hB.get(Config.BOOLEAN.disableHoppers)));
-        metrics.add("dropWithAnyDeath", String.valueOf(Settings.hB.get(Config.BOOLEAN.dropWithAnyDeath)));
-        metrics.add("usingPaper", String.valueOf(PaperLib.isPaper()));
-        metrics.add("usingMythicMobs", String.valueOf(hasMythicMobs()));
-    }
-
     private void registerEvents ()
     {
         PluginManager manager = getServer().getPluginManager();
 
         boolean validPaper = PaperLib.isPaper() && PaperLib.getMinecraftVersion() > 12;
 
-        manager.registerEvents(validPaper? new PaperEvents() : new BukkitEvents(), this);
+        manager.registerEvents(validPaper? new PaperPickupEvent() : new BukkitPickupEvent(), this);
 
-        manager.registerEvents(new CancelHopper(), this);
-        manager.registerEvents(new PreventSpawner(), this);
-        manager.registerEvents(new CoinsPickup(), this);
-        manager.registerEvents(new DropCoin(), this);
-        manager.registerEvents(new CoinPlace(), this);
-        manager.registerEvents(new CancelInventories(), this);
+        manager.registerEvents(new HopperHandler(), this);
+        manager.registerEvents(new UnfairMobHandler(), this);
+        manager.registerEvents(new PickupHandler(), this);
+        manager.registerEvents(new DropHandler(), this);
+        manager.registerEvents(new InteractionHandler(), this);
+        manager.registerEvents(new InventoryHandler(), this);
 
         if (hasMythicMobs())
         {
@@ -225,38 +194,24 @@ public class Coins
 
     private void registerCommands ()
     {
-        this.getCommand("coins").setExecutor(new Cmds());
+        this.getCommand("coins").setExecutor(new Commands());
         this.getCommand("coins").setTabCompleter(new TabComplete());
 
-        if (Settings.hB.get(Config.BOOLEAN.enableWithdraw))
+        if ((Config.enableWithdraw))
         {
-            this.getCommand("withdraw").setExecutor(new Cmds());
+            this.getCommand("withdraw").setExecutor(new Commands());
             this.getCommand("withdraw").setTabCompleter(new TabComplete());
         }
     }
 
-    private static void async (Runnable runnable)
+    private static void runAsync (final Runnable runnable)
     {
-        new BukkitRunnable()
-        {
-            @Override
-            public void run ()
-            {
-                runnable.run();
-            }
-        }.runTaskAsynchronously(PLUGIN);
+        PLUGIN.getServer().getScheduler().runTaskAsynchronously(PLUGIN, runnable);
     }
 
-    public static void later (final int ticks, Runnable runnable)
+    public static void runLater (final int ticks, final Runnable runnable)
     {
-        new BukkitRunnable()
-        {
-            @Override
-            public void run ()
-            {
-                runnable.run();
-            }
-        }.runTaskLater(PLUGIN, ticks);
+        PLUGIN.getServer().getScheduler().runTaskLater(PLUGIN, runnable, ticks);
     }
 
     public static void console (Level type, String message)

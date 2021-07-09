@@ -1,42 +1,53 @@
-package me.justeli.coins.api;
+package me.justeli.coins.util;
 
 import io.papermc.lib.PaperLib;
+import me.justeli.coins.config.Config;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Constructor;
 
-
-public class Title
-        extends JavaPlugin
+public class SubTitle
 {
+    private final String text;
+    private int fadeIn = 20;
+    private int stay = 100;
+    private int fadeOut = 20;
 
-    private static void sendPacket (Player player, Object packet)
+    private SubTitle (String text)
     {
-        try
-        {
-            Object handle = player.getClass().getMethod("getHandle").invoke(player);
-            Object playerConnection = handle.getClass().getField("playerConnection").get(handle);
-            playerConnection.getClass().getMethod("sendPacket", getNMSClass("Packet")).invoke(playerConnection, packet);
-        }
-        catch (Exception ignored) { }
+        this.text = text;
     }
 
-    private static Class<?> getNMSClass (String name)
+    public static SubTitle of (String text)
     {
-        String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-        try
-        {
-            return Class.forName("net.minecraft.server." + version + "." + name);
-        }
-        catch (ClassNotFoundException ignored)
-        {
-            return null;
-        }
+        return new SubTitle(text.replace("{$}", (Config.currencySymbol)));
     }
 
-    public static void sendSubTitle (Player player, Integer fadeIn, Integer stay, Integer fadeOut, String subtitle)
+    public SubTitle in (int ticks)
+    {
+        this.fadeIn = ticks;
+        return this;
+    }
+
+    public SubTitle out (int ticks)
+    {
+        this.fadeOut = ticks;
+        return this;
+    }
+
+    public SubTitle stay (int ticks)
+    {
+        this.stay = ticks;
+        return this;
+    }
+
+    public void send (Player player)
+    {
+        sendSubTitle(player, fadeIn, stay, fadeOut, text);
+    }
+
+    private void sendSubTitle (Player player, Integer fadeIn, Integer stay, Integer fadeOut, String subtitle)
     {
         if (PaperLib.getMinecraftVersion() >= 11)
         {
@@ -77,6 +88,30 @@ public class Title
             {
                 player.sendMessage(subtitle);
             }
+        }
+    }
+
+    private void sendPacket (Player player, Object packet)
+    {
+        try
+        {
+            Object handle = player.getClass().getMethod("getHandle").invoke(player);
+            Object playerConnection = handle.getClass().getField("playerConnection").get(handle);
+            playerConnection.getClass().getMethod("sendPacket", getNMSClass("Packet")).invoke(playerConnection, packet);
+        }
+        catch (Exception ignored) { }
+    }
+
+    private Class<?> getNMSClass (String name)
+    {
+        String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+        try
+        {
+            return Class.forName("net.minecraft.server." + version + "." + name);
+        }
+        catch (ClassNotFoundException ignored)
+        {
+            return null;
         }
     }
 }

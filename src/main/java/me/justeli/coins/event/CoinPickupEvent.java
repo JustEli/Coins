@@ -1,31 +1,27 @@
-package me.justeli.coins.events;
+package me.justeli.coins.event;
 
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by Eli on September 13, 2020.
  * Coins: me.justeli.coins.events
  */
-public class PickupEvent
+public class CoinPickupEvent
         extends Event
         implements Cancellable
 {
-    private static final HandlerList handlers = new HandlerList();
-
     private final Player player;
     private final Item item;
-    private boolean cancelled;
-    private boolean viaPaper;
 
-    public PickupEvent (Player player, Item item, boolean viaPaper)
+    public CoinPickupEvent (Player player, Item item)
     {
         this.player = player;
         this.item = item;
-        this.viaPaper = viaPaper;
     }
 
     public Player getPlayer ()
@@ -38,20 +34,9 @@ public class PickupEvent
         return item;
     }
 
-    public HandlerList getHandlers ()
-    {
-        return handlers;
-    }
+    // -- Cancellable --
 
-    public static HandlerList getHandlerList ()
-    {
-        return handlers;
-    }
-
-    public boolean isViaPaper ()
-    {
-        return viaPaper;
-    }
+    private boolean cancelled;
 
     @Override
     public boolean isCancelled ()
@@ -63,5 +48,20 @@ public class PickupEvent
     public void setCancelled (boolean cancel)
     {
         cancelled = cancel;
+    }
+
+    // -- HandlerList --
+
+    private static final HandlerList HANDLERS = new HandlerList();
+
+    @NotNull
+    public HandlerList getHandlers ()
+    {
+        return HANDLERS;
+    }
+
+    public static HandlerList getHandlerList ()
+    {
+        return HANDLERS;
     }
 }

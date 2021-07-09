@@ -23,9 +23,10 @@ Configurable lightweight coins for killing and mining, with a withdraw system an
 Coins has three parts in the plugin usable for outside developers. The classes: Coins, Coin, ~~CoinDropEvent~~. 
 
 You can drop coins in a radius around someone.
+
 ```java
-import me.justeli.coins.main.Coins;
-Coins.particles (Location location, int radius, int amount);
+import me.justeli.coins.command.Coins;
+Coins.particles(Location location,int radius,int amount);
 ```
 
 So you could, for example, do a coin rain on advancement get (outdated event).
@@ -50,9 +51,10 @@ ItemStack coin = new Coin().withdraw(100).item();   // makes it a withdrawn coin
 ```
 
 When 'spawnerDrop' is set to false (default), you can check if a mob is spawned by a spawner. Since every mob from a spawner has a hashmap (if 'spawnerDrop' is set to false).
+
 ```java
-import me.justeli.coins.main.Coins;
-boolean mobFromSpawner = Coins.mobFromSpawner (Entity entity);
+import me.justeli.coins.command.Coins;
+boolean mobFromSpawner=Coins.mobFromSpawner(Entity entity);
 ```
 Returns true if the Entity is from a spawner, false if not.
 

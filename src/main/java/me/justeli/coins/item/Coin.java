@@ -1,11 +1,9 @@
 package me.justeli.coins.item;
 
 import io.papermc.lib.PaperLib;
-import me.justeli.coins.api.SkullValue;
-import me.justeli.coins.api.Util;
-import me.justeli.coins.settings.Config;
-import me.justeli.coins.settings.Settings;
-import org.bukkit.Material;
+import me.justeli.coins.util.Skull;
+import me.justeli.coins.util.Util;
+import me.justeli.coins.config.Config;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -14,31 +12,32 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.UUID;
 
+// todo
 public class Coin
 {
     private final ItemStack coin;
 
     public Coin ()
     {
-        String texture = Settings.hS.get(Config.STRING.skullTexture);
+        String texture = Config.skullTexture;
         this.coin = texture == null || texture.isEmpty()?
-                new ItemStack(Material.valueOf(Settings.hS.get(Config.STRING.coinItem)))
-                : SkullValue.get(texture);
+                new ItemStack(Config.coinItem())
+                : Skull.of(texture);
 
         if (coin != null)
         {
             ItemMeta meta = this.coin.getItemMeta();
             if (meta != null)
             {
-                meta.setDisplayName(Settings.getCoinName());
+                meta.setDisplayName(Config.nameOfCoin());
                 meta.setLore(new ArrayList<>());
 
-                if (Settings.hD.get(Config.DOUBLE.customModelData) > 0 && PaperLib.getMinecraftVersion() >= 14)
+                if (Config.customModelData > 0 && PaperLib.getMinecraftVersion() >= 14)
                 {
-                    meta.setCustomModelData(Settings.hD.get(Config.DOUBLE.customModelData).intValue());
+                    meta.setCustomModelData(Config.customModelData);
                 }
 
-                if (Settings.hB.get(Config.BOOLEAN.enchantedCoin))
+                if (Config.enchantedCoin)
                 {
                     meta.addEnchant(Enchantment.DURABILITY, 1, true);
                 }
@@ -71,7 +70,7 @@ public class Coin
     public Coin withdraw (long amount)
     {
         ItemMeta meta = this.coin.getItemMeta();
-        meta.setDisplayName(Util.color("&e" + amount + " &r" + Settings.hS.get(Config.STRING.nameOfCoin) + Settings.hS.get(Config.STRING.multiSuffix)));
+        meta.setDisplayName(Util.color("&e" + amount + " &r" + Config.nameOfCoin() + Config.multiSuffix));
         this.coin.setItemMeta(meta);
         return this;
     }
