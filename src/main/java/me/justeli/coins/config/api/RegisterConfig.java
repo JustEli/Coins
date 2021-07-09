@@ -41,9 +41,9 @@ public class RegisterConfig
         FileConfiguration config = javaPlugin.getConfig();
         for (Field field : clazz.getDeclaredFields())
         {
-            if (field.isAnnotationPresent(ConfigFile.class))
+            if (field.isAnnotationPresent(ConfigEntry.class))
             {
-                ConfigFile set = field.getAnnotation(ConfigFile.class);
+                ConfigEntry set = field.getAnnotation(ConfigEntry.class);
                 field.setAccessible(true);
 
                 String configKey = set.value();
@@ -98,9 +98,9 @@ public class RegisterConfig
 
         for (Field field : clazz.getDeclaredFields())
         {
-            if (field.isAnnotationPresent(ConfigFile.class))
+            if (field.isAnnotationPresent(ConfigEntry.class))
             {
-                ConfigFile set = field.getAnnotation(ConfigFile.class);
+                ConfigEntry set = field.getAnnotation(ConfigEntry.class);
                 field.setAccessible(true);
 
                 try

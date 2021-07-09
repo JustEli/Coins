@@ -2,7 +2,7 @@ package me.justeli.coins.config;
 
 import io.papermc.lib.PaperLib;
 import me.justeli.coins.Coins;
-import me.justeli.coins.config.api.ConfigFile;
+import me.justeli.coins.config.api.ConfigEntry;
 import me.justeli.coins.util.Util;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -19,54 +19,54 @@ import java.util.logging.Level;
  */
 public class Config
 {
-    @ConfigFile ("stackCoins") public static Boolean stackCoins = false;
-    @ConfigFile ("spawnerDrop") public static Boolean spawnerDrop = false;
-    @ConfigFile ("passiveDrop") public static Boolean passiveDrop = false;
-    @ConfigFile ("pickupSound") public static Boolean pickupSound = true;
-    @ConfigFile ("loseOnDeath") public static Boolean loseOnDeath = true;
-    @ConfigFile ("playerDrop") public static Boolean playerDrop = true;
-    @ConfigFile ("preventAlts") public static Boolean preventAlts = true;
-    @ConfigFile ("enableWithdraw") public static Boolean enableWithdraw = true;
-    @ConfigFile ("dropEachCoin") public static Boolean dropEachCoin = false;
-    @ConfigFile ("preventSplits") public static Boolean preventSplits = true;
-    @ConfigFile ("takePercentage") public static Boolean takePercentage = false;
-    @ConfigFile ("dropOnDeath") public static Boolean dropOnDeath = false;
-    @ConfigFile ("onlyExperienceBlocks") public static Boolean onlyExperienceBlocks = true;
-    @ConfigFile ("disableHoppers") public static Boolean disableHoppers = false;
-    @ConfigFile ("dropWithAnyDeath") public static Boolean dropWithAnyDeath = false;
-    @ConfigFile ("enchantedCoin") public static Boolean enchantedCoin = false;
-    @ConfigFile ("disableMythicMobHandling") public static Boolean disableMythicMobHandling = false;
+    @ConfigEntry ("stackCoins") public static Boolean stackCoins = false;
+    @ConfigEntry ("spawnerDrop") public static Boolean spawnerDrop = false;
+    @ConfigEntry ("passiveDrop") public static Boolean passiveDrop = false;
+    @ConfigEntry ("pickupSound") public static Boolean pickupSound = true;
+    @ConfigEntry ("loseOnDeath") public static Boolean loseOnDeath = true;
+    @ConfigEntry ("playerDrop") public static Boolean playerDrop = true;
+    @ConfigEntry ("preventAlts") public static Boolean preventAlts = true;
+    @ConfigEntry ("enableWithdraw") public static Boolean enableWithdraw = true;
+    @ConfigEntry ("dropEachCoin") public static Boolean dropEachCoin = false;
+    @ConfigEntry ("preventSplits") public static Boolean preventSplits = true;
+    @ConfigEntry ("takePercentage") public static Boolean takePercentage = false;
+    @ConfigEntry ("dropOnDeath") public static Boolean dropOnDeath = false;
+    @ConfigEntry ("onlyExperienceBlocks") public static Boolean onlyExperienceBlocks = true;
+    @ConfigEntry ("disableHoppers") public static Boolean disableHoppers = false;
+    @ConfigEntry ("dropWithAnyDeath") public static Boolean dropWithAnyDeath = false;
+    @ConfigEntry ("enchantedCoin") public static Boolean enchantedCoin = false;
+    @ConfigEntry ("disableMythicMobHandling") public static Boolean disableMythicMobHandling = false;
 
-    @ConfigFile ("language") public static String language = "english";
-    @ConfigFile ("nameOfCoin") private static String nameOfCoin = "&6Coin";
-    @ConfigFile ("coinItem") private static String coinItem = "coin";
-    @ConfigFile ("pickupMessage") public static String pickupMessage = "&2+ &a{$}%amount%";
-    @ConfigFile ("deathMessage") public static String deathMessage = "&4- &c{$}%amount%";
-    @ConfigFile ("soundName") private static String soundName = "ITEM_ARMOR_EQUIP_GOLD";
-    @ConfigFile ("currencySymbol") public static String currencySymbol = "$";
-    @ConfigFile ("multiSuffix") public static String multiSuffix = "s";
-    @ConfigFile ("skullTexture") public static String skullTexture = "";
+    @ConfigEntry ("language") public static String language = "english";
+    @ConfigEntry ("nameOfCoin") private static String nameOfCoin = "&6Coin";
+    @ConfigEntry ("coinItem") private static String coinItem = "coin";
+    @ConfigEntry ("pickupMessage") public static String pickupMessage = "&2+ &a{$}%amount%";
+    @ConfigEntry ("deathMessage") public static String deathMessage = "&4- &c{$}%amount%";
+    @ConfigEntry ("soundName") private static String soundName = "ITEM_ARMOR_EQUIP_GOLD";
+    @ConfigEntry ("currencySymbol") public static String currencySymbol = "$";
+    @ConfigEntry ("multiSuffix") public static String multiSuffix = "s";
+    @ConfigEntry ("skullTexture") public static String skullTexture = "";
     
-    @ConfigFile ("dropChance") public static Double dropChance = 0.9;
-    @ConfigFile ("maxWithdrawAmount") public static Double maxWithdrawAmount = 10000.0;
-    @ConfigFile ("moneyAmount.from") public static Double moneyAmountFrom = 3.0;
-    @ConfigFile ("moneyAmount.to") public static Double moneyAmountTo = 7.0;
-    @ConfigFile ("moneyTaken.from") public static Double moneyTakenFrom = 10D;
-    @ConfigFile ("moneyTaken.to") public static Double moneyTakenTo = 30D;
-    @ConfigFile ("minePercentage") public static Double minePercentage = 0.3;
-    @ConfigFile ("percentagePlayerHit") public static Double percentagePlayerHit = 0.8;
+    @ConfigEntry ("dropChance") public static Double dropChance = 0.9;
+    @ConfigEntry ("maxWithdrawAmount") public static Double maxWithdrawAmount = 10000.0;
+    @ConfigEntry ("moneyAmount.from") public static Double moneyAmountFrom = 3.0;
+    @ConfigEntry ("moneyAmount.to") public static Double moneyAmountTo = 7.0;
+    @ConfigEntry ("moneyTaken.from") public static Double moneyTakenFrom = 10D;
+    @ConfigEntry ("moneyTaken.to") public static Double moneyTakenTo = 30D;
+    @ConfigEntry ("minePercentage") public static Double minePercentage = 0.3;
+    @ConfigEntry ("percentagePlayerHit") public static Double percentagePlayerHit = 0.8;
 
-    @ConfigFile ("soundPitch") public static Float soundPitch = 0.3F;
-    @ConfigFile ("soundVolume") public static Float soundVolume = 0.5F;
+    @ConfigEntry ("soundPitch") public static Float soundPitch = 0.3F;
+    @ConfigEntry ("soundVolume") public static Float soundVolume = 0.5F;
     
-    @ConfigFile ("moneyDecimals") public static Integer moneyDecimals = 2;
-    @ConfigFile ("limitForLocation") public static Integer limitForLocation = 1;
-    @ConfigFile ("customModelData") public static Integer customModelData = 0;
+    @ConfigEntry ("moneyDecimals") public static Integer moneyDecimals = 2;
+    @ConfigEntry ("limitForLocation") public static Integer limitForLocation = 1;
+    @ConfigEntry ("customModelData") public static Integer customModelData = 0;
     
-    @ConfigFile ("disabledWorlds") public static Set<String> disabledWorlds;
+    @ConfigEntry ("disabledWorlds") public static Set<String> disabledWorlds;
 
-    @ConfigFile ("mobMultiplier") private static Map<String, Integer> mobMultiplier;
-    @ConfigFile ("blockMultiplier") private static Map<String, Integer> blockMultiplier;
+    @ConfigEntry ("mobMultiplier") private static Map<String, Integer> mobMultiplier;
+    @ConfigEntry ("blockMultiplier") private static Map<String, Integer> blockMultiplier;
 
     public static int mobMultiplier (EntityType type)
     {
