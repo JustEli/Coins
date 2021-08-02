@@ -25,7 +25,7 @@ public class TabComplete
         if (alias.equalsIgnoreCase("withdraw") && args.length == 1)
         {
             List<String> numbers = new ArrayList<>();
-            numbers.add("1-" + Config.maxWithdrawAmount);
+            numbers.add("1-" + Config.MAX_WITHDRAW_AMOUNT);
             Collections.sort(numbers);
             return numbers;
         }

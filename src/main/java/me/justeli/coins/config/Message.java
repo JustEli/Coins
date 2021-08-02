@@ -19,12 +19,12 @@ import java.util.logging.Level;
 
 public enum Message
 {
-    LOADED_SETTINGS ("&3&oCurrently loaded settings of the Coins configuration."),
+    LOADED_SETTINGS ("&3Currently loaded settings of the Coins configuration."),
     NO_PERMISSION ("&4You do not have access to that command."),
     RELOAD_SUCCESS ("&eConfig of &6Coins &ehas been reloaded in &a{0}ms&e."),
-    MINOR_ISSUES ("&c&oThere were some minor errors while reloading, check console."),
-    CHECK_SETTINGS ("&e&oYou can check the loaded settings with &f&o/coins settings&e&o."),
-    WITHDRAW_COINS ("&e&oYou withdrawn &f&o{$}{0} &e&oand received &f&o{0} coins&e&o for it."),
+    MINOR_ISSUES ("&cThere were some minor errors while reloading, check console."),
+    CHECK_SETTINGS ("&eYou can check the loaded settings with &f/coins settings&e."),
+    WITHDRAW_COINS ("&eYou withdrawn &f{$}{0} &eand received &f{0} coins&e for it."),
     NOT_THAT_MUCH ("&cYou are not allowed to withdraw that much."),
     COINS_DISABLED ("&cCoins are disabled in this world."),
     SPAWNED_COINS ("&9Spawned {0} coins in radius {1} around {2}."),
@@ -38,7 +38,6 @@ public enum Message
     INVALID_NUMBER ("&cThat is an invalid number."),
     INVALID_RADIUS ("&cThat is an invalid radius."),
 
-    COINS_HELP ("&4:: Help for Coins"),
     DROP_USAGE ("&c/coins drop <player|x,y,z[,world]> <amount> [radius]"),
     REMOVE_USAGE ("&c/coins remove [radius|all] &7- remove coins in a radius"),
     SETTINGS_USAGE ("&c/coins settings &7- list the currently loaded settings"),
@@ -59,7 +58,7 @@ public enum Message
     @Override
     public String toString ()
     {
-        return MESSAGES.get(this).replace("{$}", Config.currencySymbol);
+        return MESSAGES.get(this).replace("{$}", Config.CURRENCY_SYMBOL);
     }
 
     public static void init (String language)
@@ -79,8 +78,7 @@ public enum Message
             }
             catch (Exception exception)
             {
-                Coins.console(Level.WARNING, "The language file you are using is missing a message called '" + message.name()
-                        + "', using the default (English) value for it now.");
+                Config.error("Language file is missing message called '" + message.name() + "'. Using its default value now (in English).");
                 MESSAGES.put(message, Util.color(message.def));
             }
         }

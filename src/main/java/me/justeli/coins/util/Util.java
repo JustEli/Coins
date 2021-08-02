@@ -130,7 +130,7 @@ public class Util
         if (item == null || item.getItemMeta() == null || !item.getItemMeta().hasDisplayName())
             return false;
 
-        return item.getItemMeta().getDisplayName().equals(Config.nameOfCoin());
+        return item.getItemMeta().getDisplayName().equals(Config.NAME_OF_COIN);
     }
 
     public static boolean isWithdrawnCoin (ItemStack item)
@@ -138,7 +138,7 @@ public class Util
         if (item == null || item.getItemMeta() == null || !item.getItemMeta().hasDisplayName())
             return false;
 
-        return item.getItemMeta().getDisplayName().endsWith(Config.nameOfCoin() + Config.multiSuffix);
+        return item.getItemMeta().getDisplayName().endsWith(Config.NAME_OF_COIN + Config.MULTI_SUFFIX);
     }
 
     // todo doesn't work -- also todo allow decimal /withdraw'ing
@@ -152,10 +152,10 @@ public class Util
 
     public static void playCoinPickupSound (Player player)
     {
-        float volume = Config.soundVolume;
-        float pitch = Config.soundPitch;
+        float volume = Config.SOUND_VOLUME;
+        float pitch = Config.SOUND_PITCH;
 
-        Sound sound = Config.soundName();
+        Sound sound = Config.SOUND_NAME;
         if (sound == null)
             return;
 
@@ -164,7 +164,7 @@ public class Util
 
     public static boolean isDisabledHere (World world)
     {
-        for (String disabledWorld : Config.disabledWorlds)
+        for (String disabledWorld : Config.DISABLED_WORLDS)
         {
             if (world.getName().equalsIgnoreCase(disabledWorld) || world.getUID().toString().equalsIgnoreCase(disabledWorld))
             {
@@ -200,22 +200,22 @@ public class Util
 
     public static double getRandomMoneyAmount ()
     {
-        double second = Config.moneyAmountFrom;
-        double first = Config.moneyAmountTo - second;
+        double second = Config.MONEY_AMOUNT_FROM;
+        double first = Config.MONEY_AMOUNT_TO - second;
 
         return RANDOM.nextDouble() * first + second;
     }
 
     public static double getRandomTakeAmount ()
     {
-        double second = Config.moneyTakenFrom;
-        double first = Config.moneyTakenTo - second;
+        double second = Config.MONEY_TAKEN_FROM;
+        double first = Config.MONEY_TAKEN_TO - second;
 
         return RANDOM.nextDouble() * first + second;
     }
 
     public static double round (double value)
     {
-        return BigDecimal.valueOf(value).setScale(Config.moneyDecimals, RoundingMode.HALF_UP).doubleValue();
+        return BigDecimal.valueOf(value).setScale(Config.MONEY_DECIMALS, RoundingMode.HALF_UP).doubleValue();
     }
 }

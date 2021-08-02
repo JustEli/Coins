@@ -19,9 +19,9 @@ public class Coin
 
     public Coin ()
     {
-        String texture = Config.skullTexture;
+        String texture = Config.SKULL_TEXTURE;
         this.coin = texture == null || texture.isEmpty()?
-                new ItemStack(Config.coinItem())
+                new ItemStack(Config.COIN_ITEM)
                 : Skull.of(texture);
 
         if (coin != null)
@@ -29,15 +29,15 @@ public class Coin
             ItemMeta meta = this.coin.getItemMeta();
             if (meta != null)
             {
-                meta.setDisplayName(Config.nameOfCoin());
+                meta.setDisplayName(Config.NAME_OF_COIN);
                 meta.setLore(new ArrayList<>());
 
-                if (Config.customModelData > 0 && PaperLib.getMinecraftVersion() >= 14)
+                if (Config.CUSTOM_MODEL_DATA > 0 && PaperLib.getMinecraftVersion() >= 14)
                 {
-                    meta.setCustomModelData(Config.customModelData);
+                    meta.setCustomModelData(Config.CUSTOM_MODEL_DATA);
                 }
 
-                if (Config.enchantedCoin)
+                if (Config.ENCHANTED_COIN)
                 {
                     meta.addEnchant(Enchantment.DURABILITY, 1, true);
                 }
@@ -70,7 +70,7 @@ public class Coin
     public Coin withdraw (long amount)
     {
         ItemMeta meta = this.coin.getItemMeta();
-        meta.setDisplayName(Util.color("&e" + amount + " &r" + Config.nameOfCoin() + Config.multiSuffix));
+        meta.setDisplayName(Util.color("&e" + amount + " &r" + Config.NAME_OF_COIN + Config.MULTI_SUFFIX));
         this.coin.setItemMeta(meta);
         return this;
     }

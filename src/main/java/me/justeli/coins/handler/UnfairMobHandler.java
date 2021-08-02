@@ -23,7 +23,7 @@ public class UnfairMobHandler
     @EventHandler
     public void preventSpawnerCoin (CreatureSpawnEvent event)
     {
-        if (Config.spawnerDrop)
+        if (Config.SPAWNER_DROP)
             return;
 
         if (Util.isDisabledHere(event.getEntity().getWorld()))
@@ -38,7 +38,7 @@ public class UnfairMobHandler
     @EventHandler
     public void splitPrevent (CreatureSpawnEvent event)
     {
-        if (event.getSpawnReason() != SpawnReason.SLIME_SPLIT || !Config.preventSplits)
+        if (event.getSpawnReason() != SpawnReason.SLIME_SPLIT || !Config.PREVENT_SPLITS)
             return;
 
         SLIME_SPLIT_MOB.add(event.getEntity().getUniqueId());

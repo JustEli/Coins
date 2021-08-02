@@ -19,7 +19,7 @@ public class ActionBar
 
     public static ActionBar of (String text)
     {
-        return new ActionBar(text.replace("{$}", Config.currencySymbol));
+        return new ActionBar(text.replace("{$}", Config.CURRENCY_SYMBOL));
     }
 
     public void send (Player player)

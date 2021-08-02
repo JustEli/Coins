@@ -1,10 +1,10 @@
 {
-  "LOADED_SETTINGS" : "&3&oOpciones actualmente cargadas de la configuración de Coins.",
+  "LOADED_SETTINGS" : "&3Opciones actualmente cargadas de la configuración de Coins.",
   "NO_PERMISSION" : "&4No tienes acceso a ese comando.",
   "RELOAD_SUCCESS" : "&eConfiguración de &6Coins &eha sido recargada en &a{0}ms&e.",
-  "MINOR_ISSUES" : "&c&oHubo errores menores mientras se recargaba, revisa la consola.",
-  "CHECK_SETTINGS" : "&e&oPuedes revisar las opciones cargadas con &f&o/coins settings&e&o.",
-  "WITHDRAW_COINS" : "&e&oRetiraste &f&o{$}{0} &e&oy recibiste &f&o{0} monedas&e&o por ello.",
+  "MINOR_ISSUES" : "&cHubo errores menores mientras se recargaba, revisa la consola.",
+  "CHECK_SETTINGS" : "&ePuedes revisar las opciones cargadas con &f/coins settings&e.",
+  "WITHDRAW_COINS" : "&eRetiraste &f{$}{0} &ey recibiste &f{0} monedas&e por ello.",
   "NOT_THAT_MUCH" : "&cNo tienes permitido retirar tanto.",
   "COINS_DISABLED" : "&cCoins están desactivadas en este mundo.",
   "SPAWNED_COINS" : "&9Generadas {0} monedas en un radio de {1} alrededor de {2}.",
@@ -18,7 +18,6 @@
   "INVALID_NUMBER" : "&cNúmero inválido.",
   "INVALID_RADIUS" : "&cRadio inválido.",
 
-  "COINS_HELP" : "&4:: Ayuda para Coins",
   "DROP_USAGE" : "&c/coins drop <jugador|x,y,z[,mundo]> <cantidad> [radio]",
   "REMOVE_USAGE" : "&c/coins remove [radio|all] &7- remueve monedas en un radio",
   "SETTINGS_USAGE" : "&c/coins settings &7- lista las opciones actualmente cargadas",

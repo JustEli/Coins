@@ -48,18 +48,18 @@ public class Commands
                         {
                             long ms = System.currentTimeMillis();
                             Util.resetMultiplier();
-                            Settings.reload();
+                            int errors = Settings.reload();
 
                             sender.sendMessage(color(Message.RELOAD_SUCCESS.toString()
                                     .replace("{0}", Long.toString(System.currentTimeMillis() - ms))));
-//                            if (!success)
-//                            {
-//                                sender.sendMessage(color(Message.MINOR_ISSUES.toString()));
-//                            }
-//                            else
-//                            {
+                            if (errors != 0)
+                            {
+                                sender.sendMessage(color(Message.MINOR_ISSUES.toString()));
+                            }
+                            else
+                            {
                                 sender.sendMessage(color(Message.CHECK_SETTINGS.toString()));
-//                            }
+                            }
                         }
                         else
                             noPerm(sender);
@@ -158,7 +158,7 @@ public class Commands
                 return true;
             }
 
-            if (!Config.enableWithdraw)
+            if (!Config.ENABLE_WITHDRAW)
                 return false;
 
             if (!sender.hasPermission("coins.withdraw") || !(sender instanceof Player))
@@ -168,7 +168,7 @@ public class Commands
             }
 
             Player player = (Player) sender;
-            if (Config.disabledWorlds.contains(player.getWorld().getName()))
+            if (Config.DISABLED_WORLDS.contains(player.getWorld().getName()))
             {
                 sender.sendMessage(color(Message.COINS_DISABLED.toString()));
                 return true;
@@ -196,7 +196,7 @@ public class Commands
                 return true;
             }
 
-            if (worth <= Config.maxWithdrawAmount && Coins.economy().getBalance(player) >= total)
+            if (worth <= Config.MAX_WITHDRAW_AMOUNT && Coins.economy().getBalance(player) >= total)
             {
                 ItemStack coin = new Coin().withdraw(worth).item();
                 coin.setAmount(amount);
@@ -205,7 +205,7 @@ public class Commands
                 Coins.economy().withdrawPlayer(player, total);
 
                 player.sendMessage(color(Message.WITHDRAW_COINS.toString().replace("{0}", Long.toString(total))));
-                ActionBar.of(Config.deathMessage.replace("%amount%", String.valueOf(total))).send(player);
+                ActionBar.of(Config.DEATH_MESSAGE.replace("%amount%", String.valueOf(total))).send(player);
             }
             else
             {
@@ -290,7 +290,7 @@ public class Commands
                 if (p == null)
                     p = (Player) sender;
 
-                for (String world : Config.disabledWorlds)
+                for (String world : Config.DISABLED_WORLDS)
                 {
                     if (p.getWorld().getName().equalsIgnoreCase(world))
                     {
@@ -318,7 +318,9 @@ public class Commands
 
         }
         else
+        {
             sender.sendMessage(color(Message.DROP_USAGE.toString()));
+        }
 
     }
 
@@ -368,7 +370,7 @@ public class Commands
                 Item i = (Item) m;
                 if (i.getItemStack().getItemMeta() != null && i.getItemStack().getItemMeta().hasDisplayName())
                 {
-                    if (i.getItemStack().getItemMeta().getDisplayName().equals(Config.nameOfCoin()))
+                    if (i.getItemStack().getItemMeta().getDisplayName().equals(Config.NAME_OF_COIN))
                     {
                         amount++;
                         double random = (RANDOM.nextDouble() * 3);
@@ -409,7 +411,7 @@ public class Commands
             notice = " (outdated -> /coins update)";
         }
 
-        sender.sendMessage(color(Message.COINS_HELP.toString() + " " + version + notice));
+        sender.sendMessage(color("&8&m     &6 Coins &e" + version + " &8&m     &c" + notice));
 
         if (sender.hasPermission("coins.drop"))
         {
@@ -433,7 +435,7 @@ public class Commands
             sender.sendMessage(color("&c/coins toggle &7- disable or enable Coins globally"));
         }
 
-        if (Config.enableWithdraw && sender.hasPermission("coins.withdraw"))
+        if (Config.ENABLE_WITHDRAW && sender.hasPermission("coins.withdraw"))
         {
             sender.sendMessage(color(Message.WITHDRAW_USAGE.toString()));
         }

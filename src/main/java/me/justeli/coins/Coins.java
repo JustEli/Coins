@@ -197,7 +197,7 @@ public class Coins
         this.getCommand("coins").setExecutor(new Commands());
         this.getCommand("coins").setTabCompleter(new TabComplete());
 
-        if ((Config.enableWithdraw))
+        if ((Config.ENABLE_WITHDRAW))
         {
             this.getCommand("withdraw").setExecutor(new Commands());
             this.getCommand("withdraw").setTabCompleter(new TabComplete());

@@ -16,38 +16,41 @@ import java.util.logging.Level;
 
 public class Settings
 {
-    private static RegisterConfig REGISTER_CONFIG;
-
-    public static void init ()
+    public static int init ()
     {
-        REGISTER_CONFIG = RegisterConfig.of(Coins.plugin(), Config.class);
-
         for (String language : new String[]{"english", "dutch", "spanish", "german", "french", "swedish", "chinese", "hungarian"})
         {
             if (!new File(Coins.plugin().getDataFolder() + File.separator + "language" + File.separator + language + ".json").exists())
             {
                 Coins.plugin().saveResource("language/" + language + ".json", false);
-                Coins.console(Level.INFO, "Added the language file '" + language + "' to Coins, which can be used in the config now.");
+                Coins.console(Level.INFO, "Added the language '" + language + "' to Coins, which can now be used in the config.");
             }
         }
 
-        reload();
+        return reload();
     }
 
-    public static void reload ()
+    // returns amount of errors
+    public static int reload ()
     {
-        Coins.plugin().saveDefaultConfig();
-        Coins.plugin().reloadConfig();
+        Config.resetErrors();
 
-        REGISTER_CONFIG.parse();
-        Message.init(Config.language);
+        RegisterConfig.parse();
+        Message.init(Config.LANGUAGE);
+
+        if (Config.getErrors() != 0)
+        {
+            Coins.console(Level.SEVERE, "Loaded the config of Coins with " + Config.getErrors() + " errors. Check above here for details.");
+        }
+
+        return Config.getErrors();
     }
 
     public static List<String> get ()
     {
         List<String> items = new ArrayList<>();
 
-        for (Map.Entry<String, Object> part : REGISTER_CONFIG.keys().entrySet())
+        for (Map.Entry<String, Object> part : RegisterConfig.keys().entrySet())
         {
             items.add(part.getKey() + "\u00BB " + part.getValue());
         }
