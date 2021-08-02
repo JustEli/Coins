@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.papermc.lib.PaperLib;
+import me.justeli.coins.command.CoinsDisabled;
 import me.justeli.coins.handler.HopperHandler;
 import me.justeli.coins.handler.InventoryHandler;
 import me.justeli.coins.handler.InteractionHandler;
@@ -28,14 +29,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 
-/**
- * Created by Eli on 12/13/2016.
- */
-
+/** by Eli at 12/13/2016. **/
 public class Coins
         extends JavaPlugin
 {
@@ -45,6 +45,13 @@ public class Coins
     private static Coins PLUGIN;
     private static Economy ECONOMY;
     private static String LATEST = "Unknown";
+
+    private final static List<String> DISABLED_REASONS = new ArrayList<>();
+
+    public static List<String> getDisabledReasons ()
+    {
+        return DISABLED_REASONS;
+    }
 
     public static Coins plugin ()
     {
@@ -61,6 +68,12 @@ public class Coins
         return LATEST;
     }
 
+    private static final String UNSUPPORTED_VERSION = "Coins only supports Minecraft version 1.8.8 and higher.";
+    private static final String USING_BUKKIT = "You seem to be using Bukkit, but the plugin Coins requires at least Spigot! " +
+            "This prevents the plugin from showing the amount of money players pick up. Please use Spigot or Paper. Moving from Bukkit to " +
+            "Spigot will NOT cause any problems with other plugins, since Spigot only adds more features to Bukkit.";
+    private static final String LACKING_ECONOMY = "There is no proper economy installed. Please install %s.";
+
     @Override
     public void onEnable ()
     {
@@ -70,27 +83,20 @@ public class Coins
         if (PaperLib.getMinecraftVersion() < 8 || (PaperLib.getMinecraftVersion() == 8 && PaperLib.getMinecraftPatchVersion() < 8))
         {
             line(Level.SEVERE);
-            console(Level.SEVERE, "COINS ONLY SUPPORTS MINECRAFT VERSION 1.8.8 AND UP.");
-
-            disablePlugin();
-            return;
+            console(Level.SEVERE, UNSUPPORTED_VERSION);
+            disablePlugin(UNSUPPORTED_VERSION);
         }
 
         if (!PaperLib.isSpigot() && !PaperLib.isPaper())
         {
             line(Level.SEVERE);
-            console(Level.SEVERE, "You seem to be using Bukkit, but the plugin Coins requires at least Spigot! " +
-                    "This prevents the plugin from showing the amount of money players pick up. Please use Spigot or Paper. Moving from Bukkit to " +
-                    "Spigot will NOT cause any problems with other plugins, since Spigot only adds more features to Bukkit.");
-
-            disablePlugin();
-            return;
+            console(Level.SEVERE, USING_BUKKIT);
+            disablePlugin(USING_BUKKIT);
         }
 
         if (getServer().getPluginManager().getPlugin("Vault") == null)
         {
-            noEconomySupport();
-            return;
+            noEconomySupport("Vault");
         }
 
         try
@@ -100,8 +106,7 @@ public class Coins
         }
         catch (NullPointerException | NoClassDefFoundError throwable)
         {
-            noEconomySupport();
-            return;
+            noEconomySupport("an economy supportive plugin");
         }
 
         if (PaperLib.getMinecraftVersion() >= 13 && !PaperLib.isPaper())
@@ -115,21 +120,37 @@ public class Coins
             enableMythicMobs();
         }
 
-        Settings.init();
+        if (DISABLED_REASONS.size() == 0)
+        {
+            Settings.init();
 
-        registerEvents();
-        registerCommands();
+            registerEvents();
+            registerCommands();
 
-        runAsync(this::versionChecker);
-        runAsync(bStatsMetrics::register);
+            runAsync(this::versionChecker);
+            runAsync(bStatsMetrics::register);
+        }
+        else
+        {
+            CoinsDisabled coinsDisabled = new CoinsDisabled();
+
+            this.getCommand("coins").setExecutor(coinsDisabled);
+            this.getCommand("withdraw").setExecutor(coinsDisabled);
+
+            line(Level.SEVERE);
+            console(Level.SEVERE, "Plugin 'Coins' is now disabled, until the issues are fixed.");
+            line(Level.SEVERE);
+        }
     }
 
-    private void noEconomySupport ()
+    private void noEconomySupport (String kind)
     {
         line(Level.SEVERE);
-        console(Level.SEVERE, "There seems to be no Vault or economy supportive plugin installed. Please install Vault and an economy " +
-                "supportive plugin like Essentials.");
-        disablePlugin();
+
+        String reason = String.format(LACKING_ECONOMY, kind);
+
+        console(Level.SEVERE, reason);
+        disablePlugin(reason);
     }
 
     private void line (Level type)
@@ -137,13 +158,9 @@ public class Coins
         console(type, "------------------------------------------------------------------");
     }
 
-    private void disablePlugin ()
+    private void disablePlugin (String reason)
     {
-        line(Level.SEVERE);
-        console(Level.SEVERE, "PLUGIN 'COINS' WILL BE DISABLED NOW!");
-        line(Level.SEVERE);
-
-        getServer().getPluginManager().disablePlugin(this);
+        DISABLED_REASONS.add(reason);
     }
 
     private void versionChecker ()
