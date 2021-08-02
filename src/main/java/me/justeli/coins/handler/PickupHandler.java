@@ -76,7 +76,7 @@ public class PickupHandler
             giveMoney(player, randomMoney);
         }
 
-        if (Config.pickupSound)
+        if (Config.PICKUP_SOUND)
         {
             Util.playCoinPickupSound(player);
         }
@@ -84,7 +84,7 @@ public class PickupHandler
 
     public static void giveRandomMoney (ItemStack item, Player player)
     {
-        if (Config.dropEachCoin)
+        if (Config.DROP_EACH_COIN)
         {
             giveMoney(player, item.getAmount());
             return;
@@ -113,10 +113,10 @@ public class PickupHandler
             {
                 PICKUP_AMOUNT_TRACKER.remove(uniqueId);
             }
-        }, Config.dropEachCoin? 30L : 10L);
+        }, Config.DROP_EACH_COIN? 30L : 10L);
 
-        ActionBar.of(Config.pickupMessage.replace("%amount%", String.format(
-                "%." + Config.moneyDecimals + "f",
+        ActionBar.of(Config.PICKUP_MESSAGE.replace("%amount%", String.format(
+                "%." + Config.MONEY_DECIMALS + "f",
                 displayAmount
         ))).send(player);
     }

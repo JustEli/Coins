@@ -22,7 +22,7 @@ public class HopperHandler
         if (!Util.isDroppedCoin(item))
             return;
 
-        if (Config.disableHoppers)
+        if (Config.DISABLE_HOPPERS)
         {
             event.setCancelled(true);
         }

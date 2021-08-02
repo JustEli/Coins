@@ -48,7 +48,7 @@ public class DropHandler
         if (Util.isDisabledHere(dead.getWorld()))
             return;
 
-        if (Coins.hasMythicMobs() && Config.disableMythicMobHandling && MythicMobsHook.isMythicMob(dead))
+        if (Coins.hasMythicMobs() && Config.DISABLE_MYTHIC_MOB_HANDLING && MythicMobsHook.isMythicMob(dead))
             return;
 
         EntityDamageEvent damageCause = dead.getLastDamageCause();
@@ -69,8 +69,7 @@ public class DropHandler
 
     public void entityDeath (LivingEntity entity, Player killer)
     {
-        int setLimit = Config.limitForLocation;
-        if (setLimit >= 1)
+        if (Config.LIMIT_FOR_LOCATION >= 1)
         {
             final Location location = entity.getLocation().getBlock().getLocation().clone();
             int killAmount = LOCATION_TRACKER.getOrDefault(location, 0);
@@ -80,14 +79,14 @@ public class DropHandler
             // subtract an hour later
             Coins.runLater(144000, () -> LOCATION_TRACKER.put(location, LOCATION_TRACKER.getOrDefault(location, 0) - 1));
 
-            if (killAmount > setLimit)
+            if (killAmount > Config.LIMIT_FOR_LOCATION)
                 return;
         }
 
-        if (PaperLib.getMinecraftVersion() >= 10 && !Config.dropWithAnyDeath && killer != null)
+        if (PaperLib.getMinecraftVersion() >= 10 && !Config.DROP_WITH_ANY_DEATH && killer != null)
         {
             AttributeInstance maxHealth = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-            double hitSetting = Config.percentagePlayerHit;
+            double hitSetting = Config.PERCENTAGE_PLAYER_HIT;
 
             if (hitSetting > 0 && maxHealth != null && getPlayerDamage(entity.getUniqueId()) / maxHealth.getValue() < hitSetting)
                 return;
@@ -96,31 +95,31 @@ public class DropHandler
         if (killer != null)
         {
             if (Util.isHostile(entity)
-                    || (Util.isPassive(entity) && Config.passiveDrop)
-                    || (Util.isPlayer(entity) && Config.playerDrop && Coins.economy().getBalance((Player) entity) >= 0))
+                    || (Util.isPassive(entity) && Config.PASSIVE_DROP)
+                    || (Util.isPlayer(entity) && Config.PLAYER_DROP && Coins.economy().getBalance((Player) entity) >= 0))
             {
                 dropMobCoin(entity, killer);
             }
         }
-        else if (Config.dropWithAnyDeath)
+        else if (Config.DROP_WITH_ANY_DEATH)
         {
             dropMobCoin(entity, null);
         }
 
-        if (Util.isPlayer(entity) && Config.loseOnDeath)
+        if (Util.isPlayer(entity) && Config.LOSE_ON_DEATH)
         {
             Player player = (Player) entity;
 
             double random = Util.getRandomTakeAmount();
-            double take = Util.round(Config.takePercentage?
+            double take = Util.round(Config.TAKE_PERCENTAGE?
                     (random / 100) * Coins.economy().getBalance(player)
                     : random);
 
             if (take > 0 && Coins.economy().withdrawPlayer(player, take).transactionSuccess())
             {
-                SubTitle.of(Config.deathMessage.replace("%amount%", String.valueOf(take))).send(player);
+                SubTitle.of(Config.DEATH_MESSAGE.replace("%amount%", String.valueOf(take))).send(player);
 
-                if (Config.dropOnDeath && player.getLocation().getWorld() != null)
+                if (Config.DROP_ON_DEATH && player.getLocation().getWorld() != null)
                 {
                     player.getWorld().dropItem(player.getLocation(), new Coin().withdraw((long) take).item());
                 }
@@ -152,22 +151,22 @@ public class DropHandler
 
     private void dropMobCoin (Entity victim, Player killer)
     {
-        if (killer != null && Util.isPlayer(victim) && Config.preventAlts)
+        if (killer != null && Util.isPlayer(victim) && Config.PREVENT_ALTS)
         {
             Player player = (Player) victim;
             if (killer.getAddress().getAddress().getHostAddress().equals(player.getAddress().getAddress().getHostAddress()))
                 return;
         }
 
-        if (UnfairMobHandler.fromSplit(victim) && Config.preventSplits)
+        if (UnfairMobHandler.fromSplit(victim) && Config.PREVENT_SPLITS)
             return;
 
         if (UnfairMobHandler.fromSpawner(victim)
-                && (killer != null || !Config.spawnerDrop)
+                && (killer != null || !Config.SPAWNER_DROP)
                 && (killer == null || !killer.hasPermission("coins.spawner")))
             return;
 
-        if (RANDOM.nextDouble() <= Config.dropChance)
+        if (RANDOM.nextDouble() <= Config.DROP_CHANCE)
         {
             final int amount = Config.mobMultiplier(victim.getType());
             dropCoin(amount, killer, victim.getLocation());
@@ -181,7 +180,7 @@ public class DropHandler
         if (Coins.isDisabled())
             return;
 
-        if (!Config.onlyExperienceBlocks)
+        if (!Config.ONLY_EXPERIENCE_BLOCKS)
         {
             dropBlockCoin(event.getBlock(), event.getPlayer());
             return;
@@ -195,7 +194,7 @@ public class DropHandler
 
     private void dropBlockCoin (Block block, Player player)
     {
-        if (RANDOM.nextDouble() <= Config.minePercentage)
+        if (RANDOM.nextDouble() <= Config.MINE_PERCENTAGE)
         {
             final int amount = Config.blockMultiplier(block.getType());
             Coins.runLater(1, () -> dropCoin(amount, player, block.getLocation().clone().add(0.5, 0.5, 0.5)));
@@ -205,11 +204,11 @@ public class DropHandler
     // todo improve
     private void dropCoin (int amount, Player player, Location location)
     {
-        if (Config.dropEachCoin)
+        if (Config.DROP_EACH_COIN)
         {
             // todo ??
-            int second = (int) Config.moneyAmountFrom.doubleValue();
-            int first = ((int) Config.moneyAmountTo.doubleValue()) + 1 - second;
+            int second = (int) Config.MONEY_AMOUNT_FROM.doubleValue();
+            int first = ((int) Config.MONEY_AMOUNT_TO.doubleValue()) + 1 - second;
 
             amount *= RANDOM.nextDouble() * first + second;
         }
@@ -219,7 +218,7 @@ public class DropHandler
             amount *= Util.getMultiplier(player);
         }
 
-        boolean stack = !Config.dropEachCoin && Config.stackCoins;
+        boolean stack = !Config.DROP_EACH_COIN && Config.STACK_COINS;
 
         if (location.getWorld() == null)
             return;

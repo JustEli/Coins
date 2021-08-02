@@ -21,7 +21,7 @@ public class SubTitle
 
     public static SubTitle of (String text)
     {
-        return new SubTitle(text.replace("{$}", (Config.currencySymbol)));
+        return new SubTitle(text.replace("{$}", (Config.CURRENCY_SYMBOL)));
     }
 
     public SubTitle in (int ticks)

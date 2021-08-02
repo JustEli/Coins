@@ -118,6 +118,7 @@ dropChance: 0.9
 
 # Set the amount of kills per location before coins stop dropping. Useful for overuse of grinders.
 # Default: 1, after 1 kill at X Y Z, it won't drop coins there for two hours. Disable by inputting 0.
+# You may want to increase this value if you're using a mob stacker plugin.
 limitForLocation: 1
 
 # List all worlds you want Coins to be disabled in here.

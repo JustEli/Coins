@@ -1,8 +1,8 @@
 package me.justeli.coins.config.api;
 
 import me.justeli.coins.Coins;
+import me.justeli.coins.config.Config;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 /**
@@ -19,84 +18,88 @@ import java.util.stream.Collectors;
  */
 public class RegisterConfig
 {
-    private final JavaPlugin javaPlugin;
-    private final Class<?> clazz;
-
-    private RegisterConfig (JavaPlugin javaPlugin, Class<?> clazz)
+    public static void parse ()
     {
-        this.javaPlugin = javaPlugin;
-        this.clazz = clazz;
-    }
+        Coins.plugin().saveDefaultConfig();
+        Coins.plugin().reloadConfig();
 
-    public static RegisterConfig of (JavaPlugin javaPlugin, Class<?> clazz)
-    {
-        return new RegisterConfig(javaPlugin, clazz);
-    }
+        FileConfiguration config = Coins.plugin().getConfig();
 
-    // returns the time it took to load
-    public long parse ()
-    {
-        long start = System.currentTimeMillis();
-
-        FileConfiguration config = javaPlugin.getConfig();
-        for (Field field : clazz.getDeclaredFields())
+        for (Field field : Config.class.getDeclaredFields())
         {
-            if (field.isAnnotationPresent(ConfigEntry.class))
+            if (!field.isAnnotationPresent(ConfigEntry.class))
+                continue;
+
+            ConfigEntry set = field.getAnnotation(ConfigEntry.class);
+            field.setAccessible(true);
+
+            String configKey = set.value();
+            if (!config.contains(configKey))
             {
-                ConfigEntry set = field.getAnnotation(ConfigEntry.class);
-                field.setAccessible(true);
-
-                String configKey = set.value();
-                Class<?> configClass = field.getType();
-                Object configValue;
-
-                if (configClass == Set.class)
-                {
-                    List<String> stringList = config.getStringList(configKey);
-                    configValue = new HashSet<>(stringList);
-                }
-                else if (configClass == Map.class)
-                {
-                    Map<String, Object> map = config.getConfigurationSection(configKey).getValues(false);
-                    configValue = map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> (Integer) e.getValue()));
-                }
-                else if (configClass == Float.class)
-                {
-                    configValue = (float) config.getDouble(configKey);
-                }
-                else
-                {
-                    configValue = config.getObject(configKey, configClass);
-                }
-
                 try
                 {
-                    if (configValue == null) // todo improve
-                    {
-                        Object defaultValue = field.get(clazz);
-
-                        Coins.console(Level.WARNING, "The config is missing the option '" + configKey + "'. Using default (" + defaultValue
-                                + ") now. Consider adding `" + configKey + ": " + defaultValue + "` to the config.");
-                        continue;
-                    }
-
-                    field.set(clazz, configValue);
+                    Object defaultValue = field.get(Config.class);
+                    Config.error(String.format(
+                            "Config file is missing key called '%s'. Using its default value now (%s). Consider to add this to the config:\n\n%s: %s\n",
+                            configKey, defaultValue, configKey.replace(".", ":\n  "), defaultValue
+                    ));
                 }
                 catch (Exception exception)
                 {
                     exception.printStackTrace();
                 }
+                continue;
+            }
+
+            Class<?> configClass = field.getType();
+            Object configValue;
+
+            if (configClass == Set.class)
+            {
+                List<String> stringList = config.getStringList(configKey);
+                configValue = new HashSet<>(stringList);
+            }
+            else if (configClass == Map.class)
+            {
+                Map<String, Object> map = config.getConfigurationSection(configKey).getValues(false);
+                configValue = map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> (Integer) e.getValue()));
+            }
+            else if (configClass == Float.class)
+            {
+                configValue = (float) config.getDouble(configKey);
+            }
+            else
+            {
+                configValue = config.getObject(configKey, configClass);
+            }
+
+            try
+            {
+                if (configValue == null) // todo improve
+                {
+                    Object defaultValue = field.get(Config.class);
+                    Config.error(String.format(
+                            "Config file has wrong value for key called '%s'. Using its default value now (%s).", configKey, defaultValue
+                    ));
+                    continue;
+                }
+
+                field.set(Config.class, configValue);
+            }
+            catch (Exception exception)
+            {
+                exception.printStackTrace();
             }
         }
 
-        return System.currentTimeMillis() - start;
+        Config.parse();
     }
 
-    public Map<String, Object> keys ()
+    public static Map<String, Object> keys ()
     {
         Map<String, Object> values = new HashMap<>();
 
-        for (Field field : clazz.getDeclaredFields())
+        for (Field field : Config.class.getDeclaredFields())
         {
             if (field.isAnnotationPresent(ConfigEntry.class))
             {
@@ -105,9 +108,9 @@ public class RegisterConfig
 
                 try
                 {
-                    values.put(set.value(), field.get(clazz));
+                    values.put(set.value(), field.get(Config.class));
                 }
-                catch (IllegalAccessException exception)
+                catch (Exception exception)
                 {
                     exception.printStackTrace();
                 }
