@@ -111,9 +111,7 @@ public class DropHandler
             Player player = (Player) entity;
 
             double random = Util.getRandomTakeAmount();
-            double take = Util.round(Config.TAKE_PERCENTAGE?
-                    (random / 100) * Coins.economy().getBalance(player)
-                    : random);
+            double take = Util.round(Config.TAKE_PERCENTAGE? (random / 100) * Coins.economy().getBalance(player) : random);
 
             if (take > 0 && Coins.economy().withdrawPlayer(player, take).transactionSuccess())
             {

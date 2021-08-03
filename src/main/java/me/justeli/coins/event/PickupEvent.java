@@ -11,14 +11,14 @@ import org.jetbrains.annotations.NotNull;
  * Created by Eli on September 13, 2020.
  * Coins: me.justeli.coins.events
  */
-public class CoinPickupEvent
+public class PickupEvent
         extends Event
         implements Cancellable
 {
     private final Player player;
     private final Item item;
 
-    public CoinPickupEvent (Player player, Item item)
+    public PickupEvent (Player player, Item item)
     {
         this.player = player;
         this.item = item;

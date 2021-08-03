@@ -1,7 +1,7 @@
 package me.justeli.coins.handler;
 
 import me.justeli.coins.Coins;
-import me.justeli.coins.event.CoinPickupEvent;
+import me.justeli.coins.event.PickupEvent;
 import me.justeli.coins.util.ActionBar;
 import me.justeli.coins.config.Config;
 import me.justeli.coins.util.Util;
@@ -25,7 +25,7 @@ public class PickupHandler
     private static final HashMap<UUID, Double> PICKUP_AMOUNT_TRACKER = new HashMap<>();
 
     @EventHandler (ignoreCancelled = true)
-    public void onPickup (CoinPickupEvent event)
+    public void onPickup (PickupEvent event)
     {
         if (Util.isDisabledHere(event.getPlayer().getWorld()))
             return;

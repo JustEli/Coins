@@ -2,6 +2,7 @@ package me.justeli.coins.util;
 
 import io.papermc.lib.PaperLib;
 import me.justeli.coins.config.Config;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -9,19 +10,19 @@ import java.lang.reflect.Constructor;
 
 public class SubTitle
 {
-    private final String text;
-    private int fadeIn = 20;
+    private final String subtitle;
+    private int fadeIn = 10;
     private int stay = 100;
     private int fadeOut = 20;
 
-    private SubTitle (String text)
+    private SubTitle (String subtitle)
     {
-        this.text = text;
+        this.subtitle = Util.color(subtitle);
     }
 
     public static SubTitle of (String text)
     {
-        return new SubTitle(text.replace("{$}", (Config.CURRENCY_SYMBOL)));
+        return new SubTitle(text.replace("{$}", Config.CURRENCY_SYMBOL));
     }
 
     public SubTitle in (int ticks)
@@ -44,18 +45,12 @@ public class SubTitle
 
     public void send (Player player)
     {
-        sendSubTitle(player, fadeIn, stay, fadeOut, text);
-    }
-
-    private void sendSubTitle (Player player, Integer fadeIn, Integer stay, Integer fadeOut, String subtitle)
-    {
         if (PaperLib.getMinecraftVersion() >= 11)
         {
-            player.sendTitle("", Util.color(subtitle), fadeIn, stay, fadeOut);
+            player.sendTitle(ChatColor.RESET.toString(), subtitle, fadeIn, stay, fadeOut);
         }
         else
         {
-            subtitle = Util.color(subtitle);
             try
             {
                 Object e;
@@ -84,7 +79,7 @@ public class SubTitle
                 sendPacket(player, subtitlePacket);
 
             }
-            catch (Exception var11)
+            catch (Exception exception)
             {
                 player.sendMessage(subtitle);
             }

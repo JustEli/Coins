@@ -1,6 +1,6 @@
 package me.justeli.coins.handler.listener;
 
-import me.justeli.coins.event.CoinPickupEvent;
+import me.justeli.coins.event.PickupEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,7 +16,7 @@ public class BukkitPickupEvent
     @EventHandler (ignoreCancelled = true)
     public void bukkitPickupEvent (PlayerPickupItemEvent event)
     {
-        CoinPickupEvent registerEvent = new CoinPickupEvent(event.getPlayer(), event.getItem());
+        PickupEvent registerEvent = new PickupEvent(event.getPlayer(), event.getItem());
         Bukkit.getServer().getPluginManager().callEvent(registerEvent);
 
         if (registerEvent.isCancelled())
