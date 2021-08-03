@@ -50,15 +50,15 @@ public class Commands
                             Util.resetMultiplier();
                             int errors = Settings.reload();
 
-                            sender.sendMessage(color(Message.RELOAD_SUCCESS.toString()
-                                    .replace("{0}", Long.toString(System.currentTimeMillis() - ms))));
+                            sender.sendMessage(Message.RELOAD_SUCCESS.toString()
+                                    .replace("{0}", Long.toString(System.currentTimeMillis() - ms)));
                             if (errors != 0)
                             {
-                                sender.sendMessage(color(Message.MINOR_ISSUES.toString()));
+                                sender.sendMessage(Message.MINOR_ISSUES.toString());
                             }
                             else
                             {
-                                sender.sendMessage(color(Message.CHECK_SETTINGS.toString()));
+                                sender.sendMessage(Message.CHECK_SETTINGS.toString());
                             }
                         }
                         else
@@ -153,7 +153,7 @@ public class Commands
         {
             if (Coins.isDisabled())
             {
-                sender.sendMessage(color(Message.COINS_DISABLED.toString()));
+                sender.sendMessage(Message.COINS_DISABLED.toString());
                 return true;
             }
 
@@ -172,19 +172,19 @@ public class Commands
             Player player = (Player) sender;
             if (Util.isDisabledHere(player.getWorld()))
             {
-                sender.sendMessage(color(Message.COINS_DISABLED.toString()));
+                sender.sendMessage(Message.COINS_DISABLED.toString());
                 return true;
             }
 
             if (player.getInventory().firstEmpty() == -1)
             {
-                player.sendMessage(color(Message.INVENTORY_FULL.toString()));
+                player.sendMessage(Message.INVENTORY_FULL.toString());
                 return true;
             }
 
             if (args.length == 0)
             {
-                player.sendMessage(color(Message.WITHDRAW_USAGE.toString()));
+                player.sendMessage(Message.WITHDRAW_USAGE.toString());
                 return true;
             }
 
@@ -194,7 +194,7 @@ public class Commands
 
             if (worth < 1 || amount < 1 || total < 1 || amount > 64)
             {
-                sender.sendMessage(color(Message.INVALID_AMOUNT.toString()));
+                sender.sendMessage(Message.INVALID_AMOUNT.toString());
                 return true;
             }
 
@@ -206,12 +206,12 @@ public class Commands
                 player.getInventory().addItem(coin);
                 Coins.economy().withdrawPlayer(player, total);
 
-                player.sendMessage(color(Message.WITHDRAW_COINS.replace(Util.doubleToString(total))));
+                player.sendMessage(Message.WITHDRAW_COINS.replace(Util.doubleToString(total)));
                 ActionBar.of(Config.DEATH_MESSAGE.replace("%amount%", Util.doubleToString(total))).send(player);
             }
             else
             {
-                player.sendMessage(color(Message.NOT_THAT_MUCH.toString()));
+                player.sendMessage(Message.NOT_THAT_MUCH.toString());
             }
         }
         return false;
@@ -239,7 +239,7 @@ public class Commands
             try {amount = Integer.parseInt(args[2]); }
             catch (NumberFormatException e)
             {
-                sender.sendMessage(color(Message.INVALID_NUMBER.toString()));
+                sender.sendMessage(Message.INVALID_NUMBER.toString());
                 return;
             }
 
@@ -252,7 +252,7 @@ public class Commands
                 try {radius = Integer.parseInt(args[3]);}
                 catch (NumberFormatException e)
                 {
-                    sender.sendMessage(color(Message.INVALID_NUMBER.toString()));
+                    sender.sendMessage(Message.INVALID_NUMBER.toString());
                     return;
                 }
             }
@@ -263,7 +263,7 @@ public class Commands
             {
                 if (!args[1].contains(","))
                 {
-                    sender.sendMessage(color(Message.PLAYER_NOT_FOUND.toString()));
+                    sender.sendMessage(Message.PLAYER_NOT_FOUND.toString());
                     return;
                 }
                 else
@@ -281,7 +281,7 @@ public class Commands
                     }
                     catch (NumberFormatException | ArrayIndexOutOfBoundsException | NullPointerException e)
                     {
-                        sender.sendMessage(color(Message.COORDS_NOT_FOUND.toString()));
+                        sender.sendMessage(Message.COORDS_NOT_FOUND.toString());
                         return;
                     }
                 }
@@ -302,7 +302,7 @@ public class Commands
                 {
                     if (p.getWorld().getName().equalsIgnoreCase(world))
                     {
-                        sender.sendMessage(color(Message.COINS_DISABLED.toString()));
+                        sender.sendMessage(Message.COINS_DISABLED.toString());
                         return;
                     }
                 }
@@ -310,13 +310,13 @@ public class Commands
 
             if (radius < 1 || radius > 80)
             {
-                sender.sendMessage(color(Message.INVALID_RADIUS.toString()));
+                sender.sendMessage(Message.INVALID_RADIUS.toString());
                 return;
             }
 
             if (amount < 1 || amount > 1000)
             {
-                sender.sendMessage(color(Message.INVALID_AMOUNT.toString()));
+                sender.sendMessage(Message.INVALID_AMOUNT.toString());
                 return;
             }
 
@@ -347,12 +347,12 @@ public class Commands
                 try {r = Integer.parseInt(args[1]);}
                 catch (NumberFormatException e)
                 {
-                    sender.sendMessage(color(Message.INVALID_RADIUS.toString()));
+                    sender.sendMessage(Message.INVALID_RADIUS.toString());
                     return;
                 }
                 if (r < 1 || r > 80)
                 {
-                    sender.sendMessage(color(Message.INVALID_RADIUS.toString()));
+                    sender.sendMessage(Message.INVALID_RADIUS.toString());
                     return;
                 }
             }
@@ -411,30 +411,30 @@ public class Commands
         String notice = "";
         if (Coins.isDisabled())
         {
-            notice = " | " + Message.GLOBALLY_DISABLED;
+            notice = " " + Message.GLOBALLY_DISABLED;
         }
         else if (!update.equals("Unknown") && !update.equals(version))
         {
             notice = " " + Message.OUTDATED;
         }
 
-        sender.sendMessage(color("&8&m     &6 Coins &e" + version + " &8&m     &c" + notice));
+        sender.sendMessage(color("&8&m     &6 Coins &e" + version + " &8&m     &4" + notice));
 
         if (sender.hasPermission("coins.drop"))
         {
-            sender.sendMessage(color(Message.DROP_USAGE.toString()));
+            sender.sendMessage(Message.DROP_USAGE.toString());
         }
 
         if (sender.hasPermission("coins.remove"))
         {
-            sender.sendMessage(color(Message.REMOVE_USAGE.toString()));
+            sender.sendMessage(Message.REMOVE_USAGE.toString());
         }
 
         if (sender.hasPermission("coins.admin"))
         {
-            sender.sendMessage(color(Message.SETTINGS_USAGE.toString()));
-            sender.sendMessage(color(Message.RELOAD_USAGE.toString()));
-            sender.sendMessage(color(Message.VERSION_CHECK.toString()));
+            sender.sendMessage(Message.SETTINGS_USAGE.toString());
+            sender.sendMessage(Message.RELOAD_USAGE.toString());
+            sender.sendMessage(Message.VERSION_CHECK.toString());
         }
 
         if (sender.hasPermission("coins.toggle"))
@@ -444,12 +444,12 @@ public class Commands
 
         if (Config.ENABLE_WITHDRAW && sender.hasPermission("coins.withdraw"))
         {
-            sender.sendMessage(color(Message.WITHDRAW_USAGE.toString()));
+            sender.sendMessage(Message.WITHDRAW_USAGE.toString());
         }
     }
 
     private void noPerm (CommandSender sender)
     {
-        sender.sendMessage(color(Message.NO_PERMISSION.toString()));
+        sender.sendMessage(Message.NO_PERMISSION.toString());
     }
 }

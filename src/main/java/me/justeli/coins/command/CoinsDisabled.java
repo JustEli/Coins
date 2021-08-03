@@ -22,7 +22,7 @@ public class CoinsDisabled
         if (!label.equalsIgnoreCase("coins") && !label.equalsIgnoreCase("coin") && !label.equalsIgnoreCase("withdraw"))
             return false;
 
-        sender.sendMessage(Util.color(Message.DISABLED_REASONS.toString()));
+        sender.sendMessage(Message.DISABLED_REASONS.toString());
         for (String message : Coins.getDisabledReasons())
         {
             sender.sendMessage(Util.color(" - &c" + message));
