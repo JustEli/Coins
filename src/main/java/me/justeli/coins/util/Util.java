@@ -80,7 +80,7 @@ public class Util
             }
             PLAYER_MULTIPLIER.put(player.getUniqueId(), permissions.size() == 0? 1d : Collections.max(permissions));
         }
-        return PLAYER_MULTIPLIER.get(player.getUniqueId());
+        return PLAYER_MULTIPLIER.computeIfAbsent(player.getUniqueId(), empty -> 1D);
     }
 
     public static boolean isHostile (Entity entity)

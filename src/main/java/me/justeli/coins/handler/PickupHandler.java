@@ -105,7 +105,7 @@ public class PickupHandler
 
         double previousAmount = PICKUP_AMOUNT_TRACKER.computeIfAbsent(uniqueId, empty -> 0D);
         PICKUP_AMOUNT_TRACKER.put(uniqueId, amount + previousAmount);
-        final double displayAmount = PICKUP_AMOUNT_TRACKER.get(uniqueId);
+        final double displayAmount = PICKUP_AMOUNT_TRACKER.computeIfAbsent(uniqueId, empty -> 0D);
 
         Bukkit.getScheduler().runTaskLater(Coins.plugin(), () ->
         {

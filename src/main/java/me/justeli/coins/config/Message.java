@@ -46,11 +46,11 @@ public enum Message
     WITHDRAW_USAGE ("&c/withdraw <worth> [amount] &7- withdraw money into coins")
     ;
 
-    private final String def;
+    private final String defaultMessage;
 
-    Message (String def)
+    Message (String defaultMessage)
     {
-        this.def = def;
+        this.defaultMessage = defaultMessage;
     }
 
     private static final HashMap<Message, String> MESSAGES = new HashMap<>();
@@ -58,7 +58,7 @@ public enum Message
     @Override
     public String toString ()
     {
-        return MESSAGES.get(this).replace("{$}", Config.CURRENCY_SYMBOL);
+        return MESSAGES.computeIfAbsent(this, empty -> Util.color(this.defaultMessage)).replace("{$}", Config.CURRENCY_SYMBOL);
     }
 
     public static void init (String language)
@@ -79,7 +79,7 @@ public enum Message
             catch (Exception exception)
             {
                 Config.error("Language file is missing message called '" + message.name() + "'. Using its default value now (in English).");
-                MESSAGES.put(message, Util.color(message.def));
+                MESSAGES.put(message, Util.color(message.defaultMessage));
             }
         }
     }

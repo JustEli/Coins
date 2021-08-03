@@ -34,13 +34,13 @@ public class Skull
         }
     }
 
-    public static ItemStack of (@NotNull String texture)
+    public static ItemStack of (String texture)
     {
+        if (texture == null || texture.isEmpty())
+            return null;
+
         if (COIN.containsKey(texture))
             return COIN.get(texture);
-
-        if (texture.isEmpty())
-            return null;
 
         SkullMeta skullMeta = (SkullMeta) SKULL_ITEM.getItemMeta();
 
