@@ -119,7 +119,7 @@ public class DropHandler
 
                 if (Config.DROP_ON_DEATH && player.getLocation().getWorld() != null)
                 {
-                    player.getWorld().dropItem(player.getLocation(), new Coin().withdraw((long) take).item());
+                    player.getWorld().dropItem(player.getLocation(), new Coin().withdraw(take).item());
                 }
             }
         }

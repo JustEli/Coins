@@ -38,12 +38,12 @@ public class InteractionHandler
         {
             event.setCancelled(true);
 
+            double amount = Util.getWithdrawnTotalWorth(event.getItem());
+
             // doesn't work on 1.8
             event.getItem().setAmount(0);
 
-            double amount = Util.getWithdrawnTotalWorth(event.getItem());
             PickupHandler.giveMoney(player, amount);
-
             Util.playCoinPickupSound(player);
         }
     }

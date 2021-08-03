@@ -141,13 +141,20 @@ public class Util
         return item.getItemMeta().getDisplayName().endsWith(Config.NAME_OF_COIN + Config.MULTI_SUFFIX);
     }
 
-    // todo doesn't work -- also todo allow decimal /withdraw'ing
     public static double getWithdrawnTotalWorth (ItemStack item)
     {
         if (!isWithdrawnCoin(item))
             return 0;
 
-        return item.getAmount() * Double.parseDouble(ChatColor.stripColor(item.getItemMeta().getDisplayName().split(" ")[0]));
+        try
+        {
+            String valuePart = ChatColor.stripColor(item.getItemMeta().getDisplayName().split(" ")[0]);
+            return item.getAmount() * new Double(valuePart);
+        }
+        catch (Exception exception)
+        {
+            return 0;
+        }
     }
 
     public static void playCoinPickupSound (Player player)

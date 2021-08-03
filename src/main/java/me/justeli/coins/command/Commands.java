@@ -159,7 +159,10 @@ public class Commands
             }
 
             if (!Config.ENABLE_WITHDRAW)
+            {
+                sender.sendMessage(color("&cWithdrawing coins is disabled on this server."));
                 return false;
+            }
 
             if (!sender.hasPermission("coins.withdraw") || !(sender instanceof Player))
             {
@@ -168,7 +171,7 @@ public class Commands
             }
 
             Player player = (Player) sender;
-            if (Config.DISABLED_WORLDS.contains(player.getWorld().getName()))
+            if (Util.isDisabledHere(player.getWorld()))
             {
                 sender.sendMessage(color(Message.COINS_DISABLED.toString()));
                 return true;
@@ -186,9 +189,9 @@ public class Commands
                 return true;
             }
 
-            int worth = parseInt(args[0]);
+            double worth = parseDouble(args[0]);
             int amount = args.length >= 2? parseInt(args[1]) : 1;
-            int total = worth * amount;
+            double total = worth * amount;
 
             if (worth < 1 || amount < 1 || total < 1 || amount > 64)
             {
@@ -204,7 +207,7 @@ public class Commands
                 player.getInventory().addItem(coin);
                 Coins.economy().withdrawPlayer(player, total);
 
-                player.sendMessage(color(Message.WITHDRAW_COINS.toString().replace("{0}", Long.toString(total))));
+                player.sendMessage(color(Message.WITHDRAW_COINS.toString().replace("{0}", String.valueOf(total))));
                 ActionBar.of(Config.DEATH_MESSAGE.replace("%amount%", String.valueOf(total))).send(player);
             }
             else
@@ -218,6 +221,12 @@ public class Commands
     private int parseInt (String arg)
     {
         try { return Integer.parseInt(arg); }
+        catch (NumberFormatException e) { return 0; }
+    }
+
+    private double parseDouble (String arg)
+    {
+        try { return Util.round(new Double(arg)); }
         catch (NumberFormatException e) { return 0; }
     }
 
