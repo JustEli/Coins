@@ -30,65 +30,77 @@ public class RegisterConfig
             if (!field.isAnnotationPresent(ConfigEntry.class))
                 continue;
 
-            ConfigEntry set = field.getAnnotation(ConfigEntry.class);
+            ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
             field.setAccessible(true);
+            String configKey = configEntry.value();
 
-            String configKey = set.value();
-            if (!config.contains(configKey))
+            try
             {
-                try
+                if (!config.contains(configKey))
                 {
                     Object defaultValue = field.get(Config.class);
                     Config.error(String.format(
                             "Config file is missing key called '%s'. Using its default value now (%s). Consider to add this to the config:\n\n%s: %s\n",
                             configKey, defaultValue, configKey.replace(".", ":\n  "), defaultValue
                     ));
-                }
-                catch (Exception exception)
-                {
-                    exception.printStackTrace();
-                }
-                continue;
-            }
-
-            Class<?> configClass = field.getType();
-            Object configValue;
-
-            if (configClass == Set.class)
-            {
-                List<String> stringList = config.getStringList(configKey);
-                configValue = new HashSet<>(stringList);
-            }
-            else if (configClass == Map.class)
-            {
-                Map<String, Object> map = config.getConfigurationSection(configKey).getValues(false);
-                configValue = map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> (Integer) e.getValue()));
-            }
-            else if (configClass == Float.class)
-            {
-                configValue = (float) config.getDouble(configKey);
-            }
-            else
-            {
-                configValue = config.getObject(configKey, configClass);
-            }
-
-            try
-            {
-                if (configValue == null) // todo improve
-                {
-                    Object defaultValue = field.get(Config.class);
-                    Config.error(String.format(
-                            "Config file has wrong value for key called '%s'. Using its default value now (%s).", configKey, defaultValue
-                    ));
                     continue;
+                }
+
+                Class<?> configClass = field.getType();
+                Object configValue;
+
+                if (configClass == Set.class)
+                {
+                    List<String> stringList = config.getStringList(configKey);
+                    configValue = new HashSet<>(stringList);
+                }
+                else if (configClass == Map.class)
+                {
+                    Map<String, Object> map = config.getConfigurationSection(configKey).getValues(false);
+                    configValue = map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> (Integer) e.getValue()));
+                }
+                // can be improved in java 11
+                else if (configClass == Long.class || configClass == Integer.class || configClass == Float.class || configClass == Double.class)
+                {
+                    Double value = new Double(config.get(configKey, "0").toString());
+
+                    if (configClass == Long.class)
+                    {
+                        configValue = value.longValue();
+                    }
+                    else if (configClass == Integer.class)
+                    {
+                        configValue = value.intValue();
+                    }
+                    else if (configClass == Float.class)
+                    {
+                        configValue = value.floatValue();
+                    }
+                    else
+                    {
+                        configValue = value;
+                    }
+                }
+                else
+                {
+                    configValue = config.getObject(configKey, configClass);
                 }
 
                 field.set(Config.class, configValue);
             }
             catch (Exception exception)
             {
-                exception.printStackTrace();
+                try
+                {
+                    Object defaultValue = field.get(Config.class);
+                    Config.error(String.format(
+                            "Config file has wrong value for key called '%s'. Using its default value now (%s).", configKey, defaultValue
+                    ));
+                }
+                catch (IllegalAccessException illegalException)
+                {
+                    illegalException.printStackTrace();
+                }
             }
         }
 

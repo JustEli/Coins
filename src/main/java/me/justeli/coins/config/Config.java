@@ -98,22 +98,24 @@ public class Config
 
     private static Material coinItem ()
     {
-        String material = RAW__COIN_ITEM
-                .toUpperCase(Locale.ROOT)
-                .replace(" ", "_")
-                .replace("COIN", PaperLib.getMinecraftVersion() > 12? "SUNFLOWER" : "DOUBLE_PLANT");
+        String correctedForVersion = PaperLib.getMinecraftVersion() > 12? "SUNFLOWER" : "DOUBLE_PLANT";
 
-        try
-        {
-            return Material.matchMaterial(material);
-        }
-        catch (IllegalArgumentException exception)
+        String material = RAW__COIN_ITEM
+                .replace(" ", "_")
+                .replace("COIN", correctedForVersion)
+                .replace("SUNFLOWER", correctedForVersion);
+
+        Material coin = Material.matchMaterial(material);
+
+        if (coin == null)
         {
             Config.error("The material '" + RAW__COIN_ITEM + "' in the config at `coinItem` does not exist. Please use a " +
                     "material from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html");
 
-            return Material.matchMaterial(PaperLib.getMinecraftVersion() > 12? "SUNFLOWER" : "DOUBLE_PLANT");
+            return Material.matchMaterial(correctedForVersion);
         }
+
+        return coin;
     }
 
     private static Sound soundName ()
@@ -123,7 +125,7 @@ public class Config
             return Sound.valueOf(
                     PaperLib.getMinecraftVersion() < 9 && (RAW__SOUND_NAME.equals("BLOCK_LAVA_POP") || RAW__SOUND_NAME.equals("ITEM_ARMOR_EQUIP_GOLD"))?
                             "NOTE_STICKS"
-                            : RAW__SOUND_NAME.toUpperCase()
+                            : RAW__SOUND_NAME.toUpperCase().replace(" ", "_")
             );
         }
         catch (IllegalArgumentException exception)
