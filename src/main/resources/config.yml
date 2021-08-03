@@ -141,7 +141,7 @@ maxWithdrawAmount: 10000.00
 # Drop coins for mined blocks. What's the chance? (0.2 = 20% = 1 coin per 5 /experience/ blocks mined)
 minePercentage: 0.30
 
-# Only drop coins by the given chance for blocks that drop experience, like: lapis, iron, spawners.
+# Only drop coins by the given chance for blocks that drop experience, like lapis, and spawners.
 onlyExperienceBlocks: true
 
 # Put the amount of coins dropped for a specific block type here, by default: blocks drop one coin.

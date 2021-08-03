@@ -39,9 +39,9 @@ public class Config
     @ConfigEntry ("enchantedCoin") public static Boolean ENCHANTED_COIN = false;
     @ConfigEntry ("disableMythicMobHandling") public static Boolean DISABLE_MYTHIC_MOB_HANDLING = false;
 
-    @ConfigEntry ("language") public static String LANGUAGE = "english";
+    @ConfigEntry ("language") public static String LANGUAGE = "English";
     @ConfigEntry ("nameOfCoin") private static String RAW__NAME_OF_COIN = "&6Coin";
-    @ConfigEntry ("coinItem") private static String RAW__COIN_ITEM = "coin";
+    @ConfigEntry ("coinItem") private static String RAW__COIN_ITEM = "sunflower";
     @ConfigEntry ("pickupMessage") public static String PICKUP_MESSAGE = "&2+ &a{$}%amount%";
     @ConfigEntry ("deathMessage") public static String DEATH_MESSAGE = "&4- &c{$}%amount%";
     @ConfigEntry ("soundName") private static String RAW__SOUND_NAME = "ITEM_ARMOR_EQUIP_GOLD";

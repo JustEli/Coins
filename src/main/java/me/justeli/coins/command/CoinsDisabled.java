@@ -1,6 +1,7 @@
 package me.justeli.coins.command;
 
 import me.justeli.coins.Coins;
+import me.justeli.coins.config.Message;
 import me.justeli.coins.util.Util;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -21,7 +22,7 @@ public class CoinsDisabled
         if (!label.equalsIgnoreCase("coins") && !label.equalsIgnoreCase("coin") && !label.equalsIgnoreCase("withdraw"))
             return false;
 
-        sender.sendMessage(Util.color("&4Coins is disabled for the following reason(s):"));
+        sender.sendMessage(Util.color(Message.DISABLED_REASONS.toString()));
         for (String message : Coins.getDisabledReasons())
         {
             sender.sendMessage(Util.color(" - &c" + message));

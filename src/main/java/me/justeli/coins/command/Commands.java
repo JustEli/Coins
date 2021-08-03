@@ -100,20 +100,20 @@ public class Commands
                         {
                             String version = Coins.latest();
                             String current = Coins.plugin().getDescription().getVersion();
-                            sender.sendMessage(color("&eVersion currently installed: &f" + current));
-                            sender.sendMessage(color("&eLatest released version: &f" + version));
+                            sender.sendMessage(Message.CURRENTLY_INSTALLED.replace(current));
+                            sender.sendMessage(Message.LATEST_VERSION.replace(version));
                             if (version.equals(current))
                             {
-                                sender.sendMessage(color("&aYou're up to date with version " + current + "."));
+                                sender.sendMessage(Message.UP_TO_DATE.replace(current));
                             }
                             else if (version.equals("Unknown"))
                             {
-                                sender.sendMessage(color("&cCouldn't get the latest version of Coins."));
+                                sender.sendMessage(Message.LATEST_RETRIEVE_FAIL.toString());
                             }
                             else
                             {
-                                sender.sendMessage(color("&cConsider updating the plugin to version " + version + "!"));
-                                sender.sendMessage("https://www.spigotmc.org/resources/coins.33382/");
+                                sender.sendMessage(Message.CONSIDER_UPDATING.replace(version));
+                                sender.sendMessage(color("&9https://www.spigotmc.org/resources/coins.33382/"));
                             }
                         }
                         else
@@ -124,12 +124,11 @@ public class Commands
                     case "toggle":
                         if (sender.hasPermission("coins.toggle"))
                         {
-                            String abled = Coins.toggleDisabled()? "&aenabled" : "&cdisabled";
-                            sender.sendMessage(color("&eCoins has been globally " + abled + "&e. Toggle with &f/coins toggle&e."));
+                            Message abled = Coins.toggleDisabled()? Message.ENABLED : Message.DISABLED;
+                            sender.sendMessage(Message.GLOBALLY_DISABLED_INFORM.replace(abled));
                             if (Coins.isDisabled())
                             {
-                                sender.sendMessage(color("&eWhen disabled, coins will not drop and withdrawing coins isn't possible. Picking up coins " +
-                                        "that were already on the ground and depositing coins is still possible."));
+                                sender.sendMessage(Message.DISABLED_DESCRIPTION.toString());
                             }
                         }
                         else
@@ -160,7 +159,7 @@ public class Commands
 
             if (!Config.ENABLE_WITHDRAW)
             {
-                sender.sendMessage(color("&cWithdrawing coins is disabled on this server."));
+                sender.sendMessage(Message.WITHDRAWING_DISABLED.toString());
                 return false;
             }
 
@@ -207,7 +206,7 @@ public class Commands
                 player.getInventory().addItem(coin);
                 Coins.economy().withdrawPlayer(player, total);
 
-                player.sendMessage(color(Message.WITHDRAW_COINS.toString().replace("{0}", Util.doubleToString(total))));
+                player.sendMessage(color(Message.WITHDRAW_COINS.replace(Util.doubleToString(total))));
                 ActionBar.of(Config.DEATH_MESSAGE.replace("%amount%", Util.doubleToString(total))).send(player);
             }
             else
@@ -322,15 +321,19 @@ public class Commands
             }
 
             Util.dropCoins(location, radius, amount);
-            sender.sendMessage(color(Message.SPAWNED_COINS.toString()).replace("{0}", Long.toString(amount)).replace("{1}", Long.toString(radius))
-                    .replace("{2}", name));
+            sender.sendMessage(
+                    Message.SPAWNED_COINS.replace(
+                                    Long.toString(amount),
+                                    Long.toString(radius),
+                                    name
+                    )
+            );
 
         }
         else
         {
-            sender.sendMessage(color(Message.DROP_USAGE.toString()));
+            sender.sendMessage(Message.DROP_USAGE.toString());
         }
-
     }
 
     private void removeCoins (CommandSender sender, String[] args)
@@ -360,12 +363,7 @@ public class Commands
         {
             Player p = (Player) sender;
             mobs = p.getWorld().getEntities();
-            /*if (PaperLib.getMinecraftVersion() < 10)
-            {
-                sender.sendMessage(ChatColor.RED + "Radius is not supported with Minecraft version below 1.10. Clearing all coins in the entire world now.");
-            }
-            else */
-                if (r != 0)
+            if (r != 0)
             {
                 mobs = new ArrayList<>(p.getWorld().getNearbyEntities(p.getLocation(), r, r, r));
             }
@@ -403,7 +401,7 @@ public class Commands
                 }
             }
         }
-        sender.sendMessage(color(Message.REMOVED_COINS.toString().replace("{0}", Long.toString(amount))));
+        sender.sendMessage(Message.REMOVED_COINS.replace(Long.toString(amount)));
     }
 
     private void sendHelp (CommandSender sender)
@@ -413,11 +411,11 @@ public class Commands
         String notice = "";
         if (Coins.isDisabled())
         {
-            notice = " :: CURRENTLY GLOBALLY DISABLED ::";
+            notice = " | " + Message.GLOBALLY_DISABLED;
         }
         else if (!update.equals("Unknown") && !update.equals(version))
         {
-            notice = " (outdated -> /coins update)";
+            notice = " " + Message.OUTDATED;
         }
 
         sender.sendMessage(color("&8&m     &6 Coins &e" + version + " &8&m     &c" + notice));
@@ -441,7 +439,7 @@ public class Commands
 
         if (sender.hasPermission("coins.toggle"))
         {
-            sender.sendMessage(color("&c/coins toggle &7- disable or enable Coins globally"));
+            sender.sendMessage(Message.TOGGLE_USAGE.toString());
         }
 
         if (Config.ENABLE_WITHDRAW && sender.hasPermission("coins.withdraw"))

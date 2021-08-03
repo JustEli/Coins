@@ -43,7 +43,25 @@ public enum Message
     SETTINGS_USAGE ("&c/coins settings &7- list the currently loaded settings"),
     RELOAD_USAGE ("&c/coins reload &7- reload the settings from config.yml"),
     VERSION_CHECK ("&c/coins version &7- check if there's a new release"),
-    WITHDRAW_USAGE ("&c/withdraw <worth> [amount] &7- withdraw money into coins")
+    WITHDRAW_USAGE ("&c/withdraw <worth> [amount] &7- withdraw money into coins"),
+    TOGGLE_USAGE ("&c/coins toggle &7- disable or enable Coins globally"),
+
+    DISABLED_REASONS ("&4Coins is disabled for the following reason(s):"),
+    CURRENTLY_INSTALLED ("&eVersion currently installed: &f{0}"),
+    LATEST_VERSION ("&eLatest released version: &f{0}"),
+    UP_TO_DATE ("&aYou're up to date with version {0}."),
+    LATEST_RETRIEVE_FAIL ("&cCouldn't get the latest version of Coins."),
+    CONSIDER_UPDATING ("&cConsider updating the plugin to version {0}."),
+
+    ENABLED ("&aenabled"),
+    DISABLED ("&cdisabled"),
+
+    GLOBALLY_DISABLED_INFORM("&eCoins has been globally {0}&e. Toggle with &f/coins toggle&e."),
+    DISABLED_DESCRIPTION ("&eWhen disabled, coins will not drop and withdrawing coins isn't possible. Picking up coins " +
+            "that were already on the ground and depositing coins is still possible."),
+    WITHDRAWING_DISABLED ("&cWithdrawing coins is disabled on this server."),
+    GLOBALLY_DISABLED ("Currently globally disabled."),
+    OUTDATED ("(outdated → /coins update)"),
     ;
 
     private final String defaultMessage;
@@ -59,6 +77,18 @@ public enum Message
     public String toString ()
     {
         return MESSAGES.computeIfAbsent(this, empty -> Util.color(this.defaultMessage)).replace("{$}", Config.CURRENCY_SYMBOL);
+    }
+
+    public String replace (Object... replacements)
+    {
+        String message = toString();
+
+        for (int i = 0; i < replacements.length; i++)
+        {
+            message = message.replace("{" + i + "}", replacements[i].toString());
+        }
+
+        return message;
     }
 
     public static void init (String language)

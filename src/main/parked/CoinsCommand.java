@@ -36,7 +36,7 @@ public class CoinsCommand
                     Util.resetMultiplier();
                     int errors = Settings.reload();
 
-                    sender.sendMessage(Message.RELOAD_SUCCESS.toString().replace("{0}", Long.toString(System.currentTimeMillis() - current)));
+                    sender.sendMessage(Message.RELOAD_SUCCESS.replace(Long.toString(System.currentTimeMillis() - current)));
                     sender.sendMessage((errors > 0? Message.MINOR_ISSUES : Message.CHECK_SETTINGS).toString());
                 });
 
