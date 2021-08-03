@@ -225,4 +225,9 @@ public class Util
     {
         return BigDecimal.valueOf(value).setScale(Config.MONEY_DECIMALS, RoundingMode.HALF_UP).doubleValue();
     }
+
+    public static String doubleToString (double input)
+    {
+        return String.format("%." + Config.MONEY_DECIMALS + "f", round(input));
+    }
 }

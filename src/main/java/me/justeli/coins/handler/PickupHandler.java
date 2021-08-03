@@ -115,9 +115,6 @@ public class PickupHandler
             }
         }, Config.DROP_EACH_COIN? 30L : 10L);
 
-        ActionBar.of(Config.PICKUP_MESSAGE.replace("%amount%", String.format(
-                "%." + Config.MONEY_DECIMALS + "f",
-                displayAmount
-        ))).send(player);
+        ActionBar.of(Config.PICKUP_MESSAGE.replace("%amount%", Util.doubleToString(displayAmount))).send(player);
     }
 }

@@ -70,7 +70,7 @@ public class Coin
     public Coin withdraw (double amount)
     {
         ItemMeta meta = this.coin.getItemMeta();
-        meta.setDisplayName(Util.color("&e" + amount + " &r" + Config.NAME_OF_COIN + Config.MULTI_SUFFIX));
+        meta.setDisplayName(Util.color("&e" + Util.doubleToString(amount) + " &r" + Config.NAME_OF_COIN + Config.MULTI_SUFFIX));
         this.coin.setItemMeta(meta);
         return this;
     }

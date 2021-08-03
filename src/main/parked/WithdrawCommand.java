@@ -66,7 +66,7 @@ public class WithdrawCommand
             Coins.economy().withdrawPlayer(player, total);
 
             player.sendMessage(Message.WITHDRAW_COINS.toString().replace("{0}", Long.toString(total)));
-            ActionBar.of(Config.DEATH_MESSAGE.replace("%amount%", String.valueOf(total))).send(player);
+            ActionBar.of(Config.DEATH_MESSAGE.replace("%amount%", Util.doubleToString(total))).send(player);
         });
 
         register();

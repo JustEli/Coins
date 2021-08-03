@@ -207,8 +207,8 @@ public class Commands
                 player.getInventory().addItem(coin);
                 Coins.economy().withdrawPlayer(player, total);
 
-                player.sendMessage(color(Message.WITHDRAW_COINS.toString().replace("{0}", String.valueOf(total))));
-                ActionBar.of(Config.DEATH_MESSAGE.replace("%amount%", String.valueOf(total))).send(player);
+                player.sendMessage(color(Message.WITHDRAW_COINS.toString().replace("{0}", Util.doubleToString(total))));
+                ActionBar.of(Config.DEATH_MESSAGE.replace("%amount%", Util.doubleToString(total))).send(player);
             }
             else
             {

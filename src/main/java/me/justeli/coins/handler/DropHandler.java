@@ -115,7 +115,7 @@ public class DropHandler
 
             if (take > 0 && Coins.economy().withdrawPlayer(player, take).transactionSuccess())
             {
-                SubTitle.of(Config.DEATH_MESSAGE.replace("%amount%", String.valueOf(take))).send(player);
+                SubTitle.of(Config.DEATH_MESSAGE.replace("%amount%", Util.doubleToString(take))).send(player);
 
                 if (Config.DROP_ON_DEATH && player.getLocation().getWorld() != null)
                 {
