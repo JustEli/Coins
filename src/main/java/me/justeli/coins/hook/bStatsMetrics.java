@@ -72,7 +72,7 @@ public class bStatsMetrics
             metrics.add("customModelData", Config.CUSTOM_MODEL_DATA);
             metrics.add("enableWithdraw", Config.ENABLE_WITHDRAW);
             metrics.add("maxWithdrawAmount", Config.MAX_WITHDRAW_AMOUNT);
-            metrics.add("minePercentage", Config.MINE_PERCENTAGE);
+            metrics.add("minePercentage", Config.MINE_PERCENTAGE * 100 + "%");
             metrics.add("onlyExperienceBlocks", Config.ONLY_EXPERIENCE_BLOCKS);
             metrics.add("loseOnDeath", Config.LOSE_ON_DEATH);
             metrics.add("moneyTaken", (Config.MONEY_TAKEN_FROM + Config.MONEY_TAKEN_TO) / 2);
