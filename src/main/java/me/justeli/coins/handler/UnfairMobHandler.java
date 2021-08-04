@@ -5,6 +5,7 @@ import me.justeli.coins.util.Util;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -44,7 +45,7 @@ public class UnfairMobHandler
         SLIME_SPLIT_MOB.add(event.getEntity().getUniqueId());
     }
 
-    @EventHandler
+    @EventHandler (priority = EventPriority.MONITOR)
     public void removeDeathEntity (EntityDeathEvent event)
     {
         removeFromList(event.getEntity());

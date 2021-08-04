@@ -159,9 +159,7 @@ public class DropHandler
         if (UnfairMobHandler.fromSplit(victim) && Config.PREVENT_SPLITS)
             return;
 
-        if (UnfairMobHandler.fromSpawner(victim)
-                && (killer != null || !Config.SPAWNER_DROP)
-                && (killer == null || !killer.hasPermission("coins.spawner")))
+        if (UnfairMobHandler.fromSpawner(victim) && !hasSpawnerPermission(killer))
             return;
 
         if (RANDOM.nextDouble() <= Config.DROP_CHANCE)
@@ -169,6 +167,14 @@ public class DropHandler
             final int amount = Config.mobMultiplier(victim.getType());
             dropCoin(amount, killer, victim.getLocation());
         }
+    }
+
+    private boolean hasSpawnerPermission (Player player)
+    {
+        if (player == null)
+            return Config.SPAWNER_DROP;
+
+        return Config.SPAWNER_DROP || player.hasPermission("coins.spawner");
     }
 
     @EventHandler (ignoreCancelled = true,
