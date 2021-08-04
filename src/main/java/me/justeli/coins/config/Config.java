@@ -102,6 +102,7 @@ public class Config
 
         String material = RAW__COIN_ITEM
                 .replace(" ", "_")
+                .toUpperCase(Locale.ROOT)
                 .replace("COIN", correctedForVersion)
                 .replace("SUNFLOWER", correctedForVersion);
 
@@ -133,7 +134,6 @@ public class Config
             Config.error("The sound '" + RAW__SOUND_NAME + "' in the config at `soundName` does not exist. Please use a " +
                     "sound from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html");
 
-            // todo test
             return Sound.valueOf(PaperLib.getMinecraftVersion() < 9? "NOTE_STICKS" : "ITEM_ARMOR_EQUIP_GOLD");
         }
     }
