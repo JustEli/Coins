@@ -4,9 +4,11 @@ import me.justeli.coins.Coins;
 import me.justeli.coins.util.Util;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -116,20 +118,34 @@ public enum Message
 
     private static JSONObject getJson (String language)
     {
+        File file = getFile(language);
+
+        if (file == null)
+            return null;
+
         try
         {
             return (JSONObject) new JSONParser().parse(
-                    new InputStreamReader(
-                            new FileInputStream(
-                                    Coins.plugin().getDataFolder() + File.separator + "language" + File.separator + language + ".json"
-                            ),
-                            StandardCharsets.UTF_8
-                    )
+                    new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)
             );
         }
-        catch (Exception exception)
+        catch (IOException | ParseException exception)
         {
             return null;
         }
+    }
+
+    private static File getFile (String language)
+    {
+        File[] languageFiles = new File(Coins.plugin().getDataFolder().getAbsolutePath() + File.separator + "language").listFiles();
+        for (File languageFile : languageFiles)
+        {
+            if (languageFile.getName().equalsIgnoreCase(language + ".json"))
+            {
+                return languageFile;
+            }
+        }
+
+        return null;
     }
 }

@@ -9,10 +9,10 @@ import me.justeli.coins.handler.HopperHandler;
 import me.justeli.coins.handler.InventoryHandler;
 import me.justeli.coins.handler.InteractionHandler;
 import me.justeli.coins.handler.UnfairMobHandler;
-import me.justeli.coins.handler.listener.BukkitPickupEvent;
+import me.justeli.coins.handler.listener.BukkitEventListener;
 import me.justeli.coins.handler.PickupHandler;
 import me.justeli.coins.handler.DropHandler;
-import me.justeli.coins.handler.listener.PaperPickupEvent;
+import me.justeli.coins.handler.listener.PaperEventListener;
 import me.justeli.coins.command.Commands;
 import me.justeli.coins.command.TabComplete;
 import me.justeli.coins.hook.MythicMobsHook;
@@ -194,7 +194,7 @@ public class Coins
 
         boolean validPaper = PaperLib.isPaper() && PaperLib.getMinecraftVersion() > 12;
 
-        manager.registerEvents(validPaper? new PaperPickupEvent() : new BukkitPickupEvent(), this);
+        manager.registerEvents(validPaper? new PaperEventListener() : new BukkitEventListener(), this);
 
         manager.registerEvents(new HopperHandler(), this);
         manager.registerEvents(new UnfairMobHandler(), this);
