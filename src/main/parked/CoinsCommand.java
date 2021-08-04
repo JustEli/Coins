@@ -34,10 +34,10 @@ public class CoinsCommand
                     long current = System.currentTimeMillis();
 
                     Util.resetMultiplier();
-                    int errors = Settings.reload();
+                    int warnings = Settings.reload();
 
                     sender.sendMessage(Message.RELOAD_SUCCESS.replace(Long.toString(System.currentTimeMillis() - current)));
-                    sender.sendMessage((errors > 0? Message.MINOR_ISSUES : Message.CHECK_SETTINGS).toString());
+                    sender.sendMessage((warnings > 0? Message.MINOR_ISSUES : Message.CHECK_SETTINGS).toString());
                 });
 
         command

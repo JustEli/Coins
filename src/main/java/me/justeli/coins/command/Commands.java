@@ -48,11 +48,11 @@ public class Commands
                         {
                             long ms = System.currentTimeMillis();
                             Util.resetMultiplier();
-                            int errors = Settings.reload();
+                            int warnings = Settings.reload();
 
                             sender.sendMessage(Message.RELOAD_SUCCESS.toString()
                                     .replace("{0}", Long.toString(System.currentTimeMillis() - ms)));
-                            if (errors != 0)
+                            if (warnings != 0)
                             {
                                 sender.sendMessage(Message.MINOR_ISSUES.toString());
                             }

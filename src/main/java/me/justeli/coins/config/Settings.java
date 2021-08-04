@@ -30,20 +30,20 @@ public class Settings
         return reload();
     }
 
-    // returns amount of errors
+    // returns amount of warnings
     public static int reload ()
     {
-        Config.resetErrors();
+        Config.resetWarnings();
 
         RegisterConfig.parse();
         Message.init(Config.LANGUAGE);
 
-        if (Config.getErrors() != 0)
+        if (Config.getWarnings() != 0)
         {
-            Coins.console(Level.SEVERE, "Loaded the config of Coins with " + Config.getErrors() + " errors. Check above here for details.");
+            Coins.console(Level.SEVERE, "Loaded the config of Coins with " + Config.getWarnings() + " warnings. Check above here for details.");
         }
 
-        return Config.getErrors();
+        return Config.getWarnings();
     }
 
     public static List<String> get ()

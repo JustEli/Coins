@@ -22,7 +22,7 @@ public enum Message
     LOADED_SETTINGS ("&3Currently loaded settings of the Coins configuration."),
     NO_PERMISSION ("&4You do not have access to that command."),
     RELOAD_SUCCESS ("&eConfig of &6Coins &ehas been reloaded in &a{0}ms&e."),
-    MINOR_ISSUES ("&cThere were some minor errors while reloading, check console."),
+    MINOR_ISSUES ("&cThere were some warnings while reloading, check console."),
     CHECK_SETTINGS ("&eYou can check the loaded settings with &f/coins settings&e."),
     WITHDRAW_COINS ("&eYou withdrawn &f{$}{0} &eand received &f{0} coins&e for it."),
     NOT_THAT_MUCH ("&cYou are not allowed to withdraw that much."),

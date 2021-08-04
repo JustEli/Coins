@@ -138,21 +138,21 @@ public class Config
         }
     }
 
-    private static int errors = 0;
+    private static int warnings = 0;
 
     public static void error (String message)
     {
-        errors ++;
-        Coins.plugin().getLogger().log(Level.WARNING, "(Notice " + errors + ") " + message);
+        warnings++;
+        Coins.plugin().getLogger().log(Level.WARNING, "(Notice " + warnings + ") " + message);
     }
 
-    public static void resetErrors ()
+    public static void resetWarnings ()
     {
-        errors = 0;
+        warnings = 0;
     }
 
-    public static int getErrors ()
+    public static int getWarnings ()
     {
-        return errors;
+        return warnings;
     }
 }
