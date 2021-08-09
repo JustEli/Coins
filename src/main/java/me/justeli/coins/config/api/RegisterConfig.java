@@ -83,7 +83,8 @@ public class RegisterConfig
                 }
                 else
                 {
-                    configValue = config.getObject(configKey, configClass);
+                    //configValue = config.getObject(configKey, configClass);
+                    configValue = configClass.cast(config.get(configKey));
                 }
 
                 field.set(Config.class, configValue);
