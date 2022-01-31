@@ -1,6 +1,5 @@
 package me.justeli.coins.config;
 
-import io.papermc.lib.PaperLib;
 import me.justeli.coins.Coins;
 import me.justeli.coins.config.api.ConfigEntry;
 import me.justeli.coins.util.Util;
@@ -38,16 +37,30 @@ public class Config
     @ConfigEntry ("dropWithAnyDeath") public static Boolean DROP_WITH_ANY_DEATH = false;
     @ConfigEntry ("enchantedCoin") public static Boolean ENCHANTED_COIN = false;
     @ConfigEntry ("disableMythicMobHandling") public static Boolean DISABLE_MYTHIC_MOB_HANDLING = false;
+    @ConfigEntry (value = "detectLegacyCoins", motivation = "It is recommended that you add this option to the Coins config as soon as you can, AND " +
+            "SET IT TO FALSE. Please note: Keep this option to true if you have withdrawn coins laying around in the server from before Coins version " +
+            "1.11. Also leave the keys 'nameOfCoin' and 'multiSuffix' untouched, if you set 'detectLegacyCoins' to true! Legacy withdrawn coins still " +
+            "depend on those two keys!") public static Boolean DETECT_LEGACY_COINS = true; // false in default config
+    @ConfigEntry ("allowNameChange") public static Boolean ALLOW_NAME_CHANGE = false;
+    @ConfigEntry ("allowModification") public static Boolean ALLOW_MODIFICATION = false;
 
     @ConfigEntry ("language") public static String LANGUAGE = "English";
-    @ConfigEntry ("nameOfCoin") private static String RAW__NAME_OF_COIN = "&6Coin";
-    @ConfigEntry ("coinItem") private static String RAW__COIN_ITEM = "sunflower";
-    @ConfigEntry ("pickupMessage") public static String PICKUP_MESSAGE = "&2+ &a{$}%amount%";
-    @ConfigEntry ("deathMessage") public static String DEATH_MESSAGE = "&4- &c{$}%amount%";
-    @ConfigEntry ("soundName") private static String RAW__SOUND_NAME = "ITEM_ARMOR_EQUIP_GOLD";
+    @ConfigEntry ("coinItem") private static String RAW_COIN_ITEM = "sunflower";
+    @ConfigEntry ("pickupMessage") public static String PICKUP_MESSAGE = "&2+ &a{currency}{amount}";
+    @ConfigEntry ("deathMessage") public static String DEATH_MESSAGE = "&4- &c{currency}{amount}";
+    @ConfigEntry ("soundName") private static String RAW_SOUND_NAME = "ITEM_ARMOR_EQUIP_GOLD";
     @ConfigEntry ("currencySymbol") public static String CURRENCY_SYMBOL = "$";
-    @ConfigEntry ("multiSuffix") public static String MULTI_SUFFIX = "s";
     @ConfigEntry ("skullTexture") public static String SKULL_TEXTURE = "";
+
+    @ConfigEntry (value = "droppedCoinName", motivation = "Has been replaced, previous key was 'nameOfCoin', which will be unsupported in a future " +
+            "version.") private static String RAW_DROPPED_COIN_NAME = "&6Coin";
+    @ConfigEntry (value = "withdrawnCoinNames.singular", motivation = "Has been replaced, previous key was 'nameOfCoin', which will be unsupported " +
+            "in a future version.") private static String RAW_WITHDRAWN_COIN_NAME_SINGULAR = "&e{amount} &6Coin";
+    @ConfigEntry (value = "withdrawnCoinNames.plural", motivation = "Has been replaced, previous key was 'nameOfCoin' and 'multiSuffix', which will " +
+            "be unsupported in a future version.") private static String RAW_WITHDRAWN_COIN_NAME_PLURAL = "&e{amount} &6Coins";
+
+    @Deprecated @ConfigEntry (value = "nameOfCoin", required = false) private static String LEGACY_RAW_NAME_OF_COIN = null;
+    @Deprecated @ConfigEntry (value = "multiSuffix", required = false) public static String LEGACY_MULTI_SUFFIX = null;
     
     @ConfigEntry ("dropChance") public static Double DROP_CHANCE = 0.9;
     @ConfigEntry ("maxWithdrawAmount") public static Double MAX_WITHDRAW_AMOUNT = 10000.0;
@@ -67,53 +80,69 @@ public class Config
     
     @ConfigEntry ("disabledWorlds") public static Set<String> DISABLED_WORLDS = new HashSet<>();
 
-    @ConfigEntry ("mobMultiplier") private static Map<String, Integer> RAW__MOB_MULTIPLIER = new HashMap<>();
-    @ConfigEntry ("blockMultiplier") private static Map<String, Integer> RAW__BLOCK_MULTIPLIER = new HashMap<>();
+    @ConfigEntry ("mobMultiplier") private static Map<String, Integer> RAW_MOB_MULTIPLIER = new HashMap<>();
+    @ConfigEntry ("blockMultiplier") private static Map<String, Integer> RAW_BLOCK_MULTIPLIER = new HashMap<>();
 
-    public static String NAME_OF_COIN;
+    public static String DROPPED_COIN_NAME;
+    public static String WITHDRAWN_COIN_NAME_SINGULAR;
+    public static String WITHDRAWN_COIN_NAME_PLURAL;
+    @Deprecated public static String LEGACY_WITHDRAWN_COIN_ENDING;
+
     public static Material COIN_ITEM;
     public static Sound SOUND_NAME;
 
+    private static final String LEGACY_PREFIX = "&e{amount} &r";
+
     public static void parse ()
     {
-        NAME_OF_COIN = nameOfCoin();
+        DROPPED_COIN_NAME = Util.color(LEGACY_RAW_NAME_OF_COIN == null? RAW_DROPPED_COIN_NAME : LEGACY_RAW_NAME_OF_COIN);
+
+        WITHDRAWN_COIN_NAME_SINGULAR = Util.color(LEGACY_RAW_NAME_OF_COIN == null
+                ? RAW_WITHDRAWN_COIN_NAME_SINGULAR
+                : LEGACY_PREFIX + LEGACY_RAW_NAME_OF_COIN);
+
+        WITHDRAWN_COIN_NAME_PLURAL = Util.color(LEGACY_MULTI_SUFFIX == null && LEGACY_RAW_NAME_OF_COIN == null
+                ? RAW_WITHDRAWN_COIN_NAME_PLURAL
+                : LEGACY_PREFIX + LEGACY_RAW_NAME_OF_COIN + LEGACY_MULTI_SUFFIX);
+
+        LEGACY_WITHDRAWN_COIN_ENDING = LEGACY_MULTI_SUFFIX == null && LEGACY_RAW_NAME_OF_COIN == null
+                ? null
+                : Util.color(LEGACY_RAW_NAME_OF_COIN + LEGACY_MULTI_SUFFIX);
+
         COIN_ITEM = coinItem();
         SOUND_NAME = soundName();
+
+        if (DETECT_LEGACY_COINS)
+        {
+            ALLOW_NAME_CHANGE = false;
+        }
     }
 
     public static int mobMultiplier (EntityType type)
     {
-        return RAW__MOB_MULTIPLIER.computeIfAbsent(type.toString(), empty -> 1);
+        return RAW_MOB_MULTIPLIER.computeIfAbsent(type.toString(), empty -> 1);
     }
 
     public static int blockMultiplier (Material material)
     {
-        return RAW__BLOCK_MULTIPLIER.computeIfAbsent(material.toString(), empty -> 1);
-    }
-
-    private static String nameOfCoin ()
-    {
-        return Util.color(RAW__NAME_OF_COIN);
+        return RAW_BLOCK_MULTIPLIER.computeIfAbsent(material.toString(), empty -> 1);
     }
 
     private static Material coinItem ()
     {
-        String correctedForVersion = PaperLib.getMinecraftVersion() > 12? "SUNFLOWER" : "DOUBLE_PLANT";
-
-        String material = RAW__COIN_ITEM
+        String material = RAW_COIN_ITEM
                 .replace(" ", "_")
                 .toUpperCase(Locale.ROOT)
-                .replace("COIN", correctedForVersion)
-                .replace("SUNFLOWER", correctedForVersion);
+                .replace("COIN", "SUNFLOWER");
 
         Material coin = Material.matchMaterial(material);
 
         if (coin == null)
         {
-            Config.error("The material '" + RAW__COIN_ITEM + "' in the config at `coinItem` does not exist. Please use a " +
+            Config.error("The material '" + RAW_COIN_ITEM + "' in the config at `coinItem` does not exist. Please use a " +
                     "material from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html");
 
-            return Material.matchMaterial(correctedForVersion);
+            return Material.SUNFLOWER;
         }
 
         return coin;
@@ -123,36 +152,32 @@ public class Config
     {
         try
         {
-            return Sound.valueOf(
-                    PaperLib.getMinecraftVersion() < 9 && (RAW__SOUND_NAME.equals("BLOCK_LAVA_POP") || RAW__SOUND_NAME.equals("ITEM_ARMOR_EQUIP_GOLD"))?
-                            "NOTE_STICKS"
-                            : RAW__SOUND_NAME.toUpperCase().replace(" ", "_")
-            );
+            return Sound.valueOf(RAW_SOUND_NAME.toUpperCase().replace(" ", "_"));
         }
         catch (IllegalArgumentException exception)
         {
-            Config.error("The sound '" + RAW__SOUND_NAME + "' in the config at `soundName` does not exist. Please use a " +
+            Config.error("The sound '" + RAW_SOUND_NAME + "' in the config at `soundName` does not exist. Please use a " +
                     "sound from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html");
 
-            return Sound.valueOf(PaperLib.getMinecraftVersion() < 9? "NOTE_STICKS" : "ITEM_ARMOR_EQUIP_GOLD");
+            return Sound.ITEM_ARMOR_EQUIP_GOLD;
         }
     }
 
-    private static int warnings = 0;
+    private static int WARNINGS = 0;
 
     public static void error (String message)
     {
-        warnings++;
-        Coins.plugin().getLogger().log(Level.WARNING, "(Notice " + warnings + ") " + message);
+        WARNINGS++;
+        Coins.plugin().getLogger().log(Level.WARNING, "#" + WARNINGS + ": " + message);
     }
 
-    public static void resetWarnings ()
+    public static void resetWarningCount ()
     {
-        warnings = 0;
+        WARNINGS = 0;
     }
 
-    public static int getWarnings ()
+    public static int getWarningCount ()
     {
-        return warnings;
+        return WARNINGS;
     }
 }

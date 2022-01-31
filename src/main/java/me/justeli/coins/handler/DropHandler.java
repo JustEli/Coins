@@ -3,8 +3,9 @@ package me.justeli.coins.handler;
 import io.papermc.lib.PaperLib;
 import me.justeli.coins.Coins;
 import me.justeli.coins.hook.MythicMobsHook;
-import me.justeli.coins.item.Coin;
 import me.justeli.coins.config.Config;
+import me.justeli.coins.item.CoinUtil;
+import me.justeli.coins.item.CreateCoin;
 import me.justeli.coins.util.SubTitle;
 import me.justeli.coins.util.Util;
 import org.bukkit.Location;
@@ -28,6 +29,7 @@ import org.bukkit.projectiles.ProjectileSource;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.SplittableRandom;
 import java.util.UUID;
 
 public class DropHandler
@@ -35,7 +37,7 @@ public class DropHandler
 {
     private static final HashMap<Location, Integer> LOCATION_TRACKER = new HashMap<>();
     private static final HashMap<UUID, Double> DAMAGES = new HashMap<>();
-    private static final Random RANDOM = new Random();
+    private static final SplittableRandom RANDOM = new SplittableRandom();
 
     @EventHandler (priority = EventPriority.HIGH)
     public void onEntityDeath (EntityDeathEvent event)
@@ -83,7 +85,7 @@ public class DropHandler
                 return;
         }
 
-        if (PaperLib.getMinecraftVersion() >= 10 && !Config.DROP_WITH_ANY_DEATH && killer != null)
+        if (!Config.DROP_WITH_ANY_DEATH && killer != null)
         {
             AttributeInstance maxHealth = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH);
             double hitSetting = Config.PERCENTAGE_PLAYER_HIT;
@@ -115,11 +117,14 @@ public class DropHandler
 
             if (take > 0 && Coins.economy().withdrawPlayer(player, take).transactionSuccess())
             {
-                SubTitle.of(Config.DEATH_MESSAGE.replace("%amount%", Util.doubleToString(take))).send(player);
+                SubTitle.of(Util.formatAmountAndCurrency(Config.DEATH_MESSAGE, take)).send(player);
 
                 if (Config.DROP_ON_DEATH && player.getLocation().getWorld() != null)
                 {
-                    player.getWorld().dropItem(player.getLocation(), new Coin().withdraw(take).item());
+                    player.getWorld().dropItem(
+                            player.getLocation(),
+                            CreateCoin.other().data(CoinUtil.COINS_WORTH, take).build()
+                    );
                 }
             }
         }
@@ -205,14 +210,12 @@ public class DropHandler
         }
     }
 
-    // todo improve
     private void dropCoin (int amount, Player player, Location location)
     {
         if (Config.DROP_EACH_COIN)
         {
-            // todo ??
-            int second = (int) Config.MONEY_AMOUNT_FROM.doubleValue();
-            int first = ((int) Config.MONEY_AMOUNT_TO.doubleValue()) + 1 - second;
+            int second = Config.MONEY_AMOUNT_FROM.intValue();
+            int first = Config.MONEY_AMOUNT_TO.intValue() + 1 - second;
 
             amount *= RANDOM.nextDouble() * first + second;
         }
@@ -222,15 +225,12 @@ public class DropHandler
             amount *= Util.getMultiplier(player);
         }
 
-        boolean stack = !Config.DROP_EACH_COIN && Config.STACK_COINS;
-
         if (location.getWorld() == null)
             return;
 
         for (int i = 0; i < amount; i++)
         {
-            ItemStack coin = new Coin().stack(stack).item();
-            location.getWorld().dropItem(location, coin);
+            location.getWorld().dropItem(location, CreateCoin.dropped());
         }
     }
 
@@ -242,10 +242,6 @@ public class DropHandler
     @EventHandler (priority = EventPriority.LOW)
     public void registerHits (EntityDamageByEntityEvent event)
     {
-        // getAttribute (line 88) not working < 1.10
-        if (PaperLib.getMinecraftVersion() < 10)
-            return;
-
         if (!(event.getDamager() instanceof Player) && resolvePlayerShooterOrNull(event) == null)
             return;
 

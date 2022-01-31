@@ -13,10 +13,9 @@ import java.util.logging.Level;
  * Created by Eli on 12/14/2016.
  * Rewritten by Eli on July 9, 2021.
  */
-
 public class Settings
 {
-    public static int init ()
+    public static void reload ()
     {
         for (String language : new String[]{"english", "dutch", "spanish", "german", "french", "swedish", "chinese", "hungarian"})
         {
@@ -27,23 +26,10 @@ public class Settings
             }
         }
 
-        return reload();
-    }
-
-    // returns amount of warnings
-    public static int reload ()
-    {
-        Config.resetWarnings();
+        Config.resetWarningCount();
 
         RegisterConfig.parse();
-        Message.init(Config.LANGUAGE);
-
-        if (Config.getWarnings() != 0)
-        {
-            Coins.console(Level.SEVERE, "Loaded the config of Coins with " + Config.getWarnings() + " warnings. Check above here for details.");
-        }
-
-        return Config.getWarnings();
+        Message.initialize(Config.LANGUAGE);
     }
 
     public static List<String> get ()

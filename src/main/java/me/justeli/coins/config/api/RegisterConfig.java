@@ -3,7 +3,9 @@ package me.justeli.coins.config.api;
 import me.justeli.coins.Coins;
 import me.justeli.coins.config.Config;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,12 +20,19 @@ import java.util.stream.Collectors;
  */
 public class RegisterConfig
 {
+    private static FileConfiguration config ()
+    {
+        File config = new File(Coins.plugin().getDataFolder() + File.separator + "config.yml");
+        if (!config.exists())
+        {
+            Coins.plugin().saveDefaultConfig();
+        }
+        return YamlConfiguration.loadConfiguration(config);
+    }
+
     public static void parse ()
     {
-        Coins.plugin().saveDefaultConfig();
-        Coins.plugin().reloadConfig();
-
-        FileConfiguration config = Coins.plugin().getConfig();
+        FileConfiguration config = config();
 
         for (Field field : Config.class.getDeclaredFields())
         {
@@ -38,11 +47,19 @@ public class RegisterConfig
             {
                 if (!config.contains(configKey))
                 {
-                    Object defaultValue = field.get(Config.class);
-                    Config.error(String.format(
-                            "Config file is missing key called '%s'. Using its default value now (%s). Consider to add this to the config:\n\n%s: %s\n",
-                            configKey, defaultValue, configKey.replace(".", ":\n  "), defaultValue
-                    ));
+                    if (configEntry.required())
+                    {
+                        String presuf = field.getType() == String.class? "'" : "";
+                        Object defaultValue = presuf + field.get(Config.class) + presuf;
+
+                        Config.error(String.format(
+                                "\nConfig file is missing key called '%s'. Using its default value now (%s)."
+                                        + (configEntry.motivation().isEmpty()? "" : " " + configEntry.motivation())
+                                        + " Consider to add this to the config:\n----------------------------------------\n%s: %s" +
+                                        "\n----------------------------------------",
+                                configKey, defaultValue, configKey.replace(".", ":\n  "), defaultValue
+                        ));
+                    }
                     continue;
                 }
 

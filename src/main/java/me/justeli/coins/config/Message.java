@@ -18,7 +18,6 @@ import java.util.logging.Level;
  * Created by Eli on 4/24/2017.
  * Spigot Plugins: me.justeli.coins.settings
  */
-
 public enum Message
 {
     LOADED_SETTINGS ("&3Currently loaded settings of the Coins configuration."),
@@ -78,7 +77,7 @@ public enum Message
     @Override
     public String toString ()
     {
-        return MESSAGES.computeIfAbsent(this, empty -> Util.color(this.defaultMessage)).replace("{$}", Config.CURRENCY_SYMBOL);
+        return MESSAGES.computeIfAbsent(this, empty -> Util.color(Util.formatCurrency(this.defaultMessage)));
     }
 
     public String replace (Object... replacements)
@@ -93,9 +92,9 @@ public enum Message
         return message;
     }
 
-    public static void init (String language)
+    public static void initialize (String language)
     {
-        JSONObject json = getJson (language);
+        JSONObject json = getJson(language);
         if (json == null)
         {
             Coins.console(Level.SEVERE, "Could not find the language file '" +  language + ".json' that was configured.");
@@ -106,12 +105,12 @@ public enum Message
             try
             {
                 Object name = json.get(message.name());
-                MESSAGES.put(message, Util.color(name.toString()));
+                MESSAGES.put(message, Util.color(Util.formatCurrency(name.toString())));
             }
             catch (Exception exception)
             {
                 Config.error("Language file is missing message called '" + message.name() + "'. Using its default value now (in English).");
-                MESSAGES.put(message, Util.color(message.defaultMessage));
+                MESSAGES.put(message, Util.color(Util.formatCurrency(message.defaultMessage)));
             }
         }
     }
@@ -123,11 +122,12 @@ public enum Message
         if (file == null)
             return null;
 
-        try
+        try (
+                FileInputStream fileStream = new FileInputStream(file);
+                InputStreamReader reader = new InputStreamReader(fileStream, StandardCharsets.UTF_8)
+        )
         {
-            return (JSONObject) new JSONParser().parse(
-                    new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)
-            );
+            return (JSONObject) new JSONParser().parse(reader);
         }
         catch (IOException | ParseException exception)
         {

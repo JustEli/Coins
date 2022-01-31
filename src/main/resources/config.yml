@@ -1,23 +1,25 @@
 # # # # # # # # # # # # # # # # # # # # # # # #
 #  Configuration for Coins 1.x  (by JustEli)  #
 # # # # # # # # # # # # # # # # # # # # # # # #
-# This config was generated for version ${project.version}.
+# This config was generated for Coins version ${project.version}.
 
 # If you need support, join our Discord support server: https://discord.gg/fVwCETj
-# Make sure you read the FAQ (#coin-faq) first, before asking for support!
+# Make sure you read the FAQ (#coins-faq) first, before asking for support!
 
 # What language should the plugin use? And what is your server's currency?
-# All available languages can be found in folder 'languages' in the plugin folder.
+# All available languages can be found in the folder 'languages' inside the plugin folder.
 # Included languages by default:
 #   English, Dutch, German, French, Spanish, Swedish, Italian, Chinese, Hungarian
 language: 'English'
 currencySymbol: '$'
 
+# Here you can configure the names of dropped coins and withdrawn coins.
 # See a list of all color codes here: http://minecraft.gamepedia.com/Formatting_codes
-# multiSuffix' value will be added behind 'nameOfCoin' in case it's more than one coin.
-# Do not change these values if there are already (withdrawn) coins in circulation!
-nameOfCoin: '&6Coin'
-multiSuffix: 's'
+# HEX color codes are possible as well, with following format: '&#xxxxxx', where x is [0-9a-f].
+droppedCoinName: '&6Coin'
+withdrawnCoinNames:
+  singular: '&e{amount} &6Coin'
+  plural: '&e{amount} &6Coins'
 
 # What item will the dropped 'coin' (material) be? Find all materials at:
 # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
@@ -26,7 +28,7 @@ coinItem: 'sunflower'
 # Should the coin have an enchanted effect?
 enchantedCoin: false
 
-# You can also set a custom texture for the coin, as skull. Filling this will disable 'coinItem'.
+# You can also set a custom texture for the coin, as skull. Filling this will ignore 'coinItem'.
 # Find textures here (example): https://minecraft-heads.com/custom-heads/decoration/3005-money-bag
 # Input the string from "Other > Value" at the bottom of the page, it's a 'texture value'.
 # For the example, that would be the one starting with "eyJ0ZXh0dXJl[...]".
@@ -34,8 +36,8 @@ enchantedCoin: false
 skullTexture: ''
 
 # This message is sent as action bar, telling the player how much money they have picked up.
-# The variable '{$}' will be replaced by the configured value at 'currencySymbol'.
-pickupMessage: '&2+ &a{$}%amount%'
+# The variable '{currency}' will be replaced by the configured value at 'currencySymbol'.
+pickupMessage: '&2+ &a{currency}{amount}'
 
 # Also drop coins when the mob is NOT killed by a player?
 # That means that any death cause will have the mob to drop coins, not just by player kills!
@@ -70,7 +72,8 @@ stackCoins: false
 # This feature does not work for Minecraft version 1.8.x.
 percentagePlayerHit: 0.80
 
-# Disable hoppers to pick up any kind of coins.
+# Prevent hoppers from picking up dropped coins specifically.
+# Withdrawn coins will still be picked up.
 disableHoppers: false
 
 # Put the amount of coins dropped for a specific mob here, by default: mobs drop one coin.
@@ -84,7 +87,7 @@ mobMultiplier:
   WITHER: 20
   PLAYER: 3
 
-# When a player gets killed by another player, should (three; setting above) coins drop?
+# When a player gets killed by another player, should coins drop?
 playerDrop: true
 
 # And should coins NOT drop when both players have the same ip address?
@@ -160,6 +163,18 @@ blockMultiplier:
 # probably also want to disable coin drops for Mythic Mobs handled by this plugin, under here.
 disableMythicMobHandling: false
 
+# Withdrawn coins in older versions of the plugin are handled in a fundamentally different way, which
+#  could cause possible exploits, when specific plugins are installed. Having this option set to false
+#  prevents that. Always leave this setting to false. (If true, legacy withdrawn coins will still work)
+detectLegacyCoins: false
+
+# Allow players to change the name of coins. Only works if 'detectLegacyCoins' is set to false.
+# Changing the names of non-legacy coins does not make it lose its value.
+allowNameChange: false
+
+# Allow players to use coins in a bench (i.e. crafting, smelting). Coin will lose its value.
+allowModification: false
+
 # # # Player Death Module # # #
 
 # Should players lose money on death?
@@ -179,4 +194,4 @@ takePercentage: false
 dropOnDeath: false
 
 # The message in the middle of their screen.
-deathMessage: '&4- &c{$}%amount%'
+deathMessage: '&4- &c{currency}{amount}'

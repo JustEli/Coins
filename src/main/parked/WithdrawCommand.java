@@ -5,7 +5,6 @@ import me.justeli.coins.command.api.Argument;
 import me.justeli.coins.command.api.Command;
 import me.justeli.coins.config.Config;
 import me.justeli.coins.config.Message;
-import me.justeli.coins.item.Coin;
 import me.justeli.coins.util.ActionBar;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -66,7 +65,7 @@ public class WithdrawCommand
             Coins.economy().withdrawPlayer(player, total);
 
             player.sendMessage(Message.WITHDRAW_COINS.replace(Long.toString(total)));
-            ActionBar.of(Config.DEATH_MESSAGE.replace("%amount%", Util.doubleToString(total))).send(player);
+            ActionBar.of(Util.formatCurrencyAndAmount(Config.DEATH_MESSAGE, total)).send(player);
         });
 
         register();

@@ -2,17 +2,29 @@ package me.justeli.coins.util;
 
 import io.papermc.lib.PaperLib;
 import me.justeli.coins.Coins;
-import me.justeli.coins.item.Coin;
 import me.justeli.coins.config.Config;
+import me.justeli.coins.item.CoinUtil;
+import me.justeli.coins.item.CreateCoin;
+import me.justeli.coins.item.MetaBuilder;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Boss;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Flying;
+import org.bukkit.entity.Golem;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Slime;
+import org.bukkit.entity.Snowman;
+import org.bukkit.entity.Wolf;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.math.BigDecimal;
@@ -21,8 +33,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
+import java.util.SplittableRandom;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,11 +47,23 @@ public class Util
 {
     private static final Pattern HEX_PATTERN = Pattern.compile("(?<!\\\\)(&#[a-fA-F0-9]{6})");
     private static final HashMap<UUID, Double> PLAYER_MULTIPLIER = new HashMap<>();
-    private static final Random RANDOM = new Random();
+    private static final SplittableRandom RANDOM = new SplittableRandom();
 
     public static String color (String msg)
     {
         return ChatColor.translateAlternateColorCodes('&', parseRGB(msg));
+    }
+
+    public static String formatAmountAndCurrency (String text, double amount)
+    {
+        String displayAmount = doubleToString(amount);
+        return formatCurrency(text.replaceAll("(%amount%|\\{amount})", Matcher.quoteReplacement(displayAmount)));
+    }
+
+    public static String formatCurrency (String text)
+    {
+        // {currency} or {$}
+        return text.replaceAll("(\\{currency}|\\{\\$})", Matcher.quoteReplacement(Config.CURRENCY_SYMBOL));
     }
 
     private static String parseRGB (String msg)
@@ -90,7 +115,7 @@ public class Util
                 || entity instanceof Slime
                 || (entity instanceof Golem && !(entity instanceof Snowman))
                 || entity instanceof Wolf
-                || (PaperLib.getMinecraftVersion() >= 14? entity instanceof Boss : entity instanceof EnderDragon);
+                || entity instanceof Boss;
     }
 
     public static boolean isPlayer (Entity entity)
@@ -105,7 +130,7 @@ public class Util
                 && entity instanceof LivingEntity;
     }
 
-    public static Player onlinePlayer (String incomplete)
+    public static Player getOnlinePlayer (String incomplete)
     {
         for (Player player : Bukkit.getServer().getOnlinePlayers())
         {
@@ -125,38 +150,6 @@ public class Util
         return null;
     }
 
-    public static boolean isDroppedCoin (ItemStack item)
-    {
-        if (item == null || item.getItemMeta() == null || !item.getItemMeta().hasDisplayName())
-            return false;
-
-        return item.getItemMeta().getDisplayName().equals(Config.NAME_OF_COIN);
-    }
-
-    public static boolean isWithdrawnCoin (ItemStack item)
-    {
-        if (item == null || item.getItemMeta() == null || !item.getItemMeta().hasDisplayName())
-            return false;
-
-        return item.getItemMeta().getDisplayName().endsWith(Config.NAME_OF_COIN + Config.MULTI_SUFFIX);
-    }
-
-    public static double getWithdrawnTotalWorth (ItemStack item)
-    {
-        if (!isWithdrawnCoin(item))
-            return 0;
-
-        try
-        {
-            String valuePart = ChatColor.stripColor(item.getItemMeta().getDisplayName().split(" ")[0]);
-            return item.getAmount() * new Double(valuePart);
-        }
-        catch (Exception exception)
-        {
-            return 0;
-        }
-    }
-
     public static void playCoinPickupSound (Player player)
     {
         float volume = Config.SOUND_VOLUME;
@@ -171,38 +164,38 @@ public class Util
 
     public static boolean isDisabledHere (World world)
     {
-        for (String disabledWorld : Config.DISABLED_WORLDS)
-        {
-            if (world.getName().equalsIgnoreCase(disabledWorld) || world.getUID().toString().equalsIgnoreCase(disabledWorld))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return Config.DISABLED_WORLDS.contains(world.getName());
     }
 
     public static void dropCoins (final Location location, final int radius, final int amount)
     {
         final Location dropLocation = location.clone().add(0.0, 0.5, 0.0);
-        final ItemStack coin = new Coin().unique().item();
-        final ItemMeta meta = coin.getItemMeta();
+        final ItemStack coin = CreateCoin.dropped();
 
-        for (int i = 0; i < amount; i++)
+        AtomicInteger ticks = new AtomicInteger();
+        new BukkitRunnable()
         {
-            Coins.runLater(i, () ->
+            @Override
+            public void run ()
             {
-                meta.setLore(Collections.singletonList(String.valueOf(RANDOM.nextFloat())));
-                coin.setItemMeta(meta);
-                Item item = dropLocation.getWorld().dropItem(dropLocation, coin);
+                Item item = dropLocation.getWorld().dropItem(
+                        dropLocation,
+                        MetaBuilder.of(coin).data(CoinUtil.COINS_RANDOM, RANDOM.nextDouble()).build()
+                );
+
                 item.setPickupDelay(30);
                 item.setVelocity(new Vector(
                         (RANDOM.nextDouble() - 0.5) * radius / 10,
                         RANDOM.nextDouble() * radius / 5,
                         (RANDOM.nextDouble() - 0.5) * radius / 10
                 ));
-            });
-        }
+
+                if (ticks.addAndGet(1) >= amount)
+                {
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(Coins.plugin(), 0, 1);
     }
 
     public static double getRandomMoneyAmount ()

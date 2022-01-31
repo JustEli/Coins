@@ -2,11 +2,9 @@ package me.justeli.coins.util;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import io.papermc.lib.PaperLib;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -20,19 +18,7 @@ public class Skull
 {
     private static final HashMap<String, ItemStack> COIN = new HashMap<>();
     private static final UUID SKULL_UUID = UUID.fromString("00000001-0001-0001-0001-000000000002");
-    private static final ItemStack SKULL_ITEM;
-
-    static
-    {
-        if (PaperLib.getMinecraftVersion() >= 13)
-        {
-            SKULL_ITEM = new ItemStack(Material.PLAYER_HEAD);
-        }
-        else
-        {
-            SKULL_ITEM = new ItemStack(Material.matchMaterial("SKULL_ITEM"), 1, (short) 3);
-        }
-    }
+    private static final ItemStack SKULL_ITEM = new ItemStack(Material.PLAYER_HEAD);
 
     public static ItemStack of (String texture)
     {

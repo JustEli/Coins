@@ -14,4 +14,8 @@ import java.lang.annotation.Target;
 public @interface ConfigEntry
 {
     String value ();
+
+    boolean required () default true;
+
+    String motivation () default "";
 }

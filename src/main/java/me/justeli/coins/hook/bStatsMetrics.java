@@ -46,8 +46,6 @@ public class bStatsMetrics
         {
             metrics.add("language", Config.LANGUAGE.toLowerCase(Locale.ROOT));
             metrics.add("currencySymbol", Config.CURRENCY_SYMBOL);
-            metrics.add("nameOfCoin", Config.NAME_OF_COIN);
-            metrics.add("multiSuffix", Config.MULTI_SUFFIX);
             metrics.add("coinItem", Config.COIN_ITEM);
             metrics.add("enchantedCoin", Config.ENCHANTED_COIN);
             metrics.add("pickupMessage", Config.PICKUP_MESSAGE);
@@ -83,6 +81,13 @@ public class bStatsMetrics
             metrics.add("usingSkullTexture", Config.SKULL_TEXTURE != null && !Config.SKULL_TEXTURE.isEmpty());
             metrics.add("usingPaper", PaperLib.isPaper());
             metrics.add("usingMythicMobs", Coins.hasMythicMobs());
+
+            metrics.add("droppedCoinName", Config.DROPPED_COIN_NAME);
+            metrics.add("withdrawnCoinNamesSingular", Config.WITHDRAWN_COIN_NAME_SINGULAR);
+            metrics.add("withdrawnCoinNamesPlural", Config.WITHDRAWN_COIN_NAME_PLURAL);
+            metrics.add("detectLegacyCoins", Config.DETECT_LEGACY_COINS);
+            metrics.add("allowNameChange", Config.ALLOW_NAME_CHANGE);
+            metrics.add("allowModification", Config.ALLOW_MODIFICATION);
         });
     }
 }

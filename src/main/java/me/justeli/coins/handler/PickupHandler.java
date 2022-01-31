@@ -2,6 +2,7 @@ package me.justeli.coins.handler;
 
 import me.justeli.coins.Coins;
 import me.justeli.coins.event.PickupEvent;
+import me.justeli.coins.item.CoinUtil;
 import me.justeli.coins.util.ActionBar;
 import me.justeli.coins.config.Config;
 import me.justeli.coins.util.Util;
@@ -31,22 +32,14 @@ public class PickupHandler
             return;
 
         Item item = event.getItem();
-        Player player = event.getPlayer();
+        if (CoinUtil.isCoin(item.getItemStack()))
+        {
+            Player player = event.getPlayer();
+            event.setCancelled(true);
 
-        if (Util.isDroppedCoin(item.getItemStack()))
-        {
-            event.setCancelled(true);
             if (!player.hasPermission("coins.disable") || player.isOp() || player.hasPermission("*"))
             {
-                giveCoin(item, player, 0);
-            }
-        }
-        else if (Util.isWithdrawnCoin(item.getItemStack()))
-        {
-            event.setCancelled(true);
-            if (!player.hasPermission("coins.disable") || player.isOp() || player.hasPermission("*"))
-            {
-                double amount = Util.getWithdrawnTotalWorth(item.getItemStack());
+                double amount = CoinUtil.getValue(item.getItemStack());
                 giveCoin(item, player, amount);
             }
         }
@@ -58,12 +51,12 @@ public class PickupHandler
             return;
 
         THROWN_COINS.add(item.getUniqueId());
-        item.setVelocity(new Vector(0, 0.3, 0));
+        item.setVelocity(new Vector(0, 0.4, 0));
 
-        Coins.runLater(3, () ->
+        Coins.runLater(5, () ->
         {
-            THROWN_COINS.remove(item.getUniqueId());
             item.remove();
+            THROWN_COINS.remove(item.getUniqueId());
         });
 
         // pass 0 for random amount
@@ -115,6 +108,6 @@ public class PickupHandler
             }
         }, Config.DROP_EACH_COIN? 30L : 10L);
 
-        ActionBar.of(Config.PICKUP_MESSAGE.replace("%amount%", Util.doubleToString(displayAmount))).send(player);
+        ActionBar.of(Util.formatAmountAndCurrency(Config.PICKUP_MESSAGE, displayAmount)).send(player);
     }
 }

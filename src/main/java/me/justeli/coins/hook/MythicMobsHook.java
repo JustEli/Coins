@@ -5,7 +5,7 @@ import io.lumine.xikage.mythicmobs.api.bukkit.BukkitAPIHelper;
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicDropLoadEvent;
 import io.lumine.xikage.mythicmobs.drops.droppables.ItemDrop;
 import io.lumine.xikage.mythicmobs.io.MythicLineConfig;
-import me.justeli.coins.item.Coin;
+import me.justeli.coins.item.CreateCoin;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -27,7 +27,7 @@ public class MythicMobsHook
         {
             String line = event.getConfig().getLine();
             MythicLineConfig config = event.getConfig();
-            BukkitItemStack coin = new BukkitItemStack(new Coin().item());
+            BukkitItemStack coin = new BukkitItemStack(CreateCoin.dropped());
 
             ItemDrop drop = new ItemDrop(line, config, coin);
             event.register(drop);

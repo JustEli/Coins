@@ -1,7 +1,7 @@
 package me.justeli.coins.handler;
 
-import me.justeli.coins.item.Coin;
 import me.justeli.coins.config.Config;
+import me.justeli.coins.item.CoinUtil;
 import me.justeli.coins.util.Util;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,16 +19,12 @@ public class HopperHandler
             return;
 
         ItemStack item = event.getItem().getItemStack();
-        if (!Util.isDroppedCoin(item))
+        if (!CoinUtil.isDroppedCoin(item))
             return;
 
         if (Config.DISABLE_HOPPERS)
         {
             event.setCancelled(true);
-        }
-        else if (item.getItemMeta().hasLore())
-        {
-            event.getItem().setItemStack(new Coin().item().clone());
         }
     }
 }

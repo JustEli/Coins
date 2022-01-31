@@ -1,9 +1,10 @@
 package me.justeli.coins.command;
 
 import me.justeli.coins.Coins;
+import me.justeli.coins.item.CoinUtil;
+import me.justeli.coins.item.CreateCoin;
 import me.justeli.coins.util.ActionBar;
 import me.justeli.coins.util.Util;
-import me.justeli.coins.item.Coin;
 import me.justeli.coins.config.Config;
 import me.justeli.coins.config.Message;
 import me.justeli.coins.config.Settings;
@@ -22,12 +23,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.SplittableRandom;
 
 public class Commands
         implements CommandExecutor
 {
-    private final static Random RANDOM = new Random();
+    private final static SplittableRandom RANDOM = new SplittableRandom();
 
     private static String color (String message)
     {
@@ -47,11 +48,11 @@ public class Commands
                         if (sender.hasPermission("coins.admin"))
                         {
                             long ms = System.currentTimeMillis();
-                            Util.resetMultiplier();
-                            int warnings = Settings.reload();
 
-                            sender.sendMessage(Message.RELOAD_SUCCESS.toString()
-                                    .replace("{0}", Long.toString(System.currentTimeMillis() - ms)));
+                            Coins.plugin().onReload();
+                            int warnings = Config.getWarningCount();
+
+                            sender.sendMessage(Message.RELOAD_SUCCESS.toString().replace("{0}", Long.toString(System.currentTimeMillis() - ms)));
                             if (warnings != 0)
                             {
                                 sender.sendMessage(Message.MINOR_ISSUES.toString());
@@ -200,14 +201,14 @@ public class Commands
 
             if (worth <= Config.MAX_WITHDRAW_AMOUNT && Coins.economy().getBalance(player) >= total)
             {
-                ItemStack coin = new Coin().withdraw(worth).item();
+                ItemStack coin = CreateCoin.withdrawn(worth);
                 coin.setAmount(amount);
 
                 player.getInventory().addItem(coin);
                 Coins.economy().withdrawPlayer(player, total);
 
                 player.sendMessage(Message.WITHDRAW_COINS.replace(Util.doubleToString(total)));
-                ActionBar.of(Config.DEATH_MESSAGE.replace("%amount%", Util.doubleToString(total))).send(player);
+                ActionBar.of(Util.formatAmountAndCurrency(Config.DEATH_MESSAGE, total)).send(player);
             }
             else
             {
@@ -233,7 +234,7 @@ public class Commands
     {
         if (args.length >= 3)
         {
-            Player p = Util.onlinePlayer(args[1]);
+            Player p = Util.getOnlinePlayer(args[1]);
 
             int amount;
             try {amount = Integer.parseInt(args[2]); }
@@ -377,7 +378,7 @@ public class Commands
                 Item i = (Item) m;
                 if (i.getItemStack().getItemMeta() != null && i.getItemStack().getItemMeta().hasDisplayName())
                 {
-                    if (i.getItemStack().getItemMeta().getDisplayName().equals(Config.NAME_OF_COIN))
+                    if (CoinUtil.isCoin(i.getItemStack()))
                     {
                         amount++;
                         double random = (RANDOM.nextDouble() * 3);
