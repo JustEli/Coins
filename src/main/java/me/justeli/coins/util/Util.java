@@ -35,14 +35,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.SplittableRandom;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by Eli on 6 jan. 2020.
- * Coins: me.justeli.coins.api
- */
+/** Created by Eli on 6 jan. 2020. */
 public class Util
 {
     private static final Pattern HEX_PATTERN = Pattern.compile("(?<!\\\\)(&#[a-fA-F0-9]{6})");
@@ -118,15 +114,10 @@ public class Util
                 || entity instanceof Boss;
     }
 
-    public static boolean isPlayer (Entity entity)
-    {
-        return entity instanceof Player;
-    }
-
     public static boolean isPassive (Entity entity)
     {
         return !isHostile(entity)
-                && !isPlayer(entity)
+                && !(entity instanceof Player)
                 && entity instanceof LivingEntity;
     }
 
@@ -165,37 +156,6 @@ public class Util
     public static boolean isDisabledHere (World world)
     {
         return Config.DISABLED_WORLDS.contains(world.getName());
-    }
-
-    public static void dropCoins (final Location location, final int radius, final int amount)
-    {
-        final Location dropLocation = location.clone().add(0.0, 0.5, 0.0);
-        final ItemStack coin = CreateCoin.dropped();
-
-        AtomicInteger ticks = new AtomicInteger();
-        new BukkitRunnable()
-        {
-            @Override
-            public void run ()
-            {
-                Item item = dropLocation.getWorld().dropItem(
-                        dropLocation,
-                        MetaBuilder.of(coin).data(CoinUtil.COINS_RANDOM, RANDOM.nextDouble()).build()
-                );
-
-                item.setPickupDelay(30);
-                item.setVelocity(new Vector(
-                        (RANDOM.nextDouble() - 0.5) * radius / 10,
-                        RANDOM.nextDouble() * radius / 5,
-                        (RANDOM.nextDouble() - 0.5) * radius / 10
-                ));
-
-                if (ticks.addAndGet(1) >= amount)
-                {
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(Coins.plugin(), 0, 1);
     }
 
     public static double getRandomMoneyAmount ()

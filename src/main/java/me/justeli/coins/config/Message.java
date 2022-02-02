@@ -1,23 +1,9 @@
 package me.justeli.coins.config;
 
-import me.justeli.coins.Coins;
 import me.justeli.coins.util.Util;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.logging.Level;
 
-/**
- * Created by Eli on 4/24/2017.
- * Spigot Plugins: me.justeli.coins.settings
- */
+/** Created by Eli on 4/24/2017. */
 public enum Message
 {
     LOADED_SETTINGS ("&3Currently loaded settings of the Coins configuration."),
@@ -65,14 +51,14 @@ public enum Message
     OUTDATED ("(outdated → /coins update)"),
     ;
 
-    private final String defaultMessage;
+    final String defaultMessage;
 
     Message (String defaultMessage)
     {
         this.defaultMessage = defaultMessage;
     }
 
-    private static final HashMap<Message, String> MESSAGES = new HashMap<>();
+    static final HashMap<Message, String> MESSAGES = new HashMap<>();
 
     @Override
     public String toString ()
@@ -90,62 +76,5 @@ public enum Message
         }
 
         return message;
-    }
-
-    public static void initialize (String language)
-    {
-        JSONObject json = getJson(language);
-        if (json == null)
-        {
-            Coins.console(Level.SEVERE, "Could not find the language file '" +  language + ".json' that was configured.");
-        }
-
-        for (Message message : Message.values())
-        {
-            try
-            {
-                Object name = json.get(message.name());
-                MESSAGES.put(message, Util.color(Util.formatCurrency(name.toString())));
-            }
-            catch (Exception exception)
-            {
-                Config.error("Language file is missing message called '" + message.name() + "'. Using its default value now (in English).");
-                MESSAGES.put(message, Util.color(Util.formatCurrency(message.defaultMessage)));
-            }
-        }
-    }
-
-    private static JSONObject getJson (String language)
-    {
-        File file = getFile(language);
-
-        if (file == null)
-            return null;
-
-        try (
-                FileInputStream fileStream = new FileInputStream(file);
-                InputStreamReader reader = new InputStreamReader(fileStream, StandardCharsets.UTF_8)
-        )
-        {
-            return (JSONObject) new JSONParser().parse(reader);
-        }
-        catch (IOException | ParseException exception)
-        {
-            return null;
-        }
-    }
-
-    private static File getFile (String language)
-    {
-        File[] languageFiles = new File(Coins.plugin().getDataFolder().getAbsolutePath() + File.separator + "language").listFiles();
-        for (File languageFile : languageFiles)
-        {
-            if (languageFile.getName().equalsIgnoreCase(language + ".json"))
-            {
-                return languageFile;
-            }
-        }
-
-        return null;
     }
 }

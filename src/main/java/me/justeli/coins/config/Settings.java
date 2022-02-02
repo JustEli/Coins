@@ -1,46 +1,333 @@
 package me.justeli.coins.config;
 
 import me.justeli.coins.Coins;
-import me.justeli.coins.config.api.RegisterConfig;
+import me.justeli.coins.util.Util;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
-/**
- * Created by Eli on 12/14/2016.
- * Rewritten by Eli on July 9, 2021.
- */
+/** Created by Eli on 12/14/2016. Rewritten by Eli on July 9, 2021. */
 public class Settings
 {
-    public static void reload ()
+    private final Coins coins;
+
+    public Settings (Coins coins)
+    {
+        this.coins = coins;
+    }
+
+    public void reloadLanguage ()
     {
         for (String language : new String[]{"english", "dutch", "spanish", "german", "french", "swedish", "chinese", "hungarian"})
         {
-            if (!new File(Coins.plugin().getDataFolder() + File.separator + "language" + File.separator + language + ".json").exists())
+            if (!new File(this.coins.getDataFolder() + File.separator + "language" + File.separator + language + ".json").exists())
             {
-                Coins.plugin().saveResource("language/" + language + ".json", false);
-                Coins.console(Level.INFO, "Added the language '" + language + "' to Coins, which can now be used in the config.");
+                this.coins.saveResource("language/" + language + ".json", false);
+                this.coins.console(Level.INFO, "Added the language '" + language + "' to Coins, which can now be used in the config.");
             }
         }
 
-        Config.resetWarningCount();
-
-        RegisterConfig.parse();
-        Message.initialize(Config.LANGUAGE);
+        initializeMessages(Config.LANGUAGE);
     }
 
-    public static List<String> get ()
+    private FileConfiguration config ()
+    {
+        File config = new File(this.coins.getDataFolder() + File.separator + "config.yml");
+        if (!config.exists())
+        {
+            this.coins.saveDefaultConfig();
+        }
+        return YamlConfiguration.loadConfiguration(config);
+    }
+
+    public void parseConfig ()
+    {
+        FileConfiguration config = config();
+
+        for (Field field : Config.class.getDeclaredFields())
+        {
+            if (!field.isAnnotationPresent(ConfigEntry.class))
+                continue;
+
+            ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
+            field.setAccessible(true);
+            String configKey = configEntry.value();
+
+            try
+            {
+                if (!config.contains(configKey))
+                {
+                    if (configEntry.required())
+                    {
+                        String prefixSuffix = field.getType() == String.class? "'" : "";
+                        Object defaultValue = prefixSuffix + field.get(Config.class) + prefixSuffix;
+
+                        error(String.format(
+                                "\nConfig file is missing key called '%s'. Using its default value now (%s)."
+                                        + (configEntry.motivation().isEmpty()? "" : " " + configEntry.motivation())
+                                        + " Consider to add this to the config:\n----------------------------------------\n%s: %s" +
+                                        "\n----------------------------------------",
+                                configKey, defaultValue, configKey.replace(".", ":\n  "), defaultValue
+                        ));
+                    }
+                    continue;
+                }
+
+                Class<?> configClass = field.getType();
+                Object configValue;
+
+                if (configClass == Set.class)
+                {
+                    List<String> stringList = config.getStringList(configKey);
+                    configValue = new HashSet<>(stringList);
+                }
+                else if (configClass == Map.class)
+                {
+                    Map<String, Object> map = config.getConfigurationSection(configKey).getValues(false);
+                    configValue = map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> (Integer) e.getValue()));
+                }
+                // can be improved in java 11
+                else if (configClass == Long.class || configClass == Integer.class || configClass == Float.class || configClass == Double.class)
+                {
+                    Double value = new Double(config.get(configKey, "0").toString());
+
+                    if (configClass == Long.class)
+                    {
+                        configValue = value.longValue();
+                    }
+                    else if (configClass == Integer.class)
+                    {
+                        configValue = value.intValue();
+                    }
+                    else if (configClass == Float.class)
+                    {
+                        configValue = value.floatValue();
+                    }
+                    else
+                    {
+                        configValue = value;
+                    }
+                }
+                else
+                {
+                    //configValue = config.getObject(configKey, configClass);
+                    configValue = configClass.cast(config.get(configKey));
+                }
+
+                field.set(Config.class, configValue);
+            }
+            catch (Exception exception)
+            {
+                try
+                {
+                    Object defaultValue = field.get(Config.class);
+                    error(String.format(
+                            "Config file has wrong value for key called '%s'. Using its default value now (%s).", configKey, defaultValue
+                    ));
+                }
+                catch (IllegalAccessException illegalException)
+                {
+                    illegalException.printStackTrace();
+                }
+            }
+        }
+
+        parseRemainingOptions();
+    }
+
+    private void parseRemainingOptions ()
+    {
+        Config.DROPPED_COIN_NAME = Util.color(Config.LEGACY_RAW_NAME_OF_COIN == null? Config.RAW_DROPPED_COIN_NAME : Config.LEGACY_RAW_NAME_OF_COIN);
+
+        Config.WITHDRAWN_COIN_NAME_SINGULAR = Util.color(Config.LEGACY_RAW_NAME_OF_COIN == null
+                ? Config.RAW_WITHDRAWN_COIN_NAME_SINGULAR
+                : Config.LEGACY_PREFIX + Config.LEGACY_RAW_NAME_OF_COIN);
+
+        Config.WITHDRAWN_COIN_NAME_PLURAL = Util.color(Config.LEGACY_MULTI_SUFFIX == null && Config.LEGACY_RAW_NAME_OF_COIN == null
+                ? Config.RAW_WITHDRAWN_COIN_NAME_PLURAL
+                : Config.LEGACY_PREFIX + Config.LEGACY_RAW_NAME_OF_COIN + Config.LEGACY_MULTI_SUFFIX);
+
+        Config.LEGACY_WITHDRAWN_COIN_ENDING = Config.LEGACY_MULTI_SUFFIX == null && Config.LEGACY_RAW_NAME_OF_COIN == null
+                ? null
+                : Util.color(Config.LEGACY_RAW_NAME_OF_COIN + Config.LEGACY_MULTI_SUFFIX);
+
+        Config.COIN_ITEM = coinItem();
+        Config.SOUND_NAME = soundName();
+
+        if (Config.DETECT_LEGACY_COINS)
+        {
+            Config.ALLOW_NAME_CHANGE = false;
+        }
+    }
+
+    private Material coinItem ()
+    {
+        String material = Config.RAW_COIN_ITEM
+                .replace(" ", "_")
+                .toUpperCase(Locale.ROOT)
+                .replace("COIN", "SUNFLOWER");
+
+        Material coin = Material.matchMaterial(material);
+
+        if (coin == null)
+        {
+            error("The material '" + Config.RAW_COIN_ITEM + "' in the config at `coinItem` does not exist. Please use a " +
+                    "material from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html");
+
+            return Material.SUNFLOWER;
+        }
+
+        return coin;
+    }
+
+    private Sound soundName ()
+    {
+        try
+        {
+            return Sound.valueOf(Config.RAW_SOUND_NAME.toUpperCase().replace(" ", "_"));
+        }
+        catch (IllegalArgumentException exception)
+        {
+            error("The sound '" + Config.RAW_SOUND_NAME + "' in the config at `soundName` does not exist. Please use a " +
+                    "sound from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html");
+
+            return Sound.ITEM_ARMOR_EQUIP_GOLD;
+        }
+    }
+
+    private int warnings = 0;
+
+    public void error (String message)
+    {
+        warnings++;
+        this.coins.console(Level.WARNING, "#" + warnings + ": " + message);
+    }
+
+    public void resetWarningCount ()
+    {
+        warnings = 0;
+    }
+
+    public int getWarningCount ()
+    {
+        return warnings;
+    }
+
+    public Map<String, Object> getKeys ()
+    {
+        Map<String, Object> values = new HashMap<>();
+
+        for (Field field : Config.class.getDeclaredFields())
+        {
+            if (field.isAnnotationPresent(ConfigEntry.class))
+            {
+                ConfigEntry set = field.getAnnotation(ConfigEntry.class);
+                field.setAccessible(true);
+
+                try
+                {
+                    values.put(set.value(), field.get(Config.class));
+                }
+                catch (Exception exception)
+                {
+                    exception.printStackTrace();
+                }
+            }
+        }
+
+        return values;
+    }
+
+    public List<String> getReadableConfig ()
     {
         List<String> items = new ArrayList<>();
 
-        for (Map.Entry<String, Object> part : RegisterConfig.keys().entrySet())
+        for (Map.Entry<String, Object> part : getKeys().entrySet())
         {
             items.add(part.getKey() + "\u00BB " + part.getValue());
         }
 
         return items;
+    }
+
+    public void initializeMessages (String language)
+    {
+        JSONObject json = getJson(language);
+        if (json == null)
+        {
+            this.coins.console(Level.SEVERE, "Could not find the language file '" +  language + ".json' that was configured.");
+        }
+
+        for (Message message : Message.values())
+        {
+            try
+            {
+                Object name = json.get(message.name());
+                Message.MESSAGES.put(message, Util.color(Util.formatCurrency(name.toString())));
+            }
+            catch (Exception exception)
+            {
+                this.coins.settings().error("Language file is missing message called '" + message.name() +
+                        "'. Using its default value now (in English).");
+                Message.MESSAGES.put(message, Util.color(Util.formatCurrency(message.defaultMessage)));
+            }
+        }
+    }
+
+    private JSONObject getJson (String language)
+    {
+        File file = getFile(language);
+
+        if (file == null)
+            return null;
+
+        try (
+                FileInputStream fileStream = new FileInputStream(file);
+                InputStreamReader reader = new InputStreamReader(fileStream, StandardCharsets.UTF_8)
+        )
+        {
+            return (JSONObject) new JSONParser().parse(reader);
+        }
+        catch (IOException | ParseException exception)
+        {
+            return null;
+        }
+    }
+
+    private File getFile (String language)
+    {
+        File[] languageFiles = new File(this.coins.getDataFolder().getAbsolutePath() + File.separator + "language").listFiles();
+        if (languageFiles == null)
+            return null;
+
+        for (File languageFile : languageFiles)
+        {
+            if (languageFile.getName().equalsIgnoreCase(language + ".json"))
+            {
+                return languageFile;
+            }
+        }
+
+        return null;
     }
 }

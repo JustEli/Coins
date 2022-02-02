@@ -1,5 +1,6 @@
 package me.justeli.coins.item;
 
+import me.justeli.coins.Coins;
 import me.justeli.coins.config.Config;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.inventory.ItemStack;
@@ -14,6 +15,13 @@ import java.util.regex.Pattern;
 /** by Eli on January 30, 2022 **/
 public class CoinUtil
 {
+    private final Coins coins;
+
+    public CoinUtil (Coins coins)
+    {
+        this.coins = coins;
+    }
+
     // three types of tags:
     //  - coins-type: Integer (as ID)
     //  - coins-worth: Double
@@ -27,12 +35,12 @@ public class CoinUtil
     public static final String COINS_WORTH = "coins-worth";
     public static final String COINS_RANDOM = "coins-random";
 
-    public static boolean isCoin (ItemStack item)
+    public boolean isCoin (ItemStack item)
     {
         if (item == null)
             return false;
 
-        if (MetaBuilder.of(item).data(COINS_TYPE, PersistentDataType.INTEGER).isPresent())
+        if (this.coins.meta(item).data(COINS_TYPE, PersistentDataType.INTEGER).isPresent())
             return true;
 
         if (!Config.DETECT_LEGACY_COINS)
@@ -41,20 +49,20 @@ public class CoinUtil
         return isWithdrawnCoin(item);
     }
 
-    public static boolean isDroppedCoin (ItemStack item)
+    public boolean isDroppedCoin (ItemStack item)
     {
         if (item == null)
             return false;
 
-        return MetaBuilder.of(item).data(COINS_TYPE, PersistentDataType.INTEGER).orElse(0) == TYPE_DROPPED;
+        return this.coins.meta(item).data(COINS_TYPE, PersistentDataType.INTEGER).orElse(0) == TYPE_DROPPED;
     }
 
-    public static boolean isWithdrawnCoin (ItemStack item)
+    public boolean isWithdrawnCoin (ItemStack item)
     {
         if (item == null)
             return false;
 
-        if (MetaBuilder.of(item).data(COINS_TYPE, PersistentDataType.INTEGER).orElse(0) == TYPE_WITHDRAWN)
+        if (this.coins.meta(item).data(COINS_TYPE, PersistentDataType.INTEGER).orElse(0) == TYPE_WITHDRAWN)
             return true;
 
         if (!Config.DETECT_LEGACY_COINS || Config.LEGACY_WITHDRAWN_COIN_ENDING == null)
@@ -65,12 +73,12 @@ public class CoinUtil
 
     private static final Pattern VALUE_PATTERN = Pattern.compile("[0-9.]+");
 
-    public static double getValue (ItemStack item)
+    public double getValue (ItemStack item)
     {
         if (item == null)
             return 0;
 
-        Optional<Double> worth = MetaBuilder.of(item).data(COINS_WORTH, PersistentDataType.DOUBLE);
+        Optional<Double> worth = this.coins.meta(item).data(COINS_WORTH, PersistentDataType.DOUBLE);
 
         if (worth.isPresent())
             return worth.get() * item.getAmount();

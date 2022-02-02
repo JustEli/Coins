@@ -8,10 +8,17 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-/** by Eli at August 02, 2021 **/
+/** by Eli on August 02, 2021 **/
 public class CoinsDisabled
         implements CommandExecutor
 {
+    private final Coins coins;
+
+    public CoinsDisabled (Coins coins)
+    {
+        this.coins = coins;
+    }
+
     @Override
     public boolean onCommand (
             @NotNull CommandSender sender,
@@ -23,7 +30,7 @@ public class CoinsDisabled
             return false;
 
         sender.sendMessage(Message.DISABLED_REASONS.toString());
-        for (String message : Coins.getDisabledReasons())
+        for (String message : this.coins.disabledReasons())
         {
             sender.sendMessage(Util.color(" - &c" + message));
         }

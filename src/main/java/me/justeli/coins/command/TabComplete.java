@@ -12,10 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by Eli on 26 dec 2018.
- * spigotPlugins: me.justeli.coins.main
- */
+/** Created by Eli on 26 dec 2018. */
 public class TabComplete
         implements TabCompleter
 {

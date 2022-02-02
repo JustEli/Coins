@@ -175,7 +175,9 @@ allowNameChange: false
 # Allow players to use coins in a bench (i.e. crafting, smelting). Coin will lose its value.
 allowModification: false
 
-# # # Player Death Module # # #
+#  #  #  #  #  #  #  #  #
+#  Player Death Module  #
+#  #  #  #  #  #  #  #  #
 
 # Should players lose money on death?
 # It shows a title (in the middle of the screen) how much they lost on death.
@@ -195,3 +197,10 @@ dropOnDeath: false
 
 # The message in the middle of their screen.
 deathMessage: '&4- &c{currency}{amount}'
+
+#  #  #  #
+#  Misc  #
+#  #  #  #
+
+# Show a message on start-up if the plugin is outdated.
+checkForUpdates: true

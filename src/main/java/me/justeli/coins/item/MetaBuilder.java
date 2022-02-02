@@ -13,18 +13,16 @@ import java.util.Optional;
 /** by Eli on January 30, 2022 **/
 public class MetaBuilder
 {
+    private final Coins coins;
+
     private final ItemStack itemStack;
     private final ItemMeta itemMeta;
 
-    private MetaBuilder (ItemStack itemStack)
+    public MetaBuilder (Coins coins, ItemStack itemStack)
     {
+        this.coins = coins;
         this.itemStack = itemStack;
         this.itemMeta = itemStack.getItemMeta();
-    }
-
-    public static MetaBuilder of (@NotNull ItemStack itemStack)
-    {
-        return new MetaBuilder(itemStack);
     }
 
     public MetaBuilder name (String name)
@@ -36,7 +34,7 @@ public class MetaBuilder
     public MetaBuilder data (String key, Integer value)
     {
         this.itemMeta.getPersistentDataContainer().set(
-                new NamespacedKey(Coins.plugin(), key),
+                new NamespacedKey(this.coins, key),
                 PersistentDataType.INTEGER, value
         );
         return this;
@@ -45,7 +43,7 @@ public class MetaBuilder
     public MetaBuilder data (String key, Double value)
     {
         this.itemMeta.getPersistentDataContainer().set(
-                new NamespacedKey(Coins.plugin(), key),
+                new NamespacedKey(this.coins, key),
                 PersistentDataType.DOUBLE, value
         );
         return this;
@@ -57,7 +55,7 @@ public class MetaBuilder
             return Optional.empty();
 
         return Optional.ofNullable(this.itemMeta.getPersistentDataContainer().get(
-                new NamespacedKey(Coins.plugin(), key), type
+                new NamespacedKey(this.coins, key), type
         ));
     }
 

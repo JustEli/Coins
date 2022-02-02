@@ -6,7 +6,7 @@
 
     <groupId>me.justeli.coins</groupId>
     <artifactId>Coins</artifactId>
-    <version>1.11</version>
+    <version>1.12</version>
     <name>Coins</name>
     <url>https://www.spigotmc.org/resources/coins.33382/</url>
 
@@ -91,13 +91,19 @@
         <dependency>
             <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.14-R0.1-SNAPSHOT</version>
+            <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
             <version>1.7</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.lokka30.treasury</groupId>
+            <artifactId>treasury-api</artifactId>
+            <version>1.0.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

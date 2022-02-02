@@ -1,5 +1,6 @@
 package me.justeli.coins.handler;
 
+import me.justeli.coins.Coins;
 import me.justeli.coins.config.Config;
 import me.justeli.coins.util.Util;
 import org.bukkit.entity.Entity;
@@ -18,8 +19,15 @@ import java.util.UUID;
 public class UnfairMobHandler
         implements Listener
 {
-    private static final Set<UUID> SPAWNER_MOB = new HashSet<>();
-    private static final Set<UUID> SLIME_SPLIT_MOB = new HashSet<>();
+    private final Coins coins;
+
+    public UnfairMobHandler (Coins coins)
+    {
+        this.coins = coins;
+    }
+
+    private final Set<UUID> spawnerMob = new HashSet<>();
+    private final Set<UUID> slimeSplitMob = new HashSet<>();
 
     @EventHandler
     public void preventSpawnerCoin (CreatureSpawnEvent event)
@@ -33,7 +41,7 @@ public class UnfairMobHandler
         if (event.getSpawnReason() != SpawnReason.SPAWNER && event.getEntityType() != EntityType.CAVE_SPIDER)
             return;
 
-        SPAWNER_MOB.add(event.getEntity().getUniqueId());
+        spawnerMob.add(event.getEntity().getUniqueId());
     }
 
     @EventHandler
@@ -42,7 +50,7 @@ public class UnfairMobHandler
         if (event.getSpawnReason() != SpawnReason.SLIME_SPLIT || !Config.PREVENT_SPLITS)
             return;
 
-        SLIME_SPLIT_MOB.add(event.getEntity().getUniqueId());
+        slimeSplitMob.add(event.getEntity().getUniqueId());
     }
 
     @EventHandler (priority = EventPriority.MONITOR)
@@ -51,19 +59,19 @@ public class UnfairMobHandler
         removeFromList(event.getEntity());
     }
 
-    public static boolean fromSplit (Entity entity)
+    public boolean fromSplit (Entity entity)
     {
-        return SLIME_SPLIT_MOB.contains(entity.getUniqueId());
+        return slimeSplitMob.contains(entity.getUniqueId());
     }
 
-    public static boolean fromSpawner (Entity entity)
+    public boolean fromSpawner (Entity entity)
     {
-        return SPAWNER_MOB.contains(entity.getUniqueId());
+        return spawnerMob.contains(entity.getUniqueId());
     }
 
-    public static void removeFromList (Entity entity)
+    public void removeFromList (Entity entity)
     {
-        SPAWNER_MOB.remove(entity.getUniqueId());
-        SLIME_SPLIT_MOB.remove(entity.getUniqueId());
+        spawnerMob.remove(entity.getUniqueId());
+        slimeSplitMob.remove(entity.getUniqueId());
     }
 }

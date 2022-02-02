@@ -3,30 +3,33 @@ package me.justeli.coins.hook;
 import io.papermc.lib.PaperLib;
 import me.justeli.coins.Coins;
 import me.justeli.coins.config.Config;
-import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Locale;
 import java.util.function.Consumer;
 
-/**
- * Created by Eli on July 09, 2021.
- * Coins: me.justeli.coins.hook
- */
-public class bStatsMetrics
+/** Created by Eli on July 09, 2021. */
+public class Metrics
 {
+    private final Coins coins;
+
+    public Metrics (Coins coins)
+    {
+        this.coins = coins;
+    }
+
     public static void metrics (JavaPlugin plugin, final Consumer<Metric> consumer)
     {
-        Metrics metrics = new Metrics(plugin, 831);
+        org.bstats.bukkit.Metrics metrics = new org.bstats.bukkit.Metrics(plugin, 831);
         consumer.accept(new Metric(metrics));
     }
 
     public static class Metric
     {
-        private final Metrics metrics;
+        private final org.bstats.bukkit.Metrics metrics;
 
-        public Metric (Metrics metrics)
+        public Metric (org.bstats.bukkit.Metrics metrics)
         {
             this.metrics = metrics;
         }
@@ -40,9 +43,9 @@ public class bStatsMetrics
         }
     }
 
-    public static void register ()
+    public void register ()
     {
-        metrics(Coins.plugin(), metrics ->
+        metrics(this.coins, metrics ->
         {
             metrics.add("language", Config.LANGUAGE.toLowerCase(Locale.ROOT));
             metrics.add("currencySymbol", Config.CURRENCY_SYMBOL);
@@ -80,7 +83,7 @@ public class bStatsMetrics
 
             metrics.add("usingSkullTexture", Config.SKULL_TEXTURE != null && !Config.SKULL_TEXTURE.isEmpty());
             metrics.add("usingPaper", PaperLib.isPaper());
-            metrics.add("usingMythicMobs", Coins.hasMythicMobs());
+            metrics.add("usingMythicMobs", this.coins.hasMythicMobs());
 
             metrics.add("droppedCoinName", Config.DROPPED_COIN_NAME);
             metrics.add("withdrawnCoinNamesSingular", Config.WITHDRAWN_COIN_NAME_SINGULAR);

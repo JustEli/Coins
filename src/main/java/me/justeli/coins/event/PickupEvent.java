@@ -7,10 +7,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Created by Eli on September 13, 2020.
- * Coins: me.justeli.coins.events
- */
+/** Created by Eli on September 13, 2020. */
 public class PickupEvent
         extends Event
         implements Cancellable

@@ -1,5 +1,6 @@
 package me.justeli.coins.item;
 
+import me.justeli.coins.Coins;
 import me.justeli.coins.config.Config;
 import me.justeli.coins.util.Skull;
 import org.bukkit.enchantments.Enchantment;
@@ -10,12 +11,15 @@ import org.bukkit.inventory.meta.ItemMeta;
 /** by Eli on January 30, 2022 **/
 public class BaseCoin
 {
+    private final Coins coins;
+
     private final ItemStack withdrawnCoin;
     private final ItemStack droppedCoin;
     private final ItemStack otherCoin;
 
-    private BaseCoin ()
+    private BaseCoin (Coins coins)
     {
+        this.coins = coins;
         String texture = Config.SKULL_TEXTURE;
 
         ItemStack baseCoin = texture == null || texture.isEmpty()? new ItemStack(Config.COIN_ITEM) : Skull.of(texture);
@@ -33,8 +37,8 @@ public class BaseCoin
 
         baseCoin.setItemMeta(baseCoinMeta);
 
-        this.withdrawnCoin = MetaBuilder.of(baseCoin.clone()).data(CoinUtil.COINS_TYPE, CoinUtil.TYPE_WITHDRAWN).build();
-        MetaBuilder droppedCoinItem = MetaBuilder.of(baseCoin.clone()).name(Config.DROPPED_COIN_NAME).data(CoinUtil.COINS_TYPE, CoinUtil.TYPE_DROPPED);
+        this.withdrawnCoin = coins.meta(baseCoin.clone()).data(CoinUtil.COINS_TYPE, CoinUtil.TYPE_WITHDRAWN).build();
+        MetaBuilder droppedCoinItem = coins.meta(baseCoin.clone()).name(Config.DROPPED_COIN_NAME).data(CoinUtil.COINS_TYPE, CoinUtil.TYPE_DROPPED);
 
         if (Config.DROP_EACH_COIN)
         {
@@ -42,12 +46,12 @@ public class BaseCoin
         }
 
         this.droppedCoin = droppedCoinItem.build();
-        this.otherCoin = MetaBuilder.of(baseCoin.clone()).name(Config.DROPPED_COIN_NAME).data(CoinUtil.COINS_TYPE, CoinUtil.TYPE_OTHER).build();
+        this.otherCoin = coins.meta(baseCoin.clone()).name(Config.DROPPED_COIN_NAME).data(CoinUtil.COINS_TYPE, CoinUtil.TYPE_OTHER).build();
     }
 
-    public static BaseCoin initialize ()
+    public static BaseCoin initialize (Coins coins)
     {
-        return new BaseCoin();
+        return new BaseCoin(coins);
     }
 
     public ItemStack dropped ()
@@ -62,6 +66,6 @@ public class BaseCoin
 
     public MetaBuilder other ()
     {
-        return MetaBuilder.of(this.otherCoin.clone());
+        return this.coins.meta(this.otherCoin.clone());
     }
 }
