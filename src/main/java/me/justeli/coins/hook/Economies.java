@@ -4,7 +4,6 @@ import me.lokka30.treasury.api.economy.EconomyProvider;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.LinkedHashSet;
 import java.util.Optional;
@@ -24,7 +23,7 @@ public final class Economies implements EconomyHook
 
     private EconomyHook hook = null;
 
-    private Economies (Plugin plugin)
+    public Economies (Plugin plugin)
     {
         this.plugin = plugin;
         
@@ -71,11 +70,6 @@ public final class Economies implements EconomyHook
         {
             return Optional.empty();
         }
-    }
-
-    public static Economies of (JavaPlugin plugin)
-    {
-        return new Economies(plugin);
     }
 
     public Set<String> getMissingPluginNames ()
