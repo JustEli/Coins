@@ -1,85 +1,70 @@
 package me.justeli.coins.hook;
 
-import me.justeli.coins.hook.treasury.EconomySubscribers;
 import me.lokka30.treasury.api.economy.EconomyProvider;
-import me.lokka30.treasury.api.economy.account.PlayerAccount;
-import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.java.JavaPlugin;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.DoubleConsumer;
+import java.util.function.Function;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 /** by Eli on February 01, 2022 **/
-public final class Economies
+public final class Economies implements EconomyHook
 {
-    private final JavaPlugin plugin;
-    private final Set<String> missingPlugins = new HashSet<>();
+    private final Plugin plugin;
+    private final Set<String> missingPlugins = new LinkedHashSet<>();
+    private final Set<String> supportedHooks = new LinkedHashSet<>();
 
-    private final EconomyType economyType;
-    private Economy vaultEconomy;
-    private EconomyProvider treasuryEconomy;
+    private EconomyHook hook = null;
 
-    private Economies (JavaPlugin plugin)
+    public Economies (Plugin plugin)
     {
         this.plugin = plugin;
-
-        for (EconomyType type : EconomyType.values())
+        
+        hookIfInstalled(TreasuryEconomyHook.TREASURY, treasury ->
+            provider(EconomyProvider.class, treasury).map(TreasuryEconomyHook::new)
+        );
+        
+        hookIfInstalled(VaultEconomyHook.VAULT, vault ->
+            provider(Economy.class, vault).map(economy -> new VaultEconomyHook(plugin, economy))
+        );
+        
+        if (this.hook == null && missingPlugins.isEmpty())
         {
-            if (isInstalled(type.pluginName()))
-            {
-                Optional<?> provider = getProvider(type.clazz(), type.pluginName());
-                if (provider.isPresent())
-                {
-                    this.economyType = type;
-                    switch (type)
-                    {
-                        case VAULT: this.vaultEconomy = (Economy) provider.get(); break;
-                        case TREASURY: this.treasuryEconomy = (EconomyProvider) provider.get(); break;
-                    }
-                    this.missingPlugins.clear();
-                    return;
-                }
-                else
-                {
-                    missingPlugins.add("an economy providing plugin for '" + type.pluginName() + "'");
-                }
-            }
+            this.missingPlugins.add(String.join(" or ", supportedHooks));
         }
-
-        if (missingPlugins.isEmpty())
-        {
-            this.missingPlugins.add(Arrays.stream(EconomyType.values()).map(EconomyType::pluginName).collect(Collectors.joining(" or ")));
-        }
-
-        this.economyType = null;
     }
-
-    private boolean isInstalled (String name)
+    
+    private void hookIfInstalled (String name, Function<String, Optional<EconomyHook>> hooker)
     {
-        return plugin.getServer().getPluginManager().isPluginEnabled(name);
+        supportedHooks.add(name);
+        
+        if (this.hook != null) { return; } // already hooked
+        if (!plugin.getServer().getPluginManager().isPluginEnabled(name)) { return; }
+        
+        this.hook = hooker.apply(name).orElse(null);
+        
+        if (this.hook == null) { missingPlugins.add("an economy providing plugin for '" + name + "'"); }
+        else { missingPlugins.clear(); }
     }
-
-    private <T> Optional<T> getProvider (Class<T> economyClass, String name)
+    
+    private <T> Optional<T> provider (Class<T> economyClass, String name)
     {
         try
         {
-            RegisteredServiceProvider<T> rsp = plugin.getServer().getServicesManager().getRegistration(economyClass);
-            if (rsp == null)
-            {
-                return Optional.empty();
-            }
+            RegisteredServiceProvider<T> registration =
+                plugin.getServer().getServicesManager().getRegistration(economyClass);
+            
+            if (registration == null) { return Optional.empty(); }
 
             this.plugin.getLogger().log(Level.INFO, name + " is used as the economy provider.");
-            return Optional.of(rsp.getProvider());
+            return Optional.of(registration.getProvider());
         }
         catch (NullPointerException | NoClassDefFoundError throwable)
         {
@@ -87,128 +72,32 @@ public final class Economies
         }
     }
 
-    public static Economies of (JavaPlugin plugin)
-    {
-        return new Economies(plugin);
-    }
-
     public Set<String> getMissingPluginNames ()
     {
         return this.missingPlugins;
     }
 
-    public void balance (UUID uuid, Consumer<Double> balance)
+    @Override
+    public void balance (UUID uuid, DoubleConsumer balance)
     {
-        switch (this.economyType)
-        {
-            case VAULT:
-                balance.accept(vaultEconomy.getBalance(plugin.getServer().getOfflinePlayer(uuid)));
-                break;
-            case TREASURY:
-                EconomyProvider economy = this.treasuryEconomy;
-                economy.retrievePlayerAccount(
-                    uuid,
-                    EconomySubscribers.requesting(PlayerAccount.class)
-                        .success(playerAccount ->
-                            playerAccount.retrieveBalance(
-                                economy.getPrimaryCurrency(),
-                                EconomySubscribers.requesting(BigDecimal.class)
-                                    .success(bigDecimal -> balance.accept(bigDecimal.doubleValue()))
-                                    .silentFailure()
-                            )
-                        )
-                        .silentFailure()
-                );
-                break;
-        }
+        if (hook != null) { hook.balance(uuid, balance); }
     }
 
+    @Override
     public void canAfford (UUID uuid, double amount, Consumer<Boolean> canAfford)
     {
-        switch (this.economyType)
-        {
-            case VAULT:
-                canAfford.accept(vaultEconomy.has(plugin.getServer().getOfflinePlayer(uuid), amount));
-                break;
-            case TREASURY:
-                EconomyProvider economy = this.treasuryEconomy;
-                economy.retrievePlayerAccount(
-                    uuid,
-                    EconomySubscribers.requesting(PlayerAccount.class)
-                        .success(playerAccount ->
-                            playerAccount.canAfford(
-                                BigDecimal.valueOf(amount),
-                                economy.getPrimaryCurrency(),
-                                EconomySubscribers.requesting(Boolean.class)
-                                    .success(canAfford).silentFailure()
-                            )
-                        )
-                        .silentFailure()
-                );
-                break;
-
-        }
+        if (hook != null) { hook.canAfford(uuid, amount, canAfford); }
     }
 
+    @Override
     public void withdraw (UUID uuid, double amount, Runnable success)
     {
-        switch (this.economyType)
-        {
-            case VAULT:
-                if (vaultEconomy.withdrawPlayer(plugin.getServer().getOfflinePlayer(uuid), amount).transactionSuccess())
-                {
-                    success.run();
-                }
-                break;
-            case TREASURY:
-                EconomyProvider economy = this.treasuryEconomy;
-                economy.retrievePlayerAccount(
-                    uuid,
-                    EconomySubscribers.requesting(PlayerAccount.class)
-                        .success(playerAccount ->
-                            playerAccount.withdrawBalance(
-                                BigDecimal.valueOf(amount),
-                                EconomyTransactionInitiator.SERVER,
-                                economy.getPrimaryCurrency(),
-                                EconomySubscribers.requesting(BigDecimal.class)
-                                    .success(bigDecimal -> success.run())
-                                    .silentFailure()
-                            )
-                        )
-                        .silentFailure()
-                );
-                break;
-        }
+        if (hook != null) { hook.withdraw(uuid, amount, success); }
     }
 
+    @Override
     public void deposit (UUID uuid, double amount, Runnable success)
     {
-        switch (this.economyType)
-        {
-            case VAULT:
-                if (vaultEconomy.depositPlayer(plugin.getServer().getOfflinePlayer(uuid), amount).transactionSuccess())
-                {
-                    success.run();
-                }
-                break;
-            case TREASURY:
-                EconomyProvider economy = this.treasuryEconomy;
-                economy.retrievePlayerAccount(
-                    uuid,
-                    EconomySubscribers.requesting(PlayerAccount.class)
-                        .success(playerAccount ->
-                            playerAccount.depositBalance(
-                                BigDecimal.valueOf(amount),
-                                EconomyTransactionInitiator.SERVER,
-                                economy.getPrimaryCurrency(),
-                                EconomySubscribers.requesting(BigDecimal.class)
-                                    .success(bigDecimal -> success.run())
-                                    .silentFailure()
-                            )
-                        )
-                        .silentFailure()
-                );
-                break;
-        }
+        if (hook != null) { hook.deposit(uuid, amount, success); }
     }
 }

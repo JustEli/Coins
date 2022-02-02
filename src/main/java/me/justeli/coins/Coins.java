@@ -74,8 +74,8 @@ public final class Coins
             console(Level.SEVERE, USING_BUKKIT);
             disablePlugin(USING_BUKKIT);
         }
-
-        this.economy = Economies.of(this);
+        
+        this.economy = new Economies(this);
         for (String missingPlugin : this.economy.getMissingPluginNames())
         {
             noEconomySupport(missingPlugin);
