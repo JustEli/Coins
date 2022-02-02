@@ -4,7 +4,6 @@ import me.justeli.coins.Coins;
 import me.justeli.coins.hook.MythicMobsHook;
 import me.justeli.coins.config.Config;
 import me.justeli.coins.item.CoinUtil;
-import me.justeli.coins.item.CreateCoin;
 import me.justeli.coins.util.SubTitle;
 import me.justeli.coins.util.Util;
 import org.bukkit.Location;

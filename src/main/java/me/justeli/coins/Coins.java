@@ -4,7 +4,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.papermc.lib.PaperLib;
-import me.justeli.coins.command.CoinsDisabled;
+import me.justeli.coins.command.CoinsCommand;
+import me.justeli.coins.command.DisabledCommand;
+import me.justeli.coins.command.WithdrawCommand;
 import me.justeli.coins.handler.HopperHandler;
 import me.justeli.coins.handler.InventoryHandler;
 import me.justeli.coins.handler.InteractionHandler;
@@ -14,8 +16,6 @@ import me.justeli.coins.handler.listener.BukkitEventListener;
 import me.justeli.coins.handler.PickupHandler;
 import me.justeli.coins.handler.DropHandler;
 import me.justeli.coins.handler.listener.PaperEventListener;
-import me.justeli.coins.command.Commands;
-import me.justeli.coins.command.TabComplete;
 import me.justeli.coins.hook.MythicMobsHook;
 import me.justeli.coins.hook.Metrics;
 import me.justeli.coins.config.Config;
@@ -26,6 +26,7 @@ import me.justeli.coins.item.CoinUtil;
 import me.justeli.coins.item.CreateCoin;
 import me.justeli.coins.item.MetaBuilder;
 import me.justeli.coins.util.Util;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -107,10 +108,11 @@ public final class Coins
         }
         else
         {
-            CoinsDisabled coinsDisabled = new CoinsDisabled(this);
-
-            this.getCommand("coins").setExecutor(coinsDisabled);
-            this.getCommand("withdraw").setExecutor(coinsDisabled);
+            DisabledCommand disabledCommand = new DisabledCommand(this);
+            for (PluginCommand command : disabledCommand.commands())
+            {
+                command.setExecutor(disabledCommand);
+            }
 
             line(Level.SEVERE);
             console(Level.SEVERE, "Plugin 'Coins' is now disabled, until the issues are fixed.");
@@ -233,16 +235,17 @@ public final class Coins
 
     private void registerCommands ()
     {
-        Commands commands = new Commands(this);
-        TabComplete tabComplete = new TabComplete();
+        CoinsCommand coinsCommand = new CoinsCommand(this);
 
-        this.getCommand("coins").setExecutor(commands);
-        this.getCommand("coins").setTabCompleter(tabComplete);
+        coinsCommand.command().setExecutor(coinsCommand);
+        coinsCommand.command().setTabCompleter(coinsCommand);
 
         if (Config.ENABLE_WITHDRAW)
         {
-            this.getCommand("withdraw").setExecutor(commands);
-            this.getCommand("withdraw").setTabCompleter(tabComplete);
+            WithdrawCommand withdrawCommand = new WithdrawCommand(this);
+
+            withdrawCommand.command().setExecutor(withdrawCommand);
+            withdrawCommand.command().setTabCompleter(withdrawCommand);
         }
     }
 
