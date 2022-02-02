@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 /** by Eli on January 30, 2022 **/
-public class MetaBuilder
+public final class MetaBuilder
 {
     private final Coins coins;
 

@@ -8,7 +8,7 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /** Created by Eli on September 13, 2020. */
-public class PickupEvent
+public final class PickupEvent
         extends Event
         implements Cancellable
 {

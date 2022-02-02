@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 /** Created by Eli on 12/14/2016. Rewritten by Eli on July 9, 2021. */
-public class Settings
+public final class Settings
 {
     private final Coins coins;
 

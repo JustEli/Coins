@@ -7,7 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 
 /** Created by Eli on September 13, 2020. */
-public class BukkitEventListener
+public final class BukkitEventListener
         implements Listener
 {
     private final Coins coins;

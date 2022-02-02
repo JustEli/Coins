@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.SplittableRandom;
 
 /** by Eli on January 30, 2022 **/
-public class CreateCoin
+public final class CreateCoin
 {
     private final Coins coins;
 

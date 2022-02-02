@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 /** Created by Eli on 6 jan. 2020. */
-public class Skull
+public final class Skull
 {
     private static final HashMap<String, ItemStack> COIN = new HashMap<>();
     private static final UUID SKULL_UUID = UUID.fromString("00000001-0001-0001-0001-000000000002");

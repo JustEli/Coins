@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 /** by Eli on January 30, 2022 **/
-public class BaseCoin
+public final class BaseCoin
 {
     private final Coins coins;
 

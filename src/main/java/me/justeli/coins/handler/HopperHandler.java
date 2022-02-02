@@ -8,7 +8,7 @@ import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 
-public class HopperHandler
+public final class HopperHandler
         implements Listener
 {
     private final Coins coins;

@@ -11,7 +11,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-public class MythicMobsHook
+public final class MythicMobsHook
         implements Listener
 {
     private final Coins coins;

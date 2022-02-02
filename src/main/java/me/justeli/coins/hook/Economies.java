@@ -19,7 +19,7 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 /** by Eli on February 01, 2022 **/
-public class Economies
+public final class Economies
 {
     private final JavaPlugin plugin;
     private final Set<String> missingPlugins = new HashSet<>();

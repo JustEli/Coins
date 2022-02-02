@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.SplittableRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Commands
+public final class Commands
         implements CommandExecutor
 {
     private final Coins coins;
@@ -55,7 +55,7 @@ public class Commands
                         {
                             long ms = System.currentTimeMillis();
 
-                            this.coins.onReload();
+                            this.coins.reload();
                             int warnings = this.coins.settings().getWarningCount();
 
                             sender.sendMessage(Message.RELOAD_SUCCESS.toString().replace("{0}", Long.toString(System.currentTimeMillis() - ms)));

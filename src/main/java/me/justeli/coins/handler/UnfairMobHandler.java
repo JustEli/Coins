@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-public class UnfairMobHandler
+public final class UnfairMobHandler
         implements Listener
 {
     private final Coins coins;

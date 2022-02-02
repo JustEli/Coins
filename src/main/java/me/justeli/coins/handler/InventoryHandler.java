@@ -10,7 +10,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 /** Created by Eli on 2 mei 2019. */
-public class InventoryHandler
+public final class InventoryHandler
         implements Listener
 {
     private final Coins coins;

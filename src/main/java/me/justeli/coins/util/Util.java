@@ -1,31 +1,22 @@
 package me.justeli.coins.util;
 
 import io.papermc.lib.PaperLib;
-import me.justeli.coins.Coins;
 import me.justeli.coins.config.Config;
-import me.justeli.coins.item.CoinUtil;
-import me.justeli.coins.item.CreateCoin;
-import me.justeli.coins.item.MetaBuilder;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Boss;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Flying;
 import org.bukkit.entity.Golem;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Snowman;
 import org.bukkit.entity.Wolf;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -39,7 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /** Created by Eli on 6 jan. 2020. */
-public class Util
+public final class Util
 {
     private static final Pattern HEX_PATTERN = Pattern.compile("(?<!\\\\)(&#[a-fA-F0-9]{6})");
     private static final HashMap<UUID, Double> PLAYER_MULTIPLIER = new HashMap<>();

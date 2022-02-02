@@ -13,7 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /** by Eli on January 30, 2022 **/
-public class CoinUtil
+public final class CoinUtil
 {
     private final Coins coins;
 

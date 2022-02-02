@@ -25,7 +25,6 @@ import me.justeli.coins.hook.Economies;
 import me.justeli.coins.item.CoinUtil;
 import me.justeli.coins.item.CreateCoin;
 import me.justeli.coins.item.MetaBuilder;
-import me.justeli.coins.util.Reloadable;
 import me.justeli.coins.util.Util;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
@@ -42,9 +41,8 @@ import java.util.Locale;
 import java.util.logging.Level;
 
 /** by Eli on 12/13/2016. **/
-public class Coins
+public final class Coins
         extends JavaPlugin
-        implements Reloadable
 {
     // TODO
     // - add option to not let balance go negative (with dropOnDeath: true)
@@ -96,7 +94,7 @@ public class Coins
         if (this.disabledReasons.size() == 0)
         {
             this.settings = new Settings(this);
-            onReload();
+            reload();
 
             registerEvents();
             registerCommands();
@@ -121,8 +119,7 @@ public class Coins
         console(Level.INFO, "Initialized in " + (System.currentTimeMillis() - current) + "ms.");
     }
 
-    @Override
-    public void onReload ()
+    public void reload ()
     {
         if (this.disabledReasons.size() != 0)
         {

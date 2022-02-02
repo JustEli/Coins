@@ -96,4 +96,6 @@ public class Config
     {
         return RAW_BLOCK_MULTIPLIER.computeIfAbsent(material.toString(), empty -> 1);
     }
+
+    private Config () {}
 }

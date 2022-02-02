@@ -3,7 +3,7 @@ package me.justeli.coins.util;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 
-public class SubTitle
+public final class SubTitle
 {
     private final String subtitle;
     private int fadeIn = 10;

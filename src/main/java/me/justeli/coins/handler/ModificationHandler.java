@@ -2,7 +2,6 @@ package me.justeli.coins.handler;
 
 import me.justeli.coins.Coins;
 import me.justeli.coins.config.Config;
-import me.justeli.coins.item.CoinUtil;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.CraftItemEvent;
@@ -13,7 +12,7 @@ import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
 
 /** by Eli on January 30, 2022 **/
-public class ModificationHandler
+public final class ModificationHandler
         implements Listener
 {
     private final Coins coins;

@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 /** by Eli on August 02, 2021 **/
-public class CoinsDisabled
+public final class CoinsDisabled
         implements CommandExecutor
 {
     private final Coins coins;

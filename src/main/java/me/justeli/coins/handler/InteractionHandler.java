@@ -1,7 +1,6 @@
 package me.justeli.coins.handler;
 
 import me.justeli.coins.Coins;
-import me.justeli.coins.item.CoinUtil;
 import me.justeli.coins.util.Util;
 import org.bukkit.block.Container;
 import org.bukkit.entity.Player;
@@ -11,7 +10,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 /** Created by Eli on 2/4/2017. */
-public class InteractionHandler
+public final class InteractionHandler
         implements Listener
 {
     private final Coins coins;

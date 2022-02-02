@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.SplittableRandom;
 import java.util.UUID;
 
-public class DropHandler
+public final class DropHandler
         implements Listener
 {
     private final Coins coins;

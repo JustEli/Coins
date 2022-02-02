@@ -2,7 +2,6 @@ package me.justeli.coins.handler;
 
 import me.justeli.coins.Coins;
 import me.justeli.coins.event.PickupEvent;
-import me.justeli.coins.item.CoinUtil;
 import me.justeli.coins.util.ActionBar;
 import me.justeli.coins.config.Config;
 import me.justeli.coins.util.Util;
@@ -18,7 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-public class PickupHandler
+public final class PickupHandler
         implements Listener
 {
     private final Coins coins;

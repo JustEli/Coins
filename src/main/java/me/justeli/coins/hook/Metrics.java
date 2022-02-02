@@ -10,7 +10,7 @@ import java.util.Locale;
 import java.util.function.Consumer;
 
 /** Created by Eli on July 09, 2021. */
-public class Metrics
+public final class Metrics
 {
     private final Coins coins;
 
@@ -91,6 +91,8 @@ public class Metrics
             metrics.add("detectLegacyCoins", Config.DETECT_LEGACY_COINS);
             metrics.add("allowNameChange", Config.ALLOW_NAME_CHANGE);
             metrics.add("allowModification", Config.ALLOW_MODIFICATION);
+            metrics.add("checkForUpdates", Config.CHECK_FOR_UPDATES);
+            metrics.add("enchantIncrement", Config.ENCHANT_INCREMENT);
         });
     }
 }
