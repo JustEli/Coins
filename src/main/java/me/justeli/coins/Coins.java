@@ -39,6 +39,8 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 
 /** by Eli on 12/13/2016. **/
@@ -46,7 +48,9 @@ public final class Coins
         extends JavaPlugin
 {
     // TODO
-    // - add option to not let balance go negative (with dropOnDeath: true)
+    // - nothing
+
+    private static final ExecutorService ASYNC_THREAD = Executors.newSingleThreadExecutor();
 
     private static final String UNSUPPORTED_VERSION = "Coins only supports Minecraft version 1.14 and higher. For 1.8.8 to 1.13.2 support, you can " +
             "use Coins version 1.10.8.";
@@ -100,7 +104,7 @@ public final class Coins
             registerEvents();
             registerCommands();
 
-            async(() ->
+            ASYNC_THREAD.submit(() ->
             {
                 versionChecker();
                 new Metrics(this).register();
@@ -247,11 +251,6 @@ public final class Coins
             withdrawCommand.command().setExecutor(withdrawCommand);
             withdrawCommand.command().setTabCompleter(withdrawCommand);
         }
-    }
-
-    public void async (final Runnable runnable)
-    {
-        getServer().getScheduler().runTaskAsynchronously(this, runnable);
     }
 
     public void sync (final int ticks, final Runnable runnable)

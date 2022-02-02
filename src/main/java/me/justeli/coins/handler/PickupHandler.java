@@ -27,8 +27,9 @@ public final class PickupHandler
         this.coins = coins;
     }
 
-    private static final Set<UUID> THROWN_COINS = new HashSet<>();
-    private static final HashMap<UUID, Double> PICKUP_AMOUNT_TRACKER = new HashMap<>();
+    private final Set<UUID> thrownCoinCache = new HashSet<>();
+    private final HashMap<UUID, Double> pickupAmountCache = new HashMap<>();
+    private final HashMap<UUID, Long> pickupTimeCache = new HashMap<>();
 
     @EventHandler (ignoreCancelled = true)
     public void onPickup (PickupEvent event)
@@ -52,16 +53,16 @@ public final class PickupHandler
 
     private void giveCoin (Item item, Player player, double randomMoney)
     {
-        if (THROWN_COINS.contains(item.getUniqueId()))
+        if (this.thrownCoinCache.contains(item.getUniqueId()))
             return;
 
-        THROWN_COINS.add(item.getUniqueId());
+        this.thrownCoinCache.add(item.getUniqueId());
         item.setVelocity(new Vector(0, 0.4, 0));
 
         this.coins.sync(5, () ->
         {
             item.remove();
-            THROWN_COINS.remove(item.getUniqueId());
+            this.thrownCoinCache.remove(item.getUniqueId());
         });
 
         // pass 0 for random amount
@@ -100,20 +101,23 @@ public final class PickupHandler
         this.coins.economy().deposit(player.getUniqueId(), amount, () ->
         {
             UUID uniqueId = player.getUniqueId();
+            long previousTime = this.pickupTimeCache.computeIfAbsent(uniqueId, empty -> 0L);
 
-            double previousAmount = PICKUP_AMOUNT_TRACKER.computeIfAbsent(uniqueId, empty -> 0D);
-            PICKUP_AMOUNT_TRACKER.put(uniqueId, amount + previousAmount);
-            final double displayAmount = PICKUP_AMOUNT_TRACKER.computeIfAbsent(uniqueId, empty -> 0D);
-
-            this.coins.sync(Config.DROP_EACH_COIN? 30 : 10, () ->
+            if (previousTime > System.currentTimeMillis() - 1500)
             {
-                if (PICKUP_AMOUNT_TRACKER.computeIfAbsent(uniqueId, empty -> 0D) == displayAmount)
-                {
-                    PICKUP_AMOUNT_TRACKER.remove(uniqueId);
-                }
-            });
+                // recently shown actionbar
+                double previousAmount = this.pickupAmountCache.computeIfAbsent(uniqueId, empty -> 0D);
+                this.pickupAmountCache.put(uniqueId, amount + previousAmount);
+            }
+            else
+            {
+                this.pickupAmountCache.put(uniqueId, amount);
+            }
 
+            final double displayAmount = this.pickupAmountCache.computeIfAbsent(uniqueId, empty -> 0D);
             ActionBar.of(Util.formatAmountAndCurrency(Config.PICKUP_MESSAGE, displayAmount)).send(player);
+
+            this.pickupTimeCache.put(uniqueId, System.currentTimeMillis());
         });
     }
 }

@@ -64,6 +64,7 @@ public class Config
     @ConfigEntry ("minePercentage") public static Double MINE_PERCENTAGE = 0.3;
     @ConfigEntry ("percentagePlayerHit") public static Double PERCENTAGE_PLAYER_HIT = 0.8;
     @ConfigEntry ("enchantIncrement") public static Double ENCHANT_INCREMENT = 0.05;
+    @ConfigEntry ("locationLimitHours") public static Double LOCATION_LIMIT_HOURS = 1.0;
 
     @ConfigEntry ("soundPitch") public static Float SOUND_PITCH = 0.3F;
     @ConfigEntry ("soundVolume") public static Float SOUND_VOLUME = 0.5F;

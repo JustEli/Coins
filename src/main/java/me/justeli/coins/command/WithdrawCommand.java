@@ -92,7 +92,6 @@ public final class WithdrawCommand
             {
                 if (canAfford)
                 {
-                    // todo needs testing
                     this.coins.economy().withdraw(player.getUniqueId(), total, () ->
                     {
                         ItemStack coin = this.coins.getCreateCoin().withdrawn(worth);

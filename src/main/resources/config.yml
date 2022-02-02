@@ -100,8 +100,7 @@ preventAlts: true
 # When 'false', mobs can still drop coins when the player (who killed) has permission: 'coins.spawner'.
 spawnerDrop: false
 
-# Should passive mobs also drop a coin?
-# Passive mobs don't drop a coin by default.
+# Should passive mobs also drop a coin? Passive mobs don't drop a coin by default.
 passiveDrop: false
 
 # Prevent slimes and magma cubes spawned by splits from dropping coins?
@@ -121,10 +120,12 @@ soundVolume: 0.50
 # Value from 0.0 to 1.0: 0.0 meaning 0%, 1.0 meaning 100% (so 0.9 meaning 90%).
 dropChance: 0.90
 
-# Set the amount of kills per location before coins stop dropping. Useful for overuse of grinders.
-# Default: 1, after 1 kill at X Y Z, it won't drop coins there for two hours. Disable by inputting 0.
-# You may want to increase this value if you're using a mob stacker plugin.
+# Set the max. amount of coin drops (from mob kills) per block location in a specific time. This can
+#  be useful to prevent overuse of grinders. Defaults to 1: after 1 kill at X Y Z, it won't drop coins
+#  there for the amount of hours set at 'locationLimitHours'. Disable by setting to 0. You may want to
+#  increase this value if you're using a mob stacker plugin. 1 minute = 0.016667
 limitForLocation: 1
+locationLimitHours: 1.0
 
 # List all worlds that you want Coins to be disabled in.
 # Example for disabling two worlds called 'creative' and 'plots':
@@ -202,5 +203,5 @@ deathMessage: '&4- &c{currency}{amount}'
 #  Misc  #
 #  #  #  #
 
-# Show a message on start-up if the plugin is outdated.
+# Show a message to update the plugin on start-up, if the plugin is outdated.
 checkForUpdates: true

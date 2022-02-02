@@ -38,8 +38,10 @@ public final class DropHandler
         this.coins = coins;
     }
 
-    private static final HashMap<Location, Integer> LOCATION_TRACKER = new HashMap<>();
-    private static final HashMap<UUID, Double> DAMAGES = new HashMap<>();
+    private final HashMap<Location, Integer> locationAmountCache = new HashMap<>();
+    private final HashMap<Location, Long> locationLastTimeCache = new HashMap<>();
+    private final HashMap<UUID, Double> damageCache = new HashMap<>();
+
     private static final SplittableRandom RANDOM = new SplittableRandom();
 
     @EventHandler (priority = EventPriority.HIGH)
@@ -76,16 +78,27 @@ public final class DropHandler
     {
         if (Config.LIMIT_FOR_LOCATION >= 1)
         {
-            final Location location = entity.getLocation().getBlock().getLocation().clone();
-            int killAmount = LOCATION_TRACKER.getOrDefault(location, 0);
-            LOCATION_TRACKER.put(location, killAmount + 1);
+            Location location = entity.getLocation().getBlock().getLocation();
+            long previousTime = this.locationLastTimeCache.computeIfAbsent(location, empty -> 0L);
 
-            // todo improve
-            // subtract an hour later
-            this.coins.sync(144000, () -> LOCATION_TRACKER.put(location, LOCATION_TRACKER.getOrDefault(location, 0) - 1));
+            if (previousTime > System.currentTimeMillis() - 3600000 * Config.LOCATION_LIMIT_HOURS)
+            {
+                // within the past hour
+                int killAmount = this.locationAmountCache.computeIfAbsent(location, empty -> 0);
 
-            if (killAmount > Config.LIMIT_FOR_LOCATION)
-                return;
+                this.locationAmountCache.put(location, killAmount + 1);
+                this.locationLastTimeCache.put(location, System.currentTimeMillis());
+
+                if (killAmount >= Config.LIMIT_FOR_LOCATION)
+                {
+                    return;
+                }
+            }
+            else
+            {
+                this.locationAmountCache.put(location, 1);
+                this.locationLastTimeCache.put(location, System.currentTimeMillis());
+            }
         }
 
         if (!Config.DROP_WITH_ANY_DEATH && killer != null)
@@ -261,7 +274,7 @@ public final class DropHandler
 
     private double getPlayerDamage (UUID uuid)
     {
-        return DAMAGES.computeIfAbsent(uuid, empty -> 0D);
+        return this.damageCache.computeIfAbsent(uuid, empty -> 0D);
     }
 
     @EventHandler (priority = EventPriority.LOW)
@@ -271,13 +284,13 @@ public final class DropHandler
             return;
 
         UUID uuid = event.getEntity().getUniqueId();
-        double playerDamage = DAMAGES.computeIfAbsent(uuid, empty -> 0D);
-        DAMAGES.put(uuid, playerDamage + event.getFinalDamage());
+        double playerDamage = this.damageCache.computeIfAbsent(uuid, empty -> 0D);
+        this.damageCache.put(uuid, playerDamage + event.getFinalDamage());
     }
 
     @EventHandler (priority = EventPriority.MONITOR)
     public void unregisterHits (EntityDeathEvent event)
     {
-        DAMAGES.remove(event.getEntity().getUniqueId());
+        this.damageCache.remove(event.getEntity().getUniqueId());
     }
 }
