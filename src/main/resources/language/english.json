@@ -4,7 +4,7 @@
   "RELOAD_SUCCESS" : "&eConfig of &6Coins &ehas been reloaded in &a{0}ms&e.",
   "MINOR_ISSUES" : "&cThere were some warnings while reloading, check console.",
   "CHECK_SETTINGS" : "&eYou can see active settings with &f/coins settings&e.",
-  "WITHDRAW_COINS" : "&eYou withdrawn &f{$}{0} &eand received &f{0} physical coins&e.",
+  "WITHDRAW_COINS" : "&eYou withdrew &f{$}{0} &eand received &f{0} physical coins&e.",
   "NOT_THAT_MUCH" : "&cYou cannot withdraw that much money.",
   "COINS_DISABLED" : "&cCoins are disabled in this world.",
   "SPAWNED_COINS" : "&9Spawned {0} coins in a radius of {1} around {2}.",

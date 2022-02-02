@@ -1,7 +1,6 @@
 package me.justeli.coins.handler;
 
 import me.justeli.coins.Coins;
-import me.justeli.coins.item.CoinUtil;
 import me.justeli.coins.util.Util;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

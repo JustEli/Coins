@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.SplittableRandom;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -87,10 +88,10 @@ public final class Util
                 if (permission.startsWith("coins.multiplier."))
                 {
                     String number = permission.replace("coins.multiplier.", "");
-                    permissions.add(Double.parseDouble(number));
+                    permissions.add(Util.parseDouble(number).orElse(1D));
                 }
             }
-            PLAYER_MULTIPLIER.put(player.getUniqueId(), permissions.size() == 0? 1d : Collections.max(permissions));
+            PLAYER_MULTIPLIER.put(player.getUniqueId(), permissions.size() == 0? 1D : Collections.max(permissions));
         }
         return PLAYER_MULTIPLIER.computeIfAbsent(player.getUniqueId(), empty -> 1D);
     }
@@ -173,5 +174,17 @@ public final class Util
     public static String doubleToString (double input)
     {
         return String.format("%." + Config.MONEY_DECIMALS + "f", round(input));
+    }
+
+    public static Optional<Integer> parseInt (String arg)
+    {
+        try { return Optional.of(Integer.parseInt(arg)); }
+        catch (NumberFormatException exception) { return Optional.empty(); }
+    }
+
+    public static Optional<Double> parseDouble (String arg)
+    {
+        try { return Optional.of(Util.round(new Double(arg))); }
+        catch (NumberFormatException exception) { return Optional.empty(); }
     }
 }
