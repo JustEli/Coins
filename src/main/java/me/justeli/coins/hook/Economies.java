@@ -1,14 +1,12 @@
 package me.justeli.coins.hook;
 
+import me.justeli.coins.hook.treasury.EconomySubscribers;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
-import me.lokka30.treasury.api.economy.response.EconomyException;
-import me.lokka30.treasury.api.economy.response.EconomySubscriber;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -108,27 +106,19 @@ public class Economies
                 break;
             case TREASURY:
                 EconomyProvider economy = this.treasuryEconomy;
-                economy.retrievePlayerAccount(uuid, new EconomySubscriber<PlayerAccount>()
-                {
-                    @Override
-                    public void succeed (@NotNull PlayerAccount playerAccount)
-                    {
-                        playerAccount.retrieveBalance(economy.getPrimaryCurrency(), new EconomySubscriber<BigDecimal>()
-                        {
-                            @Override
-                            public void succeed (@NotNull BigDecimal bigDecimal)
-                            {
-                                balance.accept(bigDecimal.doubleValue());
-                            }
-
-                            @Override
-                            public void fail (@NotNull EconomyException exception) {}
-                        });
-                    }
-
-                    @Override
-                    public void fail (@NotNull EconomyException exception) {}
-                });
+                economy.retrievePlayerAccount(
+                    uuid,
+                    EconomySubscribers.requesting(PlayerAccount.class)
+                        .success(playerAccount ->
+                            playerAccount.retrieveBalance(
+                                economy.getPrimaryCurrency(),
+                                EconomySubscribers.requesting(BigDecimal.class)
+                                    .success(bigDecimal -> balance.accept(bigDecimal.doubleValue()))
+                                    .silentFailure()
+                            )
+                        )
+                        .silentFailure()
+                );
                 break;
         }
     }
@@ -142,27 +132,19 @@ public class Economies
                 break;
             case TREASURY:
                 EconomyProvider economy = this.treasuryEconomy;
-                economy.retrievePlayerAccount(uuid, new EconomySubscriber<PlayerAccount>()
-                {
-                    @Override
-                    public void succeed (@NotNull PlayerAccount playerAccount)
-                    {
-                        playerAccount.canAfford(BigDecimal.valueOf(amount), economy.getPrimaryCurrency(), new EconomySubscriber<Boolean>()
-                        {
-                            @Override
-                            public void succeed (@NotNull Boolean aBoolean)
-                            {
-                                canAfford.accept(aBoolean);
-                            }
-
-                            @Override
-                            public void fail (@NotNull EconomyException exception) {}
-                        });
-                    }
-
-                    @Override
-                    public void fail (@NotNull EconomyException exception) {}
-                });
+                economy.retrievePlayerAccount(
+                    uuid,
+                    EconomySubscribers.requesting(PlayerAccount.class)
+                        .success(playerAccount ->
+                            playerAccount.canAfford(
+                                BigDecimal.valueOf(amount),
+                                economy.getPrimaryCurrency(),
+                                EconomySubscribers.requesting(Boolean.class)
+                                    .success(canAfford).silentFailure()
+                            )
+                        )
+                        .silentFailure()
+                );
                 break;
 
         }
@@ -180,31 +162,21 @@ public class Economies
                 break;
             case TREASURY:
                 EconomyProvider economy = this.treasuryEconomy;
-                economy.retrievePlayerAccount(uuid, new EconomySubscriber<PlayerAccount>()
-                {
-                    @Override
-                    public void succeed (@NotNull PlayerAccount playerAccount)
-                    {
-                        playerAccount.withdrawBalance(
+                economy.retrievePlayerAccount(
+                    uuid,
+                    EconomySubscribers.requesting(PlayerAccount.class)
+                        .success(playerAccount ->
+                            playerAccount.withdrawBalance(
                                 BigDecimal.valueOf(amount),
                                 EconomyTransactionInitiator.SERVER,
                                 economy.getPrimaryCurrency(),
-                                new EconomySubscriber<BigDecimal>()
-                        {
-                            @Override
-                            public void succeed (@NotNull BigDecimal bigDecimal)
-                            {
-                                success.run();
-                            }
-
-                            @Override
-                            public void fail (@NotNull EconomyException exception) {}
-                        });
-                    }
-
-                    @Override
-                    public void fail (@NotNull EconomyException exception) {}
-                });
+                                EconomySubscribers.requesting(BigDecimal.class)
+                                    .success(bigDecimal -> success.run())
+                                    .silentFailure()
+                            )
+                        )
+                        .silentFailure()
+                );
                 break;
         }
     }
@@ -221,31 +193,21 @@ public class Economies
                 break;
             case TREASURY:
                 EconomyProvider economy = this.treasuryEconomy;
-                economy.retrievePlayerAccount(uuid, new EconomySubscriber<PlayerAccount>()
-                {
-                    @Override
-                    public void succeed (@NotNull PlayerAccount playerAccount)
-                    {
-                        playerAccount.depositBalance(
+                economy.retrievePlayerAccount(
+                    uuid,
+                    EconomySubscribers.requesting(PlayerAccount.class)
+                        .success(playerAccount ->
+                            playerAccount.depositBalance(
                                 BigDecimal.valueOf(amount),
                                 EconomyTransactionInitiator.SERVER,
                                 economy.getPrimaryCurrency(),
-                                new EconomySubscriber<BigDecimal>()
-                        {
-                            @Override
-                            public void succeed (@NotNull BigDecimal bigDecimal)
-                            {
-                                success.run();
-                            }
-
-                            @Override
-                            public void fail (@NotNull EconomyException exception) {}
-                        });
-                    }
-
-                    @Override
-                    public void fail (@NotNull EconomyException exception) {}
-                });
+                                EconomySubscribers.requesting(BigDecimal.class)
+                                    .success(bigDecimal -> success.run())
+                                    .silentFailure()
+                            )
+                        )
+                        .silentFailure()
+                );
                 break;
         }
     }
