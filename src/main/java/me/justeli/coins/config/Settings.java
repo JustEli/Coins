@@ -17,14 +17,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -163,12 +163,12 @@ public final class Settings
     }
 
     public static boolean USING_LEGACY_KEYS; // from before version 1.12
-    private static final Converter<String, String> CONVERTER = CaseFormat.LOWER_HYPHEN.converterTo(CaseFormat.LOWER_CAMEL);
+    private static final Converter<String, String> LEGACY_CONVERTER = CaseFormat.LOWER_HYPHEN.converterTo(CaseFormat.LOWER_CAMEL);
 
     private String legacyKey (String key)
     {
         USING_LEGACY_KEYS = true;
-        return CONVERTER.convert(key);
+        return LEGACY_CONVERTER.convert(key);
     }
 
     private void parseRemainingOptions ()
@@ -249,46 +249,34 @@ public final class Settings
         return warnings;
     }
 
-    public Map<String, Object> getKeys ()
+    private static final Converter<String, String> VAR_CONVERTER = CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.LOWER_HYPHEN);
+
+    public TreeSet<String> getKeys ()
     {
-        Map<String, Object> values = new HashMap<>();
+        TreeSet<String> values = new TreeSet<>();
 
         for (Field field : Config.class.getDeclaredFields())
         {
-            if (field.isAnnotationPresent(ConfigEntry.class))
+            if (Modifier.isStatic(field.getModifiers()) && Modifier.isPublic(field.getModifiers()) && !field.isAnnotationPresent(Deprecated.class))
             {
-                ConfigEntry set = field.getAnnotation(ConfigEntry.class);
-                field.setAccessible(true);
-
                 try
                 {
-                    values.put(set.value(), field.get(Config.class));
+                    values.add(
+                            VAR_CONVERTER.convert(field.getName())
+                                    + " &8\u00BB&7 "
+                                    + Util.formatCurrency(field.get(Config.class).toString())
+                    );
                 }
-                catch (Exception exception)
-                {
-                    exception.printStackTrace();
-                }
+                catch (Exception ignored) {}
             }
         }
 
         return values;
     }
 
-    public List<String> getReadableConfig ()
-    {
-        List<String> items = new ArrayList<>();
-
-        for (Map.Entry<String, Object> part : getKeys().entrySet())
-        {
-            items.add(part.getKey() + "\u00BB " + part.getValue());
-        }
-
-        return items;
-    }
-
     public void initializeMessages (String language)
     {
-        JSONObject json = getJson(language);
+        JSONObject json = getLanguageJson(language);
         if (json == null)
         {
             this.coins.console(Level.SEVERE, "Could not find the language file '" +  language + ".json' that was configured.");
@@ -310,9 +298,9 @@ public final class Settings
         }
     }
 
-    private JSONObject getJson (String language)
+    private JSONObject getLanguageJson (String language)
     {
-        File file = getFile(language);
+        File file = getLanguageFile(language);
 
         if (file == null)
             return null;
@@ -330,7 +318,7 @@ public final class Settings
         }
     }
 
-    private File getFile (String language)
+    private File getLanguageFile (String language)
     {
         File[] languageFiles = new File(this.coins.getDataFolder().getAbsolutePath() + File.separator + "language").listFiles();
         if (languageFiles == null)

@@ -21,6 +21,7 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -186,5 +187,25 @@ public final class Util
     {
         try { return Optional.of(Util.round(new Double(arg))); }
         catch (NumberFormatException exception) { return Optional.empty(); }
+    }
+
+    // page starts at 1
+    public static ArrayList<String> page (ArrayList<String> items, int pageSize, int pageNumber)
+    {
+        if (pageNumber <= 0)
+        {
+            return new ArrayList<>();
+        }
+
+        ArrayList<String> pages = new ArrayList<>();
+        for (int i = (pageNumber - 1) * pageSize; i < pageNumber * pageSize; i++)
+        {
+            if (items.size() <= i)
+                continue;
+
+            pages.add(items.get(i));
+        }
+
+        return pages;
     }
 }

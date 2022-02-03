@@ -5,6 +5,7 @@ import me.justeli.coins.config.Config;
 import me.justeli.coins.config.Message;
 import me.justeli.coins.item.CoinUtil;
 import me.justeli.coins.util.Util;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -24,10 +25,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.SplittableRandom;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /** Created by Eli on 26 dec 2018. */
@@ -81,7 +84,12 @@ public final class CoinsCommand
                 case "settings":
                     if (sender.hasPermission("coins.admin"))
                     {
-                        for (String setting : this.coins.settings().getReadableConfig())
+                        int page = args.length > 1? Util.parseInt(args[1]).orElse(1) : 1;
+                        TreeSet<String> keys = this.coins.settings().getKeys();
+                        int totalPages = keys.size() / 8 + Math.min(keys.size() % 8, 1);
+
+                        sender.sendMessage(String.format(COINS_TITLE, "Settings") + Util.color(" &7" + page + "&8/&7" + totalPages));
+                        for (String setting : Util.page(new ArrayList<>(keys), 8, page))
                         {
                             sender.sendMessage(Util.color(setting));
                         }
@@ -207,6 +215,10 @@ public final class CoinsCommand
                 }
                 list.add("<x,y,z>");
                 list.add("<x,y,z,world>");
+            }
+            if (args[0].equalsIgnoreCase("settings") && sender.hasPermission("coins.admin"))
+            {
+                list.add("1"); list.add("2"); list.add("3"); list.add("4"); list.add("5"); list.add("6");
             }
         }
         else if (sender.hasPermission("coins.remove"))
@@ -406,6 +418,8 @@ public final class CoinsCommand
         sender.sendMessage(Message.REMOVED_COINS.replace(Long.toString(amount)));
     }
 
+    private static final String COINS_TITLE = Util.color("&8&m     &6 Coins &e%s &8&m     &r");
+
     private void sendHelp (CommandSender sender)
     {
         String version = this.coins.getDescription().getVersion();
@@ -420,7 +434,7 @@ public final class CoinsCommand
             notice = " " + Message.OUTDATED;
         }
 
-        sender.sendMessage(Util.color("&8&m     &6 Coins &e" + version + " &8&m     &4" + notice));
+        sender.sendMessage(String.format(COINS_TITLE, version) + ChatColor.DARK_RED + notice);
 
         if (sender.hasPermission("coins.drop"))
         {
