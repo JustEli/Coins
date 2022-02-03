@@ -7,6 +7,7 @@ import me.justeli.coins.item.CoinUtil;
 import me.justeli.coins.util.SubTitle;
 import me.justeli.coins.util.Util;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
@@ -22,27 +23,28 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.SplittableRandom;
-import java.util.UUID;
 
 public final class DropHandler
         implements Listener
 {
     private final Coins coins;
+    private final NamespacedKey playerDamage;
 
     public DropHandler (Coins coins)
     {
         this.coins = coins;
+        this.playerDamage = new NamespacedKey(coins, "coins-player-damage");
     }
 
     private final HashMap<Location, Integer> locationAmountCache = new HashMap<>();
     private final HashMap<Location, Long> locationLastTimeCache = new HashMap<>();
-    private final HashMap<UUID, Double> damageCache = new HashMap<>();
 
     private static final SplittableRandom RANDOM = new SplittableRandom();
 
@@ -108,7 +110,7 @@ public final class DropHandler
             AttributeInstance maxHealth = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH);
             double hitSetting = Config.PERCENTAGE_PLAYER_HIT;
 
-            if (hitSetting > 0 && maxHealth != null && getPlayerDamage(entity.getUniqueId()) / maxHealth.getValue() < hitSetting)
+            if (hitSetting > 0 && maxHealth != null && getPlayerDamage(entity) / maxHealth.getValue() < hitSetting)
                 return;
         }
 
@@ -288,9 +290,9 @@ public final class DropHandler
         }
     }
 
-    private double getPlayerDamage (UUID uuid)
+    private double getPlayerDamage (Entity entity)
     {
-        return this.damageCache.computeIfAbsent(uuid, empty -> 0D);
+        return entity.getPersistentDataContainer().getOrDefault(this.playerDamage, PersistentDataType.DOUBLE, 0D);
     }
 
     @EventHandler (priority = EventPriority.LOW)
@@ -299,14 +301,11 @@ public final class DropHandler
         if (!(event.getDamager() instanceof Player) && resolvePlayerShooterOrNull(event) == null)
             return;
 
-        UUID uuid = event.getEntity().getUniqueId();
-        double playerDamage = this.damageCache.computeIfAbsent(uuid, empty -> 0D);
-        this.damageCache.put(uuid, playerDamage + event.getFinalDamage());
-    }
-
-    @EventHandler (priority = EventPriority.MONITOR)
-    public void unregisterHits (EntityDeathEvent event)
-    {
-        this.damageCache.remove(event.getEntity().getUniqueId());
+        double playerDamage = getPlayerDamage(event.getEntity());
+        event.getEntity().getPersistentDataContainer().set(
+                this.playerDamage,
+                PersistentDataType.DOUBLE,
+                playerDamage + event.getFinalDamage()
+        );
     }
 }

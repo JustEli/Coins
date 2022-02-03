@@ -3,31 +3,26 @@ package me.justeli.coins.handler;
 import me.justeli.coins.Coins;
 import me.justeli.coins.config.Config;
 import me.justeli.coins.util.Util;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.bukkit.event.entity.EntityDeathEvent;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import org.bukkit.persistence.PersistentDataType;
 
 public final class UnfairMobHandler
         implements Listener
 {
-    private final Coins coins;
+    private final NamespacedKey slimeSplit;
+    private final NamespacedKey spawnerMob;
 
     public UnfairMobHandler (Coins coins)
     {
-        this.coins = coins;
+        this.slimeSplit = new NamespacedKey(coins, "coins-slime-split");
+        this.spawnerMob = new NamespacedKey(coins, "coins-spawner-mob");
     }
-
-    private final Set<UUID> spawnerMobCache = new HashSet<>();
-    private final Set<UUID> slimeSplitMobCache = new HashSet<>();
 
     @EventHandler
     public void preventSpawnerCoin (CreatureSpawnEvent event)
@@ -41,7 +36,7 @@ public final class UnfairMobHandler
         if (event.getSpawnReason() != SpawnReason.SPAWNER && event.getEntityType() != EntityType.CAVE_SPIDER)
             return;
 
-        spawnerMobCache.add(event.getEntity().getUniqueId());
+        event.getEntity().getPersistentDataContainer().set(this.spawnerMob, PersistentDataType.INTEGER, 1);
     }
 
     @EventHandler
@@ -50,28 +45,16 @@ public final class UnfairMobHandler
         if (event.getSpawnReason() != SpawnReason.SLIME_SPLIT || !Config.PREVENT_SPLITS)
             return;
 
-        slimeSplitMobCache.add(event.getEntity().getUniqueId());
-    }
-
-    @EventHandler (priority = EventPriority.MONITOR)
-    public void removeDeathEntity (EntityDeathEvent event)
-    {
-        removeFromList(event.getEntity());
+        event.getEntity().getPersistentDataContainer().set(this.slimeSplit, PersistentDataType.INTEGER, 1);
     }
 
     public boolean fromSplit (Entity entity)
     {
-        return slimeSplitMobCache.contains(entity.getUniqueId());
+        return entity.getPersistentDataContainer().has(this.slimeSplit, PersistentDataType.INTEGER);
     }
 
     public boolean fromSpawner (Entity entity)
     {
-        return spawnerMobCache.contains(entity.getUniqueId());
-    }
-
-    public void removeFromList (Entity entity)
-    {
-        spawnerMobCache.remove(entity.getUniqueId());
-        slimeSplitMobCache.remove(entity.getUniqueId());
+        return entity.getPersistentDataContainer().has(this.spawnerMob, PersistentDataType.INTEGER);
     }
 }

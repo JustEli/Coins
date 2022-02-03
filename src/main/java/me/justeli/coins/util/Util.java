@@ -88,7 +88,7 @@ public final class Util
                 if (permission.startsWith("coins.multiplier."))
                 {
                     String number = permission.replace("coins.multiplier.", "");
-                    permissions.add(Util.parseDouble(number).orElse(1D));
+                    permissions.add(parseDouble(number).orElse(1D));
                 }
             }
             PLAYER_MULTIPLIER.put(player.getUniqueId(), permissions.size() == 0? 1D : Collections.max(permissions));

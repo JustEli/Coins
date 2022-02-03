@@ -141,7 +141,7 @@ public final class Coins
         this.settings.resetWarningCount();
         this.settings.parseConfig();
 
-        this.baseCoin = BaseCoin.initialize(this);
+        this.baseCoin = new BaseCoin(this);
         this.createCoin = new CreateCoin(this);
         this.coinUtil = new CoinUtil(this);
 

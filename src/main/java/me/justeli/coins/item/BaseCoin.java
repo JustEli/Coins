@@ -15,7 +15,7 @@ public final class BaseCoin
     private final MetaBuilder droppedCoin;
     private final MetaBuilder otherCoin;
 
-    private BaseCoin (Coins coins)
+    public BaseCoin (Coins coins)
     {
         String texture = Config.SKULL_TEXTURE;
 
@@ -44,11 +44,6 @@ public final class BaseCoin
 
         this.droppedCoin = droppedCoinItem;
         this.otherCoin = coins.meta(baseCoin.clone()).name(Config.DROPPED_COIN_NAME).data(CoinUtil.COINS_TYPE, CoinUtil.TYPE_OTHER);
-    }
-
-    public static BaseCoin initialize (Coins coins)
-    {
-        return new BaseCoin(coins);
     }
 
     public MetaBuilder dropped ()
