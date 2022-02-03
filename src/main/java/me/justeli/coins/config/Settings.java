@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 /** Created by Eli on 12/14/2016. Rewritten by Eli on July 9, 2021. */
 public final class Settings
@@ -63,6 +62,9 @@ public final class Settings
         return YamlConfiguration.loadConfiguration(config);
     }
 
+    public static boolean USING_LEGACY_KEYS; // from before version 1.12
+    private static final Converter<String, String> LEGACY_CONVERTER = CaseFormat.LOWER_HYPHEN.converterTo(CaseFormat.LOWER_CAMEL);
+
     public void parseConfig ()
     {
         FileConfiguration config = config();
@@ -78,9 +80,11 @@ public final class Settings
 
             try
             {
+                boolean legacyChecked = false;
                 if (!config.contains(configKey))
                 {
-                    configKey = legacyKey(configKey);
+                    configKey = LEGACY_CONVERTER.convert(configKey);
+                    legacyChecked = true;
                 }
 
                 if (!config.contains(configKey))
@@ -99,6 +103,11 @@ public final class Settings
                         ));
                     }
                     continue;
+                }
+
+                if (legacyChecked)
+                {
+                    USING_LEGACY_KEYS = true;
                 }
 
                 Class<?> configClass = field.getType();
@@ -169,15 +178,6 @@ public final class Settings
         }
 
         parseRemainingOptions();
-    }
-
-    public static boolean USING_LEGACY_KEYS; // from before version 1.12
-    private static final Converter<String, String> LEGACY_CONVERTER = CaseFormat.LOWER_HYPHEN.converterTo(CaseFormat.LOWER_CAMEL);
-
-    private String legacyKey (String key)
-    {
-        USING_LEGACY_KEYS = true;
-        return LEGACY_CONVERTER.convert(key);
     }
 
     private void parseRemainingOptions ()
