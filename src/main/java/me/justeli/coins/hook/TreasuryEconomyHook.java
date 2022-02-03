@@ -6,6 +6,7 @@ import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
@@ -97,5 +98,11 @@ final class TreasuryEconomyHook implements EconomyHook
                 )
                 .silentFailure()
         );
+    }
+
+    @Override
+    public Optional<String> economyName ()
+    {
+        return Optional.of(TREASURY);
     }
 }

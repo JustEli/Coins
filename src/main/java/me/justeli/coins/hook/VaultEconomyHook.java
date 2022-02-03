@@ -3,6 +3,7 @@ package me.justeli.coins.hook;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.Plugin;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
@@ -49,5 +50,11 @@ final class VaultEconomyHook implements EconomyHook
         {
             success.run();
         }
+    }
+
+    @Override
+    public Optional<String> economyName ()
+    {
+        return Optional.of(VAULT);
     }
 }

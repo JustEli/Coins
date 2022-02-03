@@ -3,6 +3,7 @@ package me.justeli.coins.hook;
 import io.papermc.lib.PaperLib;
 import me.justeli.coins.Coins;
 import me.justeli.coins.config.Config;
+import me.justeli.coins.config.Settings;
 import org.bstats.charts.SimplePie;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -93,6 +94,8 @@ public final class Metrics
             metrics.add("allowModification", Config.ALLOW_MODIFICATION);
             metrics.add("checkForUpdates", Config.CHECK_FOR_UPDATES);
             metrics.add("enchantIncrement", Config.ENCHANT_INCREMENT);
+            metrics.add("usingLegacyKeys", Settings.USING_LEGACY_KEYS);
+            metrics.add("economyHook", this.coins.economy().economyName().orElse("None"));
         });
     }
 }

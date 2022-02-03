@@ -35,15 +35,15 @@ public final class Economies implements EconomyHook
             provider(Economy.class, vault).map(economy -> new VaultEconomyHook(plugin, economy))
         );
         
-        if (this.hook == null && missingPlugins.isEmpty())
+        if (this.hook == null && this.missingPlugins.isEmpty())
         {
-            this.missingPlugins.add(String.join(" or ", supportedHooks));
+            this.missingPlugins.add(String.join(" or ", this.supportedHooks));
         }
     }
     
     private void hookIfInstalled (String name, Function<String, Optional<EconomyHook>> hooker)
     {
-        supportedHooks.add(name);
+        this.supportedHooks.add(name);
         
         if (this.hook != null) { return; } // already hooked
         if (!plugin.getServer().getPluginManager().isPluginEnabled(name)) { return; }
@@ -99,5 +99,14 @@ public final class Economies implements EconomyHook
     public void deposit (UUID uuid, double amount, Runnable success)
     {
         if (hook != null) { hook.deposit(uuid, amount, success); }
+    }
+
+    @Override
+    public Optional<String> economyName ()
+    {
+        if (this.hook == null)
+            return Optional.empty();
+
+        return this.hook.economyName();
     }
 }

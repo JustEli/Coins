@@ -1,5 +1,7 @@
 package me.justeli.coins.config;
 
+import com.google.common.base.CaseFormat;
+import com.google.common.base.Converter;
 import me.justeli.coins.Coins;
 import me.justeli.coins.util.Util;
 import org.bukkit.Material;
@@ -77,6 +79,11 @@ public final class Settings
             {
                 if (!config.contains(configKey))
                 {
+                    configKey = legacyKey(configKey);
+                }
+
+                if (!config.contains(configKey))
+                {
                     if (configEntry.required())
                     {
                         String prefixSuffix = field.getType() == String.class? "'" : "";
@@ -87,7 +94,7 @@ public final class Settings
                                         + (configEntry.motivation().isEmpty()? "" : " " + configEntry.motivation())
                                         + " Consider to add this to the config:\n----------------------------------------\n%s: %s" +
                                         "\n----------------------------------------",
-                                configKey, defaultValue, configKey.replace(".", ":\n  "), defaultValue
+                                configEntry.value(), defaultValue, configEntry.value().replace(".", ":\n  "), defaultValue
                         ));
                     }
                     continue;
@@ -155,6 +162,15 @@ public final class Settings
         parseRemainingOptions();
     }
 
+    public static boolean USING_LEGACY_KEYS; // from before version 1.12
+    private static final Converter<String, String> CONVERTER = CaseFormat.LOWER_HYPHEN.converterTo(CaseFormat.LOWER_CAMEL);
+
+    private String legacyKey (String key)
+    {
+        USING_LEGACY_KEYS = true;
+        return CONVERTER.convert(key);
+    }
+
     private void parseRemainingOptions ()
     {
         Config.DROPPED_COIN_NAME = Util.color(Config.LEGACY_RAW_NAME_OF_COIN == null? Config.RAW_DROPPED_COIN_NAME : Config.LEGACY_RAW_NAME_OF_COIN);
@@ -191,7 +207,7 @@ public final class Settings
 
         if (coin == null)
         {
-            error("The material '" + Config.RAW_COIN_ITEM + "' in the config at `coinItem` does not exist. Please use a " +
+            error("The material '" + Config.RAW_COIN_ITEM + "' in the config at `coin-item` does not exist. Please use a " +
                     "material from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html");
 
             return Material.SUNFLOWER;
@@ -208,7 +224,7 @@ public final class Settings
         }
         catch (IllegalArgumentException exception)
         {
-            error("The sound '" + Config.RAW_SOUND_NAME + "' in the config at `soundName` does not exist. Please use a " +
+            error("The sound '" + Config.RAW_SOUND_NAME + "' in the config at `sound-name` does not exist. Please use a " +
                     "sound from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html");
 
             return Sound.ITEM_ARMOR_EQUIP_GOLD;

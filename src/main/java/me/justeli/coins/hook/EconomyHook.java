@@ -1,5 +1,6 @@
 package me.justeli.coins.hook;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
@@ -14,4 +15,6 @@ public interface EconomyHook
     void withdraw (UUID uuid, double amount, Runnable success);
     
     void deposit (UUID uuid, double amount, Runnable success);
+
+    Optional<String> economyName ();
 }
