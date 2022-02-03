@@ -9,6 +9,7 @@ import org.bukkit.persistence.PersistentDataType;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,9 +24,10 @@ public final class CoinUtil
     }
 
     // three types of tags:
-    //  - coins-type: Integer (as ID)
-    //  - coins-worth: Double
-    //  - coins-random: Integer
+    //  - coins-type:       Integer  TYPE_DROPPED, TYPE_WITHDRAWN, TYPE_OTHER
+    //  - coins-worth:      Double   coin worth if not random amount
+    //  - coins-random:     Integer  a random number prevents item to stack
+    //  - coins-increment:  Double   looting or fortune coin value increment
 
     public static final String COINS_TYPE = "coins-type"; // 1 = dropped, 2 = withdrawn, 3 = other
     public static final int TYPE_DROPPED = 1;
@@ -34,6 +36,7 @@ public final class CoinUtil
 
     public static final String COINS_WORTH = "coins-worth";
     public static final String COINS_RANDOM = "coins-random";
+    public static final String COINS_INCREMENT = "coins-increment";
 
     public boolean isCoin (ItemStack item)
     {
@@ -100,6 +103,11 @@ public final class CoinUtil
         {
             return 0;
         }
+    }
+
+    public double getIncrement (ItemStack item)
+    {
+        return this.coins.meta(item).data(COINS_INCREMENT, PersistentDataType.DOUBLE).orElse(1D);
     }
 
     private static Optional<String> name (ItemStack item)

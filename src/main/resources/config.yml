@@ -115,6 +115,12 @@ allow-name-change: false
 #  its value.
 allow-modification: false
 
+# Add more value to coin drops when a Looting or Fortune enchant is used. The
+#  configured value is a percentage per enchantment level. Default value is 0.05 =
+#  5%. Which means: Fortune/Looting I = 5% coin increase, Fortune/Looting II =
+#  10% coin increase and Fortune/Looting III = 15% coin increase.
+enchant-increment: 0.05
+
 #  #  #  #  #  #  #  #
 #  Coin Mob Drops    #
 #  #  #  #  #  #  #  #

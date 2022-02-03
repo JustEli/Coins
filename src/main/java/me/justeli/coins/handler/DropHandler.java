@@ -4,12 +4,14 @@ import me.justeli.coins.Coins;
 import me.justeli.coins.hook.MythicMobsHook;
 import me.justeli.coins.config.Config;
 import me.justeli.coins.item.CoinUtil;
+import me.justeli.coins.item.MetaBuilder;
 import me.justeli.coins.util.SubTitle;
 import me.justeli.coins.util.Util;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -21,7 +23,9 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -208,7 +212,7 @@ public final class DropHandler
         if (RANDOM.nextDouble() <= Config.DROP_CHANCE)
         {
             final int amount = Config.mobMultiplier(victim.getType());
-            dropCoin(amount, killer, victim.getLocation());
+            dropCoin(amount, killer, victim.getLocation(), true);
         }
     }
 
@@ -244,31 +248,48 @@ public final class DropHandler
         if (RANDOM.nextDouble() <= Config.MINE_PERCENTAGE)
         {
             final int amount = Config.blockMultiplier(block.getType());
-            this.coins.sync(1, () -> dropCoin(amount, player, block.getLocation().clone().add(0.5, 0.5, 0.5)));
+            this.coins.sync(1, () -> dropCoin(amount, player, block.getLocation().clone().add(0.5, 0.5, 0.5), false));
         }
     }
 
-    private void dropCoin (int amount, Player player, Location location)
+    private void dropCoin (int amount, @NotNull Player player, Location location, boolean mobElseBlock)
     {
+        double increment = 1;
+
+        if (Config.ENCHANT_INCREMENT > 0)
+        {
+            int lootingLevel = player.getInventory().getItemInMainHand().getEnchantmentLevel(
+                    mobElseBlock
+                            ? Enchantment.LOOT_BONUS_MOBS
+                            : Enchantment.LOOT_BONUS_BLOCKS
+            );
+
+            if (lootingLevel > 0)
+            {
+                increment += lootingLevel * Config.ENCHANT_INCREMENT;
+            }
+        }
+
         if (Config.DROP_EACH_COIN)
         {
-            int second = Config.MONEY_AMOUNT_FROM.intValue();
-            int first = Config.MONEY_AMOUNT_TO.intValue() + 1 - second;
+            double second = Config.MONEY_AMOUNT_FROM;
+            double first = Config.MONEY_AMOUNT_TO + 1D - second;
 
-            amount *= RANDOM.nextDouble() * first + second;
+            amount *= (RANDOM.nextDouble() * first + second) * increment;
+            increment = 1;
         }
 
-        if (player != null)
-        {
-            amount *= Util.getMultiplier(player);
-        }
+        amount *= Util.getMultiplier(player);
 
         if (location.getWorld() == null)
             return;
 
         for (int i = 0; i < amount; i++)
         {
-            location.getWorld().dropItem(location, this.coins.getCreateCoin().dropped());
+            location.getWorld().dropItem(
+                    location,
+                    this.coins.getCreateCoin().dropped(increment)
+            );
         }
     }
 

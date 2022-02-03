@@ -13,9 +13,9 @@ public final class BaseCoin
 {
     private final Coins coins;
 
-    private final ItemStack withdrawnCoin;
-    private final ItemStack droppedCoin;
-    private final ItemStack otherCoin;
+    private final MetaBuilder withdrawnCoin;
+    private final MetaBuilder droppedCoin;
+    private final MetaBuilder otherCoin;
 
     private BaseCoin (Coins coins)
     {
@@ -37,7 +37,7 @@ public final class BaseCoin
 
         baseCoin.setItemMeta(baseCoinMeta);
 
-        this.withdrawnCoin = coins.meta(baseCoin.clone()).data(CoinUtil.COINS_TYPE, CoinUtil.TYPE_WITHDRAWN).build();
+        this.withdrawnCoin = coins.meta(baseCoin.clone()).data(CoinUtil.COINS_TYPE, CoinUtil.TYPE_WITHDRAWN);
         MetaBuilder droppedCoinItem = coins.meta(baseCoin.clone()).name(Config.DROPPED_COIN_NAME).data(CoinUtil.COINS_TYPE, CoinUtil.TYPE_DROPPED);
 
         if (Config.DROP_EACH_COIN)
@@ -45,8 +45,8 @@ public final class BaseCoin
             droppedCoinItem.data(CoinUtil.COINS_WORTH, 1D);
         }
 
-        this.droppedCoin = droppedCoinItem.build();
-        this.otherCoin = coins.meta(baseCoin.clone()).name(Config.DROPPED_COIN_NAME).data(CoinUtil.COINS_TYPE, CoinUtil.TYPE_OTHER).build();
+        this.droppedCoin = droppedCoinItem;
+        this.otherCoin = coins.meta(baseCoin.clone()).name(Config.DROPPED_COIN_NAME).data(CoinUtil.COINS_TYPE, CoinUtil.TYPE_OTHER);
     }
 
     public static BaseCoin initialize (Coins coins)
@@ -54,18 +54,18 @@ public final class BaseCoin
         return new BaseCoin(coins);
     }
 
-    public ItemStack dropped ()
+    public MetaBuilder dropped ()
     {
         return this.droppedCoin.clone();
     }
 
-    public ItemStack withdrawn ()
+    public MetaBuilder withdrawn ()
     {
         return this.withdrawnCoin.clone();
     }
 
     public MetaBuilder other ()
     {
-        return this.coins.meta(this.otherCoin.clone());
+        return this.otherCoin.clone();
     }
 }

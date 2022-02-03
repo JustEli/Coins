@@ -24,8 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -221,19 +219,21 @@ public final class CoinsCommand
                 list.add("1"); list.add("2"); list.add("3"); list.add("4"); list.add("5"); list.add("6");
             }
         }
-        else if (sender.hasPermission("coins.remove"))
+        else if (args.length == 3)
         {
-            if (args.length == 3)
+            if (args[0].equalsIgnoreCase("remove") && sender.hasPermission("coins.remove"))
             {
                 list.add("<amount>");
             }
-            if (args.length == 4)
+        }
+        else if (args.length == 4)
+        {
+            if (args[0].equalsIgnoreCase("remove") && sender.hasPermission("coins.remove"))
             {
                 list.add("[radius]");
             }
         }
 
-        Collections.sort(list);
         return list;
     }
 

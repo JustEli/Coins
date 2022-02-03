@@ -45,11 +45,11 @@ public class Config
     @ConfigEntry ("currency-symbol") public static String CURRENCY_SYMBOL = "$";
     @ConfigEntry ("skull-texture") public static String SKULL_TEXTURE = "";
 
-    @ConfigEntry (value = "dropped-coin-name", motivation = "Has been replaced, previous key was 'nameOfCoin', which will be unsupported in a future " +
+    @ConfigEntry (value = "dropped-coin-name", motivation = "This is a replacement, previous key was 'nameOfCoin', which will be unsupported in a future " +
             "version.") protected static String RAW_DROPPED_COIN_NAME = "&6Coin";
-    @ConfigEntry (value = "withdrawn-coin-names.singular", motivation = "Has been replaced, previous key was 'nameOfCoin', which will be unsupported " +
+    @ConfigEntry (value = "withdrawn-coin-names.singular", motivation = "This is a replacement, previous key was 'nameOfCoin', which will be unsupported " +
             "in a future version.") protected static String RAW_WITHDRAWN_COIN_NAME_SINGULAR = "&e{amount} &6Coin";
-    @ConfigEntry (value = "withdrawn-coin-names.plural", motivation = "Has been replaced, previous key was 'nameOfCoin' and 'multiSuffix', which will" +
+    @ConfigEntry (value = "withdrawn-coin-names.plural", motivation = "This is a replacement, previous key was 'nameOfCoin' and 'multiSuffix', which will" +
             " be unsupported in a future version.") protected static String RAW_WITHDRAWN_COIN_NAME_PLURAL = "&e{amount} &6Coins";
 
     @Deprecated @ConfigEntry (value = "name-of-coin", required = false) protected static String LEGACY_RAW_NAME_OF_COIN = null;
@@ -86,7 +86,7 @@ public class Config
     public static Material COIN_ITEM;
     public static Sound SOUND_NAME;
 
-    protected static final String LEGACY_PREFIX = "&e{amount} &r";
+    @Deprecated protected static final String LEGACY_PREFIX = "&e{amount} &r";
 
     public static int mobMultiplier (EntityType type)
     {

@@ -9,9 +9,11 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
+import java.util.logging.Level;
 
 /** by Eli on January 30, 2022 **/
 public final class MetaBuilder
+        implements Cloneable
 {
     private final Coins coins;
 
@@ -63,5 +65,21 @@ public final class MetaBuilder
     {
         this.itemStack.setItemMeta(this.itemMeta);
         return this.itemStack;
+    }
+
+    @Override
+    public MetaBuilder clone ()
+    {
+        final MetaBuilder clone;
+        try
+        {
+            clone = (MetaBuilder) super.clone();
+        }
+        catch (CloneNotSupportedException ex)
+        {
+            this.coins.getLogger().log(Level.WARNING, ex.getMessage());
+            return new MetaBuilder(this.coins, build().clone());
+        }
+        return clone;
     }
 }

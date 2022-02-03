@@ -38,6 +38,9 @@ public final class PickupHandler
             return;
 
         Item item = event.getItem();
+        if (this.thrownCoinCache.contains(item.getUniqueId()))
+            return;
+
         if (this.coins.getCoinUtil().isCoin(item.getItemStack()))
         {
             Player player = event.getPlayer();
@@ -86,13 +89,14 @@ public final class PickupHandler
         if (Config.DROP_EACH_COIN)
         {
             giveMoney(player, item.getAmount());
-            return;
         }
+        else
+        {
+            int amount = item.getAmount();
+            double total = amount * Util.getRandomMoneyAmount() * this.coins.getCoinUtil().getIncrement(item);
 
-        int amount = item.getAmount();
-        double total = amount * Util.getRandomMoneyAmount();
-
-        giveMoney(player, total);
+            giveMoney(player, total);
+        }
     }
 
     public void giveMoney (Player player, double rawAmount)

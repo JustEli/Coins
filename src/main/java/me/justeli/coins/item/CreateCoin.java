@@ -25,19 +25,33 @@ public final class CreateCoin
                 ? Config.WITHDRAWN_COIN_NAME_SINGULAR
                 : Config.WITHDRAWN_COIN_NAME_PLURAL, worth);
 
-        return this.coins.meta(this.coins.getBaseCoin().withdrawn()).data(CoinUtil.COINS_WORTH, worth).name(name).build();
+        return this.coins.getBaseCoin().withdrawn().data(CoinUtil.COINS_WORTH, worth).name(name).build();
+    }
+
+    private MetaBuilder rawDropped ()
+    {
+        MetaBuilder coin = this.coins.getBaseCoin().dropped();
+
+        if (Config.DROP_EACH_COIN || !Config.STACK_COINS)
+        {
+            return coin.data(CoinUtil.COINS_RANDOM, SPLITTABLE_RANDOM.nextInt());
+        }
+        return coin;
     }
 
     public ItemStack dropped ()
     {
-        ItemStack coin = this.coins.getBaseCoin().dropped();
+        MetaBuilder coin = rawDropped();
+        return coin.build();
+    }
 
-        if (Config.DROP_EACH_COIN || !Config.STACK_COINS) // or maybe only just DROP_EACH_COIN
-        {
-            return this.coins.meta(coin).data(CoinUtil.COINS_RANDOM, SPLITTABLE_RANDOM.nextInt()).build();
-        }
+    public ItemStack dropped (double increment)
+    {
+        if (increment == 1)
+            return dropped();
 
-        return coin;
+        MetaBuilder coin = rawDropped().data(CoinUtil.COINS_INCREMENT, increment);
+        return coin.build();
     }
 
     public MetaBuilder other ()
