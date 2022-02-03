@@ -26,8 +26,8 @@ public final class UnfairMobHandler
         this.coins = coins;
     }
 
-    private final Set<UUID> spawnerMob = new HashSet<>();
-    private final Set<UUID> slimeSplitMob = new HashSet<>();
+    private final Set<UUID> spawnerMobCache = new HashSet<>();
+    private final Set<UUID> slimeSplitMobCache = new HashSet<>();
 
     @EventHandler
     public void preventSpawnerCoin (CreatureSpawnEvent event)
@@ -41,7 +41,7 @@ public final class UnfairMobHandler
         if (event.getSpawnReason() != SpawnReason.SPAWNER && event.getEntityType() != EntityType.CAVE_SPIDER)
             return;
 
-        spawnerMob.add(event.getEntity().getUniqueId());
+        spawnerMobCache.add(event.getEntity().getUniqueId());
     }
 
     @EventHandler
@@ -50,7 +50,7 @@ public final class UnfairMobHandler
         if (event.getSpawnReason() != SpawnReason.SLIME_SPLIT || !Config.PREVENT_SPLITS)
             return;
 
-        slimeSplitMob.add(event.getEntity().getUniqueId());
+        slimeSplitMobCache.add(event.getEntity().getUniqueId());
     }
 
     @EventHandler (priority = EventPriority.MONITOR)
@@ -61,17 +61,17 @@ public final class UnfairMobHandler
 
     public boolean fromSplit (Entity entity)
     {
-        return slimeSplitMob.contains(entity.getUniqueId());
+        return slimeSplitMobCache.contains(entity.getUniqueId());
     }
 
     public boolean fromSpawner (Entity entity)
     {
-        return spawnerMob.contains(entity.getUniqueId());
+        return spawnerMobCache.contains(entity.getUniqueId());
     }
 
     public void removeFromList (Entity entity)
     {
-        spawnerMob.remove(entity.getUniqueId());
-        slimeSplitMob.remove(entity.getUniqueId());
+        spawnerMobCache.remove(entity.getUniqueId());
+        slimeSplitMobCache.remove(entity.getUniqueId());
     }
 }

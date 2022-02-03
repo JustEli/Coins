@@ -38,19 +38,16 @@ public final class PickupHandler
             return;
 
         Item item = event.getItem();
-        if (this.thrownCoinCache.contains(item.getUniqueId()))
+        if (!this.coins.getCoinUtil().isCoin(item.getItemStack()))
             return;
 
-        if (this.coins.getCoinUtil().isCoin(item.getItemStack()))
-        {
-            Player player = event.getPlayer();
-            event.setCancelled(true);
+        Player player = event.getPlayer();
+        event.setCancelled(true);
 
-            if (!player.hasPermission("coins.disable") || player.isOp() || player.hasPermission("*"))
-            {
-                double amount = this.coins.getCoinUtil().getValue(item.getItemStack());
-                giveCoin(item, player, amount);
-            }
+        if (!player.hasPermission("coins.disable") || player.isOp() || player.hasPermission("*"))
+        {
+            double amount = this.coins.getCoinUtil().getValue(item.getItemStack());
+            giveCoin(item, player, amount);
         }
     }
 
@@ -119,7 +116,7 @@ public final class PickupHandler
             }
 
             final double displayAmount = this.pickupAmountCache.computeIfAbsent(uniqueId, empty -> 0D);
-            ActionBar.of(Util.formatAmountAndCurrency(Config.PICKUP_MESSAGE, displayAmount)).send(player);
+            new ActionBar(Config.PICKUP_MESSAGE, displayAmount).send(player);
 
             this.pickupTimeCache.put(uniqueId, System.currentTimeMillis());
         });

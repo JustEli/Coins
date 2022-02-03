@@ -19,6 +19,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -111,7 +112,16 @@ public final class Settings
                 else if (configClass == Map.class)
                 {
                     Map<String, Object> map = config.getConfigurationSection(configKey).getValues(false);
-                    configValue = map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> (Integer) e.getValue()));
+                    Map<String, Integer> configMap = new HashMap<>();
+
+                    for (Map.Entry<String, Object> mapLoop : map.entrySet())
+                    {
+                        configMap.put(
+                                mapLoop.getKey().toUpperCase(Locale.ROOT).replace(" ", "_"),
+                                Util.parseInt(mapLoop.getValue().toString()).orElse(1)
+                        );
+                    }
+                    configValue = configMap;
                 }
                 // can be improved in java 11
                 else if (configClass == Long.class || configClass == Integer.class || configClass == Float.class || configClass == Double.class)
@@ -149,13 +159,12 @@ public final class Settings
                 {
                     Object defaultValue = field.get(Config.class);
                     error(String.format(
-                            "Config file has wrong value for key called '%s'. Using its default value now (%s).", configKey, defaultValue
+                            "Config file has wrong value for key called '%s'. Using its default value now (%s).",
+                            configEntry.value(),
+                            defaultValue
                     ));
                 }
-                catch (IllegalAccessException illegalException)
-                {
-                    illegalException.printStackTrace();
-                }
+                catch (IllegalAccessException ignored) {}
             }
         }
 

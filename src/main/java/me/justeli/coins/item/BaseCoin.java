@@ -11,15 +11,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 /** by Eli on January 30, 2022 **/
 public final class BaseCoin
 {
-    private final Coins coins;
-
     private final MetaBuilder withdrawnCoin;
     private final MetaBuilder droppedCoin;
     private final MetaBuilder otherCoin;
 
     private BaseCoin (Coins coins)
     {
-        this.coins = coins;
         String texture = Config.SKULL_TEXTURE;
 
         ItemStack baseCoin = texture == null || texture.isEmpty()? new ItemStack(Config.COIN_ITEM) : Skull.of(texture);

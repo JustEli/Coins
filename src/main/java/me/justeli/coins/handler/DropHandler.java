@@ -4,7 +4,6 @@ import me.justeli.coins.Coins;
 import me.justeli.coins.hook.MythicMobsHook;
 import me.justeli.coins.config.Config;
 import me.justeli.coins.item.CoinUtil;
-import me.justeli.coins.item.MetaBuilder;
 import me.justeli.coins.util.SubTitle;
 import me.justeli.coins.util.Util;
 import org.bukkit.Location;
@@ -23,7 +22,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 
@@ -272,10 +270,7 @@ public final class DropHandler
 
         if (Config.DROP_EACH_COIN)
         {
-            double second = Config.MONEY_AMOUNT_FROM;
-            double first = Config.MONEY_AMOUNT_TO + 1D - second;
-
-            amount *= (RANDOM.nextDouble() * first + second) * increment;
+            amount *= (Util.getRandomMoneyAmount() + 0.5) * increment;
             increment = 1;
         }
 

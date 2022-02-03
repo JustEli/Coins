@@ -8,14 +8,9 @@ public final class ActionBar
 {
     private final String text;
 
-    private ActionBar (String text)
+    public ActionBar (String text, double amount)
     {
-        this.text = Util.color(text);
-    }
-
-    public static ActionBar of (String text)
-    {
-        return new ActionBar(Util.formatCurrency(text));
+        this.text = Util.color(Util.formatAmountAndCurrency(text, amount));
     }
 
     public void send (Player player)

@@ -9,7 +9,6 @@ import org.bukkit.persistence.PersistentDataType;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Optional;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
