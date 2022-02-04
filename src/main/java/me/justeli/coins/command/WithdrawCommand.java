@@ -76,11 +76,11 @@ public final class WithdrawCommand
             return true;
         }
 
-        double worth = Util.parseDouble(args[0]).orElse(0D);
+        double worth = Util.round(Util.parseDouble(args[0]).orElse(0D));
         int amount = args.length >= 2? Util.parseInt(args[1]).orElse(0) : 1;
         double total = worth * amount;
 
-        if (worth < 1 || amount < 1 || total < 1 || amount > 64)
+        if (worth <= 0 || amount < 1 || total <= 0 || amount > 64)
         {
             sender.sendMessage(Message.INVALID_AMOUNT.toString());
             return true;
