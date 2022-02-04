@@ -25,7 +25,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.projectiles.ProjectileSource;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -194,7 +193,7 @@ public final class DropHandler
 
     // End of Bow & Trident Section
 
-    private void dropMobCoin (Entity victim, Player killer)
+    private void dropMobCoin (Entity victim, @Nullable Player killer)
     {
         if (killer != null && victim instanceof Player && Config.PREVENT_ALTS)
         {
@@ -252,11 +251,11 @@ public final class DropHandler
         }
     }
 
-    private void dropCoin (int amount, @NotNull Player player, Location location, boolean mobElseBlock)
+    private void dropCoin (int amount, @Nullable Player player, Location location, boolean mobElseBlock)
     {
         double increment = 1;
 
-        if (Config.ENCHANT_INCREMENT > 0)
+        if (player != null && Config.ENCHANT_INCREMENT > 0)
         {
             int lootingLevel = player.getInventory().getItemInMainHand().getEnchantmentLevel(
                     mobElseBlock
@@ -276,7 +275,10 @@ public final class DropHandler
             increment = 1;
         }
 
-        amount *= Util.getMultiplier(player);
+        if (player != null)
+        {
+            amount *= Util.getMultiplier(player);
+        }
 
         if (location.getWorld() == null)
             return;
