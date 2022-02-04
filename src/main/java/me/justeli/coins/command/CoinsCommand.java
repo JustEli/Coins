@@ -56,130 +56,127 @@ public final class CoinsCommand
     @Override
     public boolean onCommand (@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args)
     {
-        if (args.length >= 1)
+        if (args.length == 0)
         {
-            switch (args[0].toLowerCase(Locale.ROOT))
-            {
-                case "reload":
-                    if (sender.hasPermission("coins.admin"))
+            sendHelp(sender);
+            return true;
+        }
+
+        switch (args[0].toLowerCase(Locale.ROOT))
+        {
+            case "reload":
+                if (perm(sender, "coins.admin"))
+                {
+                    long ms = System.currentTimeMillis();
+
+                    this.coins.reload();
+                    int warnings = this.coins.settings().getWarningCount();
+
+                    sender.sendMessage(Message.RELOAD_SUCCESS.replace(Long.toString(System.currentTimeMillis() - ms)));
+                    if (warnings != 0)
                     {
-                        long ms = System.currentTimeMillis();
-
-                        this.coins.reload();
-                        int warnings = this.coins.settings().getWarningCount();
-
-                        sender.sendMessage(Message.RELOAD_SUCCESS.toString().replace("{0}", Long.toString(System.currentTimeMillis() - ms)));
-                        if (warnings != 0)
-                        {
-                            sender.sendMessage(Message.MINOR_ISSUES.toString());
-                        }
-                        else
-                        {
-                            sender.sendMessage(Message.CHECK_SETTINGS.toString());
-                        }
-                    }
-                    else
-                        noPerm(sender);
-                    break;
-                case "settings":
-                    if (sender.hasPermission("coins.admin"))
-                    {
-                        int page = args.length > 1? Util.parseInt(args[1]).orElse(1) : 1;
-                        TreeSet<String> keys = this.coins.settings().getKeys();
-                        int totalPages = keys.size() / 8 + Math.min(keys.size() % 8, 1);
-
-                        sender.sendMessage(String.format(COINS_TITLE, "Settings") + Util.color(" &7" + page + "&8/&7" + totalPages));
-                        for (String setting : Util.page(new ArrayList<>(keys), 8, page))
-                        {
-                            sender.sendMessage(Util.color(setting));
-                        }
+                        sender.sendMessage(Message.MINOR_ISSUES.toString());
                     }
                     else
                     {
-                        noPerm(sender);
+                        sender.sendMessage(Message.CHECK_SETTINGS.toString());
                     }
-                    break;
-                case "drop":
-                    if (sender.hasPermission("coins.drop"))
-                        dropCoinsCommand(sender, args);
-                    else
-                        noPerm(sender);
-                    break;
-                case "remove":
-                    if (sender.hasPermission("coins.remove"))
-                        removeCoins(sender, args);
-                    else
-                        noPerm(sender);
-                    break;
-                case "lang":
-                case "language":
+                }
+                break;
+            case "settings":
+                if (perm(sender, "coins.admin"))
+                {
+                    int page = args.length > 1? Util.parseInt(args[1]).orElse(1) : 1;
+                    TreeSet<String> keys = this.coins.settings().getKeys();
+                    int totalPages = keys.size() / 8 + Math.min(keys.size() % 8, 1);
+
+                    sender.sendMessage(String.format(COINS_TITLE, "Settings") + Util.color(" &7" + page + "&8/&7" + totalPages));
+                    for (String setting : Util.page(new ArrayList<>(keys), 8, page))
+                    {
+                        sender.sendMessage(Util.color(setting));
+                    }
+                }
+                break;
+            case "drop":
+                if (perm(sender, "coins.drop"))
+                {
+                    dropCoinsCommand(sender, args);
+                }
+                break;
+            case "remove":
+                if (perm(sender, "coins.remove"))
+                {
+                    removeCoins(sender, args);
+                }
+                break;
+            case "lang":
+            case "language":
+                if (perm(sender, "coins.admin"))
+                {
                     for (Message message : Message.values())
                     {
                         sender.sendMessage(message.toString());
                     }
-                    break;
-                case "version":
-                case "update":
-                    if (sender.hasPermission("coins.admin"))
-                    {
-                        sender.sendMessage(String.format(COINS_TITLE, "Version"));
-
-                        Optional<VersionChecker.Version> latestVersion = this.coins.latestVersion();
-                        String currentVersion = this.coins.getDescription().getVersion();
-
-                        sender.sendMessage(Message.CURRENTLY_INSTALLED.replace(currentVersion));
-
-                        if (!latestVersion.isPresent())
-                        {
-                            sender.sendMessage(Message.LATEST_RETRIEVE_FAIL.toString());
-                        }
-                        else if (latestVersion.get().tag().equals(currentVersion))
-                        {
-                            sender.sendMessage(Message.UP_TO_DATE.replace(currentVersion));
-                        }
-                        else
-                        {
-                            sender.sendMessage(Message.LATEST_RELEASE.replace(
-                                    latestVersion.get().tag(),
-                                    Util.DATE_FORMAT.format(new Date(latestVersion.get().time())),
-                                    latestVersion.get().name(),
-                                    "https://www.spigotmc.org/resources/coins.33382/"
-                            ));
-                        }
-                    }
-                    else
-                    {
-                        noPerm(sender);
-                    }
-                    break;
-                case "toggle":
-                    if (sender.hasPermission("coins.toggle"))
-                    {
-                        Message abled = this.coins.toggleDisabled()? Message.ENABLED : Message.DISABLED;
-                        sender.sendMessage(Message.GLOBALLY_DISABLED_INFORM.replace(abled.toString()));
-                        if (this.coins.isDisabled())
-                        {
-                            sender.sendMessage(Message.DISABLED_DESCRIPTION.toString());
-                        }
-                    }
-                    else
-                    {
-                        noPerm(sender);
-                    }
-                    break;
-                default:
-                {
-                    sendHelp(sender);
-                    break;
                 }
+                break;
+            case "version":
+            case "update":
+                if (perm(sender, "coins.admin"))
+                {
+                    sender.sendMessage(String.format(COINS_TITLE, "Version"));
+
+                    Optional<VersionChecker.Version> latestVersion = this.coins.latestVersion();
+                    String currentVersion = this.coins.getDescription().getVersion();
+
+                    sender.sendMessage(Message.CURRENTLY_INSTALLED.replace(currentVersion));
+
+                    if (!latestVersion.isPresent())
+                    {
+                        sender.sendMessage(Message.LATEST_RETRIEVE_FAIL.toString());
+                    }
+                    else if (latestVersion.get().tag().equals(currentVersion))
+                    {
+                        sender.sendMessage(Message.UP_TO_DATE.replace(currentVersion));
+                    }
+                    else
+                    {
+                        sender.sendMessage(Message.LATEST_RELEASE.replace(
+                                latestVersion.get().tag(),
+                                Util.DATE_FORMAT.format(new Date(latestVersion.get().time())),
+                                latestVersion.get().name(),
+                                "https://www.spigotmc.org/resources/coins.33382/"
+                        ));
+                    }
+                }
+                break;
+            case "toggle":
+                if (perm(sender, "coins.toggle"))
+                {
+                    Message abled = this.coins.toggleDisabled()? Message.ENABLED : Message.DISABLED;
+                    sender.sendMessage(Message.GLOBALLY_DISABLED_INFORM.replace(abled.toString()));
+                    if (this.coins.isDisabled())
+                    {
+                        sender.sendMessage(Message.DISABLED_DESCRIPTION.toString());
+                    }
+                }
+                break;
+            default:
+            {
+                sendHelp(sender);
+                break;
             }
-        }
-        else
-        {
-            sendHelp(sender);
         }
 
         return true;
+    }
+
+    private boolean perm (CommandSender sender, String permission)
+    {
+        if (sender.hasPermission(permission))
+            return true;
+
+        sender.sendMessage(Message.NO_PERMISSION.toString());
+        return false;
     }
 
     @Override
@@ -504,10 +501,5 @@ public final class CoinsCommand
                 }
             }
         }.runTaskTimer(this.coins, 0, 1);
-    }
-
-    private void noPerm (CommandSender sender)
-    {
-        sender.sendMessage(Message.NO_PERMISSION.toString());
     }
 }

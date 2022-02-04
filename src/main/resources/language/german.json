@@ -22,5 +22,22 @@
   "SETTINGS_USAGE" : "&c/coins settings &7- Liste der aktuell geladenen Einstellungen",
   "RELOAD_USAGE" : "&c/coins reload &7- Lade die Einstellungen von config.yml neu",
   "VERSION_CHECK" : "&c/coins version &7- check if there's a new release",
-  "WITHDRAW_USAGE" : "&c/withdraw <worth> [amount] &7- Etwas Geld in Coins zurückziehen"
+  "WITHDRAW_USAGE" : "&c/withdraw <worth> [amount] &7- Etwas Geld in Coins zurückziehen",
+  "TOGGLE_USAGE" :  "&c/coins toggle &7- disable or enable Coins globally",
+
+  "DISABLED_REASONS" :  "&4Coins is disabled for the following reason(s):",
+  "CURRENTLY_INSTALLED" :  "&eVersion currently installed: &f{0}",
+  "LATEST_RELEASE" :  "&eThe latest released version of &6Coins&e is &f{0}&e, released on &f{1}&e, and described as &f'{2}'&e. Consider updating the plugin to this version. &eDownload at: &9{3}",
+  "UP_TO_DATE" :  "&aYou're up to date with version {0}.",
+  "LATEST_RETRIEVE_FAIL" :  "&cCouldn't get the latest version of Coins.",
+
+  "ENABLED" :  "&aenabled",
+  "DISABLED" :  "&cdisabled",
+
+  "GLOBALLY_DISABLED_INFORM" : "&eCoins has been globally {0}&e. Toggle with &f/coins toggle&e.",
+  "DISABLED_DESCRIPTION" :  "&eWhen disabled, coins will not drop and withdrawing coins isn't possible. Picking up coins that were already on the ground and depositing coins is still possible.",
+  "WITHDRAWING_DISABLED" :  "&cWithdrawing coins is disabled on this server.",
+
+  "GLOBALLY_DISABLED" :  "(globally disabled)",
+  "OUTDATED" :  "(outdated → {0})"
 }
