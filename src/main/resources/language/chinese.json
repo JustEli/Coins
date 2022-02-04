@@ -1,5 +1,4 @@
 {
-  "LOADED_SETTINGS" : "&3Coins插件的配置文件已加载完毕",
   "NO_PERMISSION" : "&4你没有使用这个命令的权限",
   "RELOAD_SUCCESS" : "&6Coins插件&e的配置文件已在&a{0}ms&e内重新加载完毕",
   "MINOR_ISSUES" : "&c重新加载配置文件时遇到错误，请查看控制台的输出内容",

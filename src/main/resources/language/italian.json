@@ -1,5 +1,4 @@
 {
-  "LOADED_SETTINGS" : "&3Impostazioni attualmente caricate della configurazione Coins.",
   "NO_PERMISSION" : "&4Non hai accesso a quel comando.",
   "RELOAD_SUCCESS" : "&eConfigurazione di &6Coins &eè stato ricaricato &a{0}ms&e.",
   "MINOR_ISSUES" : "&cCi sono stati alcuni errori durante il ricaricamento, controlla la console.",

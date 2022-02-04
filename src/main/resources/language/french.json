@@ -1,5 +1,4 @@
 {
-  "LOADED_SETTINGS" : "&3Configuration actuellement chargée.",
   "NO_PERMISSION" : "&4Vous n'avez pas la permission d'accéder à cette commande.",
   "RELOAD_SUCCESS" : "&eLa configuration de &6Coins &ea été rechargée en &a{0}ms&e.",
   "MINOR_ISSUES" : "&cIl y a eu quelques erreurs mineures lors du rechargement, vérifiez la console.",

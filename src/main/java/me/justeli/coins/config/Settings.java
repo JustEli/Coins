@@ -15,15 +15,18 @@ import org.json.simple.parser.ParseException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -32,10 +35,12 @@ import java.util.logging.Level;
 public final class Settings
 {
     private final Coins coins;
+    private final JSONObject fallbackLanguage;
 
     public Settings (Coins coins)
     {
         this.coins = coins;
+        this.fallbackLanguage = retrieveFallbackLanguage();
     }
 
     public void reloadLanguage ()
@@ -285,39 +290,68 @@ public final class Settings
 
     public void initializeMessages (String language)
     {
-        JSONObject json = getLanguageJson(language);
-        if (json == null)
+        Optional<JSONObject> json = retrieveLanguageJson(language);
+        if (!json.isPresent())
         {
             this.coins.console(Level.SEVERE, "Could not find the language file '" +  language + ".json' that was configured.");
         }
 
+        List<String> missingKeys = new ArrayList<>();
         for (Message message : Message.values())
         {
             try
             {
-                Object name = json.get(message.name());
+                Object name = json.get().get(message.name());
                 Message.MESSAGES.put(message, Util.color(Util.formatCurrency(name.toString())));
             }
             catch (Exception exception)
             {
-                this.coins.settings().error("Language file is missing message called '" + message.name() +
-                        "'. Using its default value now (in English).");
-                Message.MESSAGES.put(message, Util.color(Util.formatCurrency(message.defaultMessage)));
+                missingKeys.add(message.name());
+                Message.MESSAGES.put(message, Util.color(Util.formatCurrency(fallbackLanguage.get(message.name()).toString())));
+            }
+        }
+
+        if (missingKeys.size() > 0)
+        {
+            this.coins.settings().error("Language file '" + language + "' is missing the message(s) '" + String.join("', '", missingKeys) +
+                    "'. Using the default value(s) now, which are in English. You can find the up-to-date default configured messages at:" +
+                    " https://github.com/JustEli/Coins/blob/master/src/main/resources/language/english.json");
+
+            if (language.equalsIgnoreCase("english"))
+            {
+                this.coins.console(Level.WARNING, "You are using the default language (English), you could delete the English" +
+                        " language file (at /Coins/language/english.json) to get rid of this warning.");
             }
         }
     }
 
-    private JSONObject getLanguageJson (String language)
+    private Optional<JSONObject> retrieveLanguageJson (String language)
     {
-        File file = getLanguageFile(language);
+        Optional<File> file = retrieveLanguageFile(language);
+        if (!file.isPresent())
+            return Optional.empty();
 
-        if (file == null)
-            return null;
+        try (InputStream fileStream = new FileInputStream(file.get()))
+        {
+            return Optional.ofNullable(jsonStream(fileStream));
+        }
+        catch (Exception ignored) {}
+        return Optional.empty();
+    }
 
-        try (
-                FileInputStream fileStream = new FileInputStream(file);
-                InputStreamReader reader = new InputStreamReader(fileStream, StandardCharsets.UTF_8)
-        )
+    private JSONObject retrieveFallbackLanguage ()
+    {
+        try (InputStream inputStream = this.coins.getResource("language" + File.separator + "english.json"))
+        {
+            return jsonStream(inputStream);
+        }
+        catch (Exception ignored) {}
+        return null;
+    }
+
+    private JSONObject jsonStream (InputStream inputStream)
+    {
+        try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8))
         {
             return (JSONObject) new JSONParser().parse(reader);
         }
@@ -327,20 +361,20 @@ public final class Settings
         }
     }
 
-    private File getLanguageFile (String language)
+    private Optional<File> retrieveLanguageFile (String language)
     {
         File[] languageFiles = new File(this.coins.getDataFolder().getAbsolutePath() + File.separator + "language").listFiles();
         if (languageFiles == null)
-            return null;
+            return Optional.empty();
 
         for (File languageFile : languageFiles)
         {
             if (languageFile.getName().equalsIgnoreCase(language + ".json"))
             {
-                return languageFile;
+                return Optional.of(languageFile);
             }
         }
 
-        return null;
+        return Optional.empty();
     }
 }

@@ -5,6 +5,7 @@ import me.justeli.coins.config.Config;
 import me.justeli.coins.config.Message;
 import me.justeli.coins.item.CoinUtil;
 import me.justeli.coins.util.Util;
+import me.justeli.coins.util.VersionChecker;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -24,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -120,22 +122,29 @@ public final class CoinsCommand
                 case "update":
                     if (sender.hasPermission("coins.admin"))
                     {
-                        String version = this.coins.latest();
-                        String current = this.coins.getDescription().getVersion();
-                        sender.sendMessage(Message.CURRENTLY_INSTALLED.replace(current));
-                        sender.sendMessage(Message.LATEST_VERSION.replace(version));
-                        if (version.equals(current))
-                        {
-                            sender.sendMessage(Message.UP_TO_DATE.replace(current));
-                        }
-                        else if (version.equals("Unknown"))
+                        sender.sendMessage(String.format(COINS_TITLE, "Version"));
+
+                        Optional<VersionChecker.Version> latestVersion = this.coins.latestVersion();
+                        String currentVersion = this.coins.getDescription().getVersion();
+
+                        sender.sendMessage(Message.CURRENTLY_INSTALLED.replace(currentVersion));
+
+                        if (!latestVersion.isPresent())
                         {
                             sender.sendMessage(Message.LATEST_RETRIEVE_FAIL.toString());
                         }
+                        else if (latestVersion.get().tag().equals(currentVersion))
+                        {
+                            sender.sendMessage(Message.UP_TO_DATE.replace(currentVersion));
+                        }
                         else
                         {
-                            sender.sendMessage(Message.CONSIDER_UPDATING.replace(version));
-                            sender.sendMessage(Util.color("&9https://www.spigotmc.org/resources/coins.33382/"));
+                            sender.sendMessage(Message.LATEST_RELEASE.replace(
+                                    latestVersion.get().tag(),
+                                    Util.DATE_FORMAT.format(new Date(latestVersion.get().time())),
+                                    latestVersion.get().name(),
+                                    "https://www.spigotmc.org/resources/coins.33382/"
+                            ));
                         }
                     }
                     else
@@ -147,7 +156,7 @@ public final class CoinsCommand
                     if (sender.hasPermission("coins.toggle"))
                     {
                         Message abled = this.coins.toggleDisabled()? Message.ENABLED : Message.DISABLED;
-                        sender.sendMessage(Message.GLOBALLY_DISABLED_INFORM.replace(abled));
+                        sender.sendMessage(Message.GLOBALLY_DISABLED_INFORM.replace(abled.toString()));
                         if (this.coins.isDisabled())
                         {
                             sender.sendMessage(Message.DISABLED_DESCRIPTION.toString());
@@ -422,19 +431,20 @@ public final class CoinsCommand
 
     private void sendHelp (CommandSender sender)
     {
-        String version = this.coins.getDescription().getVersion();
-        String update = this.coins.latest();
+        String currentVersion = this.coins.getDescription().getVersion();
+        Optional<VersionChecker.Version> latestVersion = this.coins.latestVersion();
+
         String notice = "";
         if (this.coins.isDisabled())
         {
             notice = " " + Message.GLOBALLY_DISABLED;
         }
-        else if (!update.equals("Unknown") && !update.equals(version))
+        else if (latestVersion.isPresent() && !latestVersion.get().tag().equals(currentVersion))
         {
-            notice = " " + Message.OUTDATED;
+            notice = " " + Message.OUTDATED.replace("/coins update");
         }
 
-        sender.sendMessage(String.format(COINS_TITLE, version) + ChatColor.DARK_RED + notice);
+        sender.sendMessage(String.format(COINS_TITLE, currentVersion) + ChatColor.DARK_RED + notice);
 
         if (sender.hasPermission("coins.drop"))
         {

@@ -1,8 +1,5 @@
 package me.justeli.coins;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import io.papermc.lib.PaperLib;
 import me.justeli.coins.command.CoinsCommand;
 import me.justeli.coins.command.DisabledCommand;
@@ -25,20 +22,19 @@ import me.justeli.coins.hook.Economies;
 import me.justeli.coins.item.CoinUtil;
 import me.justeli.coins.item.CreateCoin;
 import me.justeli.coins.item.MetaBuilder;
+import me.justeli.coins.util.VersionChecker;
 import me.justeli.coins.util.Util;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -137,9 +133,9 @@ public final class Coins
 
         Util.resetMultiplier();
 
-        this.settings.reloadLanguage();
         this.settings.resetWarningCount();
         this.settings.parseConfig();
+        this.settings.reloadLanguage();
 
         this.baseCoin = new BaseCoin(this);
         this.createCoin = new CreateCoin(this);
@@ -185,31 +181,20 @@ public final class Coins
         if (!Config.CHECK_FOR_UPDATES)
             return;
 
-        try
-        {
-            URL url = new URL("https://api.github.com/repos/JustEli/Coins/releases/latest");
-            URLConnection request = url.openConnection();
-            request.connect();
+        VersionChecker checker = new VersionChecker("JustEli/Coins");
+        if (!checker.latestVersion().isPresent())
+            return;
 
-            JsonParser jp = new JsonParser();
-            try (
-                    InputStream inputStream = (InputStream) request.getContent();
-                    InputStreamReader reader = new InputStreamReader(inputStream);
-            )
-            {
-                JsonElement root = jp.parse(reader);
-                JsonObject rootobj = root.getAsJsonObject();
-                this.latest = rootobj.get("tag_name").getAsString();
-            }
-        }
-        catch (IOException ignored) {}
+        this.latestVersion = checker.latestVersion().get();
+        String currentVersion = getDescription().getVersion();
 
-        if (!this.latest.equals("Unknown") && !getDescription().getVersion().equals(this.latest))
+        if (!currentVersion.equals(this.latestVersion.tag()) && !this.latestVersion.preRelease())
         {
             line(Level.WARNING);
-            console(Level.WARNING, "   You're running an outdated version of Coins 1.x.");
-            console(Level.WARNING, "   The version installed is " + getDescription().getVersion() + ", while " + this.latest + " is out!");
-            console(Level.WARNING, "   https://www.spigotmc.org/resources/coins.33382/");
+            console(Level.WARNING, "  Detected an outdated version of Coins (" + currentVersion + " is installed).");
+            console(Level.WARNING, "  The latest version is " + this.latestVersion.tag() + ", released on "
+                    + Util.DATE_FORMAT.format(new Date(this.latestVersion.time())) + ".");
+            console(Level.WARNING, "  Download: https://www.spigotmc.org/resources/coins.33382/");
             line(Level.WARNING);
         }
     }
@@ -269,10 +254,10 @@ public final class Coins
         return this.economy;
     }
 
-    private String latest = "Unknown";
-    public String latest ()
+    private VersionChecker.Version latestVersion;
+    public Optional<VersionChecker.Version> latestVersion ()
     {
-        return this.latest;
+        return Optional.ofNullable(this.latestVersion);
     }
 
     private final List<String> disabledReasons = new ArrayList<>();

@@ -1,5 +1,4 @@
 {
-  "LOADED_SETTINGS" : "&3Derzeit geladene Einstellungen der Coins Konfiguration.",
   "NO_PERMISSION" : "&4Du hast keine Berechtigung zu diesem Command.",
   "RELOAD_SUCCESS" : "&eKonfig von &6Coins &ewurde in &a{0}ms&e neu geladen.",
   "MINOR_ISSUES" : "&cEs gab einige kleinere Fehler beim Nachladen, überprüfe die Konsole.",

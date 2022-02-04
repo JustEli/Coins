@@ -20,6 +20,7 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -187,6 +188,8 @@ public final class Util
         try { return Optional.of(Util.round(new Double(arg))); }
         catch (NumberFormatException exception) { return Optional.empty(); }
     }
+
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMMM d, yyyy");
 
     // page starts at 1
     public static ArrayList<String> page (ArrayList<String> items, int pageSize, int pageNumber)

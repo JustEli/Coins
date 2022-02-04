@@ -230,6 +230,9 @@ public final class DropHandler
         if (this.coins.isDisabled())
             return;
 
+        if (Config.MINE_PERCENTAGE == 0)
+            return;
+
         if (!Config.ONLY_EXPERIENCE_BLOCKS)
         {
             dropBlockCoin(event.getBlock(), event.getPlayer());

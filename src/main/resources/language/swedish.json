@@ -1,5 +1,4 @@
 {
-  "LOADED_SETTINGS" : "&3För närvarande laddade inställningar av Coins konfigurationen.",
   "NO_PERMISSION" : "&4Du har inte tillgång till detta kommando.",
   "RELOAD_SUCCESS" : "&eKonfiguration av &6Coins &ehar laddat i &a{0}ms&e.",
   "MINOR_ISSUES" : "&cDet är några små fel när det laddade, titta konsolen.",
