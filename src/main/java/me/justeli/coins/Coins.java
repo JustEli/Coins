@@ -151,8 +151,8 @@ public final class Coins
             console(Level.WARNING, "Coins has been configured to detected legacy withdrawn coins, which are coins withdrawn before Coins version " +
                     "1.11. It is recommended to tell your players to deposit all their legacy withdrawn coins, as support for legacy withdrawn " +
                     "coins by this plugin will be dropped early 2023. If you do not wish to detect legacy withdrawn coins, you can set " +
-                    "`detect-legacy-coins` to false in the config, which is safer, and prevents possible exploits (if plugins are installed that " +
-                    "allow items to be renamed in color).");
+                    "`detect-legacy-coins` to false in the config, which is safer, and prevents possible exploits (that may occur if plugins are " +
+                    "installed that allow items to be renamed in color).");
         }
     }
 
