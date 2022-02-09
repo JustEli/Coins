@@ -103,7 +103,7 @@ public final class Util
                 || entity instanceof Flying
                 || entity instanceof Slime
                 || (entity instanceof Golem && !(entity instanceof Snowman))
-                || entity instanceof Wolf
+                || (entity instanceof Wolf && ((Wolf) entity).isAngry())
                 || entity instanceof Boss;
     }
 
