@@ -86,10 +86,9 @@ public final class Util
             for (PermissionAttachmentInfo permissionInfo : player.getEffectivePermissions())
             {
                 String permission = permissionInfo.getPermission();
-                if (permission.startsWith("coins.multiplier."))
+                if (permission.startsWith(Permission.MULTIPLIER_PREFIX))
                 {
-                    String number = permission.replace("coins.multiplier.", "");
-                    permissions.add(parseDouble(number).orElse(1D));
+                    permissions.add(Permission.multiplierFromPermission(permission));
                 }
             }
             PLAYER_MULTIPLIER.put(player.getUniqueId(), permissions.size() == 0? 1D : Collections.max(permissions));

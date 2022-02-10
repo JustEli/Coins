@@ -194,7 +194,7 @@ public final class Coins
             console(Level.WARNING, "  Detected an outdated version of Coins (" + currentVersion + " is installed).");
             console(Level.WARNING, "  The latest version is " + this.latestVersion.tag() + ", released on "
                     + Util.DATE_FORMAT.format(new Date(this.latestVersion.time())) + ".");
-            console(Level.WARNING, "  Download: https://www.spigotmc.org/resources/coins.33382/");
+            console(Level.WARNING, "  Download: " + getDescription().getWebsite());
             line(Level.WARNING);
         }
     }

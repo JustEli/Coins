@@ -4,6 +4,7 @@ import me.justeli.coins.Coins;
 import me.justeli.coins.config.Config;
 import me.justeli.coins.config.Message;
 import me.justeli.coins.util.ActionBar;
+import me.justeli.coins.util.Permission;
 import me.justeli.coins.util.Util;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -51,7 +52,7 @@ public final class WithdrawCommand
             return false;
         }
 
-        if (!sender.hasPermission("coins.withdraw") || !(sender instanceof Player))
+        if (!sender.hasPermission(Permission.WITHDRAW) || !(sender instanceof Player))
         {
             noPerm(sender);
             return true;

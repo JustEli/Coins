@@ -4,6 +4,7 @@ import me.justeli.coins.Coins;
 import me.justeli.coins.hook.MythicMobsHook;
 import me.justeli.coins.config.Config;
 import me.justeli.coins.item.CoinUtil;
+import me.justeli.coins.util.Permission;
 import me.justeli.coins.util.SubTitle;
 import me.justeli.coins.util.Util;
 import org.bukkit.Location;
@@ -220,7 +221,7 @@ public final class DropHandler
         if (player == null)
             return Config.SPAWNER_DROP;
 
-        return Config.SPAWNER_DROP || player.hasPermission("coins.spawner");
+        return Config.SPAWNER_DROP || player.hasPermission(Permission.SPAWNER);
     }
 
     @EventHandler (ignoreCancelled = true,

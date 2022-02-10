@@ -3,7 +3,7 @@
   "RELOAD_SUCCESS" : "&eInstellingen van &6Coins &ewaren herladen in &a{0}ms&e.",
   "MINOR_ISSUES" : "&cEr waren een paar problemen na het herladen, zie console.",
   "CHECK_SETTINGS" : "&eBekijk de geladen instellingen met &f/coins settings&e.",
-  "WITHDRAW_COINS" : "&eJe hebt &f{$}{0} &egewisseld voor &f{0} fysieke munten&e.",
+  "WITHDRAW_COINS" : "&eJe hebt &f{$}{0} &eingewisseld voor &f{0} fysieke munten&e.",
   "NOT_THAT_MUCH" : "&cJe heb de mogelijkheid niet om zo veel munten om te wisselen.",
   "COINS_DISABLED" : "&cCoins is niet ingeschakeld in deze wereld.",
   "SPAWNED_COINS" : "&9Je gooide {0} munten in een straal van {1} om {2} heen.",

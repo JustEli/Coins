@@ -1,18 +1,48 @@
-main: "${project.groupId}.${project.name}"
-name: "${project.name}"
-version: "${project.version}"
-website: "${project.url}"
-api-version: "1.14"
-authors:
-  - JustEli
-softdepend:
-  - Vault
-  - Treasury
-  - WorldGuard
-  - mcMMO
-  - MythicMobs
+main: '${project.groupId}.${project.name}'
+name: '${project.name}'
+version: '${project.version}'
+website: '${project.url}'
+description: 'Coins is a plugin that allows players to collect coins for killing mobs and mining precious blocks. It also comes with the ability to withdraw balance into physical coins.'
+api-version: '1.14'
+authors: [JustEli]
+softdepend: [Vault, Treasury, WorldGuard, mcMMO, MythicMobs]
 commands:
   coins:
+    description: 'Command for showing all available commands from Coins. Also used for various admin tools.'
+    permission: 'coins.command'
+    usage: '/<command> [reload|settings|drop|remove|language|version|toggle]'
     aliases:
       - coin
-  withdraw: {}
+  withdraw:
+    description: 'Withdraw money from your balance into physical coins.'
+    permission: 'coins.withdraw'
+    usage: '/<command> <worth> [amount]'
+permissions:
+  coins.command:
+    default: true
+  coins.command.reload:
+    default: op
+  coins.command.settings:
+    default: op
+  coins.command.drop:
+    default: op
+  coins.command.remove:
+    default: op
+  coins.command.language:
+    default: op
+  coins.command.version:
+    default: op
+  coins.command.toggle:
+    default: op
+  coins.withdraw:
+    description: 'Access to the /withdraw command, and ability to withdraw and deposit coins.'
+    default: op
+  coins.multiplier.n:
+    description: 'Permission to give to players who should get multiplied coin drops. Replace /n/ with a number.'
+    default: false
+  coins.disable:
+    description: 'Permission to give to players to disable coin pickup for them.'
+    default: false
+  coins.spawner:
+    description: 'Permission to give to players who should get coins from killing mobs from spawners.'
+    default: false

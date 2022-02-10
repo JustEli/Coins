@@ -4,6 +4,7 @@ import me.justeli.coins.Coins;
 import me.justeli.coins.event.PickupEvent;
 import me.justeli.coins.util.ActionBar;
 import me.justeli.coins.config.Config;
+import me.justeli.coins.util.Permission;
 import me.justeli.coins.util.Util;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -44,7 +45,7 @@ public final class PickupHandler
         Player player = event.getPlayer();
         event.setCancelled(true);
 
-        if (!player.hasPermission("coins.disable") || player.isOp() || player.hasPermission("*"))
+        if (!player.hasPermission(Permission.DISABLE) || player.isOp() || player.hasPermission("*"))
         {
             double amount = this.coins.getCoinUtil().getValue(item.getItemStack());
             giveCoin(item, player, amount);

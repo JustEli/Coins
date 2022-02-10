@@ -1,6 +1,7 @@
 package me.justeli.coins.handler;
 
 import me.justeli.coins.Coins;
+import me.justeli.coins.util.Permission;
 import me.justeli.coins.util.Util;
 import org.bukkit.block.Container;
 import org.bukkit.entity.Player;
@@ -32,7 +33,7 @@ public final class InteractionHandler
         Player player = event.getPlayer();
 
         // because of .setAmount(0) AND Container, players have to drop coin instead
-        if (!player.hasPermission("coins.withdraw"))
+        if (!player.hasPermission(Permission.WITHDRAW))
         {
             event.setCancelled(true);
             return;
