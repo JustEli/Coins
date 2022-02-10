@@ -81,6 +81,7 @@ public final class Metrics
             metrics.add("takePercentage", Config.TAKE_PERCENTAGE);
             metrics.add("dropOnDeath", Config.DROP_ON_DEATH);
             metrics.add("deathMessage", Config.DEATH_MESSAGE);
+            metrics.add("location-limit-hours", Config.LOCATION_LIMIT_HOURS);
 
             metrics.add("usingSkullTexture", Config.SKULL_TEXTURE != null && !Config.SKULL_TEXTURE.isEmpty());
             metrics.add("usingPaper", PaperLib.isPaper());
