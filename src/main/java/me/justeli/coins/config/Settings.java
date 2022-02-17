@@ -344,7 +344,7 @@ public final class Settings
 
     private JSONObject retrieveFallbackLanguage ()
     {
-        try (InputStream inputStream = this.coins.getResource("language" + File.separator + "english.json"))
+        try (InputStream inputStream = this.coins.getResource("language/english.json"))
         {
             return jsonStream(inputStream);
         }
@@ -373,7 +373,9 @@ public final class Settings
     private void stackTraceInfo ()
     {
         this.coins.console(Level.WARNING, "The above error does not affect the plugin. Though, it is appreciated if you report this error to Coins " +
-                "in the Discord server (https://discord.gg/fVwCETj) at #coins-errors.");
+                "in the Discord server (https://discord.gg/fVwCETj) at #coins-errors, because the error should not happen. Include this line. " +
+                "Details[OS='" + System.getProperty("os.name") + "',JAVA='" + System.getProperty("java.version") + "',MC='" +
+                this.coins.getServer().getVersion() + "']");
     }
 
     private Optional<File> retrieveLanguageFile (String language)
