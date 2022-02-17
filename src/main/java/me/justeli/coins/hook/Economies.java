@@ -1,11 +1,9 @@
 package me.justeli.coins.hook;
 
-import me.lokka30.treasury.api.common.service.Service;
 import me.lokka30.treasury.api.common.service.ServiceRegistry;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.LinkedHashSet;
 import java.util.Optional;
@@ -13,7 +11,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
-import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 
 /** by Eli on February 01, 2022 **/
@@ -29,27 +27,15 @@ public final class Economies implements EconomyHook
     {
         this.plugin = plugin;
         
-        hookIfInstalled(TreasuryEconomyHook.TREASURY, treasury ->
+        hookIfInstalled(TreasuryEconomyHook.TREASURY, () ->
             ServiceRegistry.INSTANCE.serviceFor(EconomyProvider.class)
                 .map(service -> new TreasuryEconomyHook(service.get()))
         );
         
-        hookIfInstalled(VaultEconomyHook.VAULT, vault ->
-        {
-            try
-            {
-                RegisteredServiceProvider<Economy> registration =
-                    plugin.getServer().getServicesManager().getRegistration(Economy.class);
-                
-                if (registration == null) { return Optional.empty(); }
-                
-                return Optional.of(new VaultEconomyHook(plugin, registration.getProvider()));
-            }
-            catch (NullPointerException | NoClassDefFoundError throwable)
-            {
-                return Optional.empty();
-            }
-        });
+        hookIfInstalled(VaultEconomyHook.VAULT, () ->
+            Optional.ofNullable(plugin.getServer().getServicesManager().getRegistration(Economy.class))
+                .map(registration -> new VaultEconomyHook(plugin, registration.getProvider()))
+        );
         
         if (this.hook == null && this.missingPlugins.isEmpty())
         {
@@ -57,14 +43,15 @@ public final class Economies implements EconomyHook
         }
     }
     
-    private void hookIfInstalled (String name, Function<String, Optional<EconomyHook>> hooker)
+    private void hookIfInstalled (String name, Supplier<Optional<EconomyHook>> hooker)
     {
         this.supportedHooks.add(name);
         
         if (this.hook != null) { return; } // already hooked
         if (!plugin.getServer().getPluginManager().isPluginEnabled(name)) { return; }
         
-        this.hook = hooker.apply(name).orElse(null);
+        try { this.hook = hooker.get().orElse(null); }
+        catch (NullPointerException | NoClassDefFoundError ignored) {}
         
         if (this.hook == null)
         {
