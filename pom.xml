@@ -115,7 +115,9 @@
         <dependency>
             <groupId>com.github.lokka30.treasury</groupId>
             <artifactId>treasury-api</artifactId>
-            <version>1.0.0</version>
+            <!-- Force a specific commit since they created the 1.1.0 git tag days before -->
+            <!-- they actually released 1.1.0... so the existing JitPack build for 1.1.0 is incorrect -->
+            <version>937ec97a98</version> <!-- (1.1.0-937ec97-RELEASE) -->
             <scope>provided</scope>
         </dependency>
         <dependency>

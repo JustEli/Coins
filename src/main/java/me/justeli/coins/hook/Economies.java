@@ -1,5 +1,7 @@
 package me.justeli.coins.hook;
 
+import me.lokka30.treasury.api.common.service.Service;
+import me.lokka30.treasury.api.common.service.ServiceRegistry;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.Plugin;
@@ -28,12 +30,26 @@ public final class Economies implements EconomyHook
         this.plugin = plugin;
         
         hookIfInstalled(TreasuryEconomyHook.TREASURY, treasury ->
-            provider(EconomyProvider.class, treasury).map(TreasuryEconomyHook::new)
+            ServiceRegistry.INSTANCE.serviceFor(EconomyProvider.class)
+                .map(service -> new TreasuryEconomyHook(service.get()))
         );
         
         hookIfInstalled(VaultEconomyHook.VAULT, vault ->
-            provider(Economy.class, vault).map(economy -> new VaultEconomyHook(plugin, economy))
-        );
+        {
+            try
+            {
+                RegisteredServiceProvider<Economy> registration =
+                    plugin.getServer().getServicesManager().getRegistration(Economy.class);
+                
+                if (registration == null) { return Optional.empty(); }
+                
+                return Optional.of(new VaultEconomyHook(plugin, registration.getProvider()));
+            }
+            catch (NullPointerException | NoClassDefFoundError throwable)
+            {
+                return Optional.empty();
+            }
+        });
         
         if (this.hook == null && this.missingPlugins.isEmpty())
         {
@@ -50,25 +66,14 @@ public final class Economies implements EconomyHook
         
         this.hook = hooker.apply(name).orElse(null);
         
-        if (this.hook == null) { missingPlugins.add("an economy providing plugin for '" + name + "'"); }
-        else { missingPlugins.clear(); }
-    }
-    
-    private <T> Optional<T> provider (Class<T> economyClass, String name)
-    {
-        try
+        if (this.hook == null)
         {
-            RegisteredServiceProvider<T> registration =
-                plugin.getServer().getServicesManager().getRegistration(economyClass);
-            
-            if (registration == null) { return Optional.empty(); }
-
-            this.plugin.getLogger().log(Level.INFO, name + " is used as the economy provider.");
-            return Optional.of(registration.getProvider());
+            missingPlugins.add("an economy providing plugin for '" + name + "'");
         }
-        catch (NullPointerException | NoClassDefFoundError throwable)
+        else
         {
-            return Optional.empty();
+            this.plugin.getLogger().log(Level.INFO, name + " is used as the economy provider.");
+            missingPlugins.clear();
         }
     }
 
