@@ -29,7 +29,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -143,7 +142,7 @@ public final class Coins
 
         if (this.settings.getWarningCount() != 0)
         {
-            console(Level.SEVERE, "Loaded the config of Coins with " + this.settings.getWarningCount() + " warnings. Check above here for details.");
+            console(Level.WARNING, "Loaded the config of Coins with " + this.settings.getWarningCount() + " warnings. Check above here for details.");
         }
 
         if (Config.DETECT_LEGACY_COINS)

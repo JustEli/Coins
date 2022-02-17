@@ -92,14 +92,14 @@ public final class Settings
                     legacyChecked = true;
                 }
 
-                if (!config.contains(configKey))
+                if (configKey == null || !config.contains(configKey))
                 {
                     if (configEntry.required())
                     {
                         String prefixSuffix = field.getType() == String.class? "'" : "";
                         Object defaultValue = prefixSuffix + field.get(Config.class) + prefixSuffix;
 
-                        error(String.format(
+                        warning(String.format(
                                 "\nConfig file is missing key called '%s'. Using its default value now (%s)."
                                         + (configEntry.motivation().isEmpty()? "" : " " + configEntry.motivation())
                                         + " Consider to add this to the config:\n----------------------------------------\n%s: %s" +
@@ -172,7 +172,7 @@ public final class Settings
                 try
                 {
                     Object defaultValue = field.get(Config.class);
-                    error(String.format(
+                    warning(String.format(
                             "Config file has wrong value for key called '%s'. Using its default value now (%s).",
                             configEntry.value(),
                             defaultValue
@@ -221,7 +221,7 @@ public final class Settings
 
         if (coin == null)
         {
-            error("The material '" + Config.RAW_COIN_ITEM + "' in the config at `coin-item` does not exist. Please use a " +
+            warning("The material '" + Config.RAW_COIN_ITEM + "' in the config at `coin-item` does not exist. Please use a " +
                     "material from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html");
 
             return Material.SUNFLOWER;
@@ -238,7 +238,7 @@ public final class Settings
         }
         catch (IllegalArgumentException exception)
         {
-            error("The sound '" + Config.RAW_SOUND_NAME + "' in the config at `sound-name` does not exist. Please use a " +
+            warning("The sound '" + Config.RAW_SOUND_NAME + "' in the config at `sound-name` does not exist. Please use a " +
                     "sound from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html");
 
             return Sound.ITEM_ARMOR_EQUIP_GOLD;
@@ -247,20 +247,20 @@ public final class Settings
 
     private int warnings = 0;
 
-    public void error (String message)
+    public void warning (String message)
     {
-        warnings++;
-        this.coins.console(Level.WARNING, "#" + warnings + ": " + message);
+        this.warnings++;
+        this.coins.console(Level.WARNING, "#" + this.warnings + ": " + message);
     }
 
     public void resetWarningCount ()
     {
-        warnings = 0;
+        this.warnings = 0;
     }
 
     public int getWarningCount ()
     {
-        return warnings;
+        return this.warnings;
     }
 
     private static final Converter<String, String> VAR_CONVERTER = CaseFormat.UPPER_UNDERSCORE.converterTo(CaseFormat.LOWER_HYPHEN);
@@ -293,7 +293,7 @@ public final class Settings
         Optional<JSONObject> json = retrieveLanguageJson(language);
         if (!json.isPresent())
         {
-            this.coins.console(Level.SEVERE, "Could not find the language file '" +  language + ".json' that was configured.");
+            this.coins.console(Level.WARNING, "Could not find the language file '" +  language + ".json' that was configured.");
         }
 
         List<String> missingKeys = new ArrayList<>();
@@ -307,13 +307,16 @@ public final class Settings
             catch (Exception exception)
             {
                 missingKeys.add(message.name());
-                Message.MESSAGES.put(message, Util.color(Util.formatCurrency(fallbackLanguage.get(message.name()).toString())));
+                if (this.fallbackLanguage != null)
+                {
+                    Message.MESSAGES.put(message, Util.color(Util.formatCurrency(this.fallbackLanguage.get(message.name()).toString())));
+                }
             }
         }
 
         if (missingKeys.size() > 0)
         {
-            this.coins.settings().error("Language file '" + language + "' is missing the message(s) '" + String.join("', '", missingKeys) +
+            warning("Language file '" + language + "' is missing the message(s) '" + String.join("', '", missingKeys) +
                     "'. Using the default value(s) now, which are in English. You can find the up-to-date default configured messages at:" +
                     " https://github.com/JustEli/Coins/blob/master/src/main/resources/language/english.json");
 
@@ -345,7 +348,11 @@ public final class Settings
         {
             return jsonStream(inputStream);
         }
-        catch (Exception ignored) {}
+        catch (Exception exception)
+        {
+            exception.printStackTrace();
+            stackTraceInfo();
+        }
         return null;
     }
 
@@ -357,8 +364,16 @@ public final class Settings
         }
         catch (IOException | ParseException exception)
         {
-            return null;
+            exception.printStackTrace();
+            stackTraceInfo();
         }
+        return null;
+    }
+
+    private void stackTraceInfo ()
+    {
+        this.coins.console(Level.WARNING, "The above error does not affect the plugin. Though, it is appreciated if you report this error to Coins " +
+                "in the Discord server (https://discord.gg/fVwCETj) at #coins-errors.");
     }
 
     private Optional<File> retrieveLanguageFile (String language)
