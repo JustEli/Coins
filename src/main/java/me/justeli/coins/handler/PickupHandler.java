@@ -117,7 +117,10 @@ public final class PickupHandler
             }
 
             final double displayAmount = this.pickupAmountCache.computeIfAbsent(uniqueId, empty -> 0D);
-            new ActionBar(Config.PICKUP_MESSAGE, displayAmount).send(player);
+            if (!Config.PICKUP_MESSAGE.isEmpty())
+            {
+                new ActionBar(Config.PICKUP_MESSAGE, displayAmount).send(player);
+            }
 
             this.pickupTimeCache.put(uniqueId, System.currentTimeMillis());
         });
