@@ -43,9 +43,22 @@ public final class Settings
         this.fallbackLanguage = retrieveFallbackLanguage();
     }
 
+    private static final String[] LANGUAGES = new String[]{
+            "english",
+            "dutch",
+            "spanish",
+            "german",
+            "french",
+            "swedish",
+            "chinese",
+            "hungarian",
+            "italian",
+            "russian"
+    };
+
     public void reloadLanguage ()
     {
-        for (String language : new String[]{"english", "dutch", "spanish", "german", "french", "swedish", "chinese", "hungarian"})
+        for (String language : LANGUAGES)
         {
             if (!new File(this.coins.getDataFolder() + File.separator + "language" + File.separator + language + ".json").exists())
             {

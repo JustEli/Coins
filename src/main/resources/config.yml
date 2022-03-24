@@ -19,7 +19,7 @@ check-for-updates: true
 # What language should the plugin use? And what is your server's currency symbol?
 #  All available languages can be found in the folder 'languages' inside the plugin
 #  folder. Included languages by default: English, Dutch, German, French, Spanish,
-#  Swedish, Italian, Chinese and Hungarian.
+#  Swedish, Italian, Chinese, Hungarian and Russian.
 language: 'English'
 currency-symbol: '$'
 
