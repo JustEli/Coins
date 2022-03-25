@@ -26,6 +26,7 @@ import me.justeli.coins.util.VersionChecker;
 import me.justeli.coins.util.Util;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -88,7 +89,16 @@ public final class Coins
 
         if (getServer().getPluginManager().isPluginEnabled("MythicMobs"))
         {
-            enableMythicMobs();
+            Plugin mm = getServer().getPluginManager().getPlugin("MythicMobs");
+            if (mm == null || !mm.getDescription().getVersion().startsWith("5."))
+            {
+                console(Level.WARNING, "Detected MythicMobs, but could not hook into it, because Coins supports MythicMobs 5.x only! " +
+                        "Coins 1.12.2 does support MythicMobs 4.x.");
+            }
+            else
+            {
+                enableMythicMobs();
+            }
         }
 
         if (this.disabledReasons.size() == 0)
