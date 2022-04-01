@@ -10,6 +10,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
@@ -31,6 +32,20 @@ public final class PickupHandler
     private final Set<UUID> thrownCoinCache = new HashSet<>();
     private final HashMap<UUID, Double> pickupAmountCache = new HashMap<>();
     private final HashMap<UUID, Long> pickupTimeCache = new HashMap<>();
+
+    @EventHandler
+    public void mobPickup (EntityPickupItemEvent event)
+    {
+        // handled properly with PickupEvent
+        if (event.getEntity() instanceof Player)
+            return;
+
+        // don't let mobs pick up coins that are already being given to players
+        if (!this.thrownCoinCache.contains(event.getItem().getUniqueId()))
+            return;
+
+        event.setCancelled(true);
+    }
 
     @EventHandler (ignoreCancelled = true)
     public void onPickup (PickupEvent event)

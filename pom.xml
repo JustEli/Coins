@@ -127,11 +127,17 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>io.lumine</groupId>
-            <artifactId>Mythic-Dist</artifactId>
-            <version>5.0.2</version>
+            <groupId>io.lumine.xikage</groupId>
+            <artifactId>MythicMobs</artifactId>
+            <version>4.9.1</version>
             <scope>provided</scope>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>io.lumine</groupId>-->
+<!--            <artifactId>Mythic-Dist</artifactId>-->
+<!--            <version>5.0.2</version>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
         <!-- Compile -->
         <dependency>
             <groupId>io.papermc</groupId>

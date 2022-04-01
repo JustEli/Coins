@@ -1,10 +1,10 @@
 package me.justeli.coins.hook;
 
-import io.lumine.mythic.api.config.MythicLineConfig;
-import io.lumine.mythic.bukkit.BukkitAPIHelper;
-import io.lumine.mythic.bukkit.adapters.BukkitItemStack;
-import io.lumine.mythic.bukkit.events.MythicDropLoadEvent;
-import io.lumine.mythic.core.drops.droppables.ItemDrop;
+import io.lumine.xikage.mythicmobs.adapters.bukkit.BukkitItemStack;
+import io.lumine.xikage.mythicmobs.api.bukkit.BukkitAPIHelper;
+import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicDropLoadEvent;
+import io.lumine.xikage.mythicmobs.drops.droppables.ItemDrop;
+import io.lumine.xikage.mythicmobs.io.MythicLineConfig;
 import me.justeli.coins.Coins;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;

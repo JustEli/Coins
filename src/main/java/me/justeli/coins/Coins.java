@@ -89,15 +89,20 @@ public final class Coins
 
         if (getServer().getPluginManager().isPluginEnabled("MythicMobs"))
         {
-            Plugin mm = getServer().getPluginManager().getPlugin("MythicMobs");
-            if (mm == null || !mm.getDescription().getVersion().startsWith("5."))
+            Optional<Plugin> mm = Optional.ofNullable(getServer().getPluginManager().getPlugin("MythicMobs"));
+            if (mm.isPresent() && mm.get().getDescription().getVersion().startsWith("4."))
             {
-                console(Level.WARNING, "Detected MythicMobs, but could not hook into it, because Coins supports MythicMobs 5.x only! " +
-                        "Coins 1.12.2 does support MythicMobs 4.x.");
+                enableMythicMobs();
+            }
+            else if (mm.isPresent() && mm.get().getDescription().getVersion().startsWith("5."))
+            {
+                console(Level.WARNING, "Detected MythicMobs 5.x. MythicMobs has released 5.x a while ago, we are trying to figure out how to add " +
+                        "support for their new version. It's not easy because it's built on another Java version that we do not support. We are " +
+                        "thinking of releasing an extra plugin just for MythicMobs support, but it may take a bit of time. Thanks for your patience.");
             }
             else
             {
-                enableMythicMobs();
+                console(Level.WARNING, "Detected MythicMobs, but Coins only supports MythicMobs 4.x.");
             }
         }
 
