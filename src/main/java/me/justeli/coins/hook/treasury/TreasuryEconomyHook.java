@@ -1,5 +1,6 @@
-package me.justeli.coins.hook;
+package me.justeli.coins.hook.treasury;
 
+import me.justeli.coins.hook.EconomyHook;
 import me.justeli.coins.hook.treasury.EconomySubscribers;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
@@ -12,13 +13,13 @@ import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
 
 /** by Rezz on February 02, 2022 **/
-final class TreasuryEconomyHook implements EconomyHook
+public final class TreasuryEconomyHook implements EconomyHook
 {
     public static final String TREASURY = "Treasury";
     
     private final EconomyProvider economy;
     
-    TreasuryEconomyHook (EconomyProvider economy)
+    public TreasuryEconomyHook (EconomyProvider economy)
     {
         this.economy = economy;
     }

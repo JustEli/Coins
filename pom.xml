@@ -8,36 +8,15 @@
     <artifactId>Coins</artifactId>
     <version>b1.12.3</version>
     <name>Coins</name>
+    <description>Coins is a plugin that allows players to collect coins for killing mobs and mining precious blocks. It also comes with the ability to withdraw balance into physical coins.</description>
     <url>https://www.spigotmc.org/resources/coins.33382/</url>
 
     <properties>
+        <!-- Change your Project SDK to at least Java 16, to be able to access dependencies -->
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <id>mojang</id>
-            <url>https://libraries.minecraft.net/</url>
-        </repository>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-        <repository>
-            <id>paper-repo</id>
-            <url>https://papermc.io/repo/repository/maven-public/</url>
-        </repository>
-        <repository>
-            <id>nexus</id>
-            <url>https://mvn.lumine.io/repository/maven-public/</url>
-        </repository>
-    </repositories>
 
     <build>
         <finalName>${project.name}-${project.version}</finalName>
@@ -45,8 +24,17 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
+                <version>3.3.0</version>
                 <configuration>
                     <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
                     <relocations>
@@ -86,6 +74,29 @@
             </resource>
         </resources>
     </build>
+
+    <repositories>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>mojang</id>
+            <url>https://libraries.minecraft.net/</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>paper-repo</id>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>nexus</id>
+            <url>https://mvn.lumine.io/repository/maven-public/</url>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
@@ -132,12 +143,13 @@
             <version>4.9.1</version>
             <scope>provided</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>io.lumine</groupId>-->
-<!--            <artifactId>Mythic-Dist</artifactId>-->
-<!--            <version>5.0.2</version>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>io.lumine</groupId>
+            <artifactId>Mythic-Dist</artifactId>
+            <version>5.0.2</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Compile -->
         <dependency>
             <groupId>io.papermc</groupId>

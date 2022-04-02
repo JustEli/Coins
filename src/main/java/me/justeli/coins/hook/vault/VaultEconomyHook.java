@@ -1,5 +1,6 @@
-package me.justeli.coins.hook;
+package me.justeli.coins.hook.vault;
 
+import me.justeli.coins.hook.EconomyHook;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.Plugin;
 
@@ -9,14 +10,14 @@ import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
 
 /** by Rezz on February 02, 2022 **/
-final class VaultEconomyHook implements EconomyHook
+public final class VaultEconomyHook implements EconomyHook
 {
     public static final String VAULT = "Vault";
     
     private final Plugin plugin;
     private final Economy economy;
     
-    VaultEconomyHook (Plugin plugin, Economy economy)
+    public VaultEconomyHook (Plugin plugin, Economy economy)
     {
         this.plugin = plugin;
         this.economy = economy;

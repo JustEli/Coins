@@ -1,7 +1,6 @@
 package me.justeli.coins.handler;
 
 import me.justeli.coins.Coins;
-import me.justeli.coins.hook.MythicMobsHook;
 import me.justeli.coins.config.Config;
 import me.justeli.coins.item.CoinUtil;
 import me.justeli.coins.util.Permission;
@@ -59,7 +58,7 @@ public final class DropHandler
         if (Util.isDisabledHere(dead.getWorld()))
             return;
 
-        if (this.coins.hasMythicMobs() && Config.DISABLE_MYTHIC_MOB_HANDLING && MythicMobsHook.isMythicMob(dead))
+        if (this.coins.mmHook().isPresent() && Config.DISABLE_MYTHIC_MOB_HANDLING && this.coins.mmHook().get().isMythicMob(dead))
             return;
 
         EntityDamageEvent damageCause = dead.getLastDamageCause();

@@ -1,5 +1,7 @@
 package me.justeli.coins.hook;
 
+import me.justeli.coins.hook.treasury.TreasuryEconomyHook;
+import me.justeli.coins.hook.vault.VaultEconomyHook;
 import me.lokka30.treasury.api.common.service.ServiceRegistry;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import net.milkbowl.vault.economy.Economy;

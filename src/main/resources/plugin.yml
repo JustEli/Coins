@@ -2,7 +2,7 @@ main: '${project.groupId}.${project.name}'
 name: '${project.name}'
 version: '${project.version}'
 website: '${project.url}'
-description: 'Coins is a plugin that allows players to collect coins for killing mobs and mining precious blocks. It also comes with the ability to withdraw balance into physical coins.'
+description: '${project.description}'
 api-version: '1.14'
 authors: [JustEli]
 softdepend: [Vault, Treasury, WorldGuard, mcMMO, MythicMobs]

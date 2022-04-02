@@ -13,10 +13,12 @@ import me.justeli.coins.handler.listener.BukkitEventListener;
 import me.justeli.coins.handler.PickupHandler;
 import me.justeli.coins.handler.DropHandler;
 import me.justeli.coins.handler.listener.PaperEventListener;
-import me.justeli.coins.hook.MythicMobsHook;
-import me.justeli.coins.hook.Metrics;
+import me.justeli.coins.hook.mythicmobs.MMHook;
+import me.justeli.coins.hook.bstats.Metrics;
 import me.justeli.coins.config.Config;
 import me.justeli.coins.config.Settings;
+import me.justeli.coins.hook.mythicmobs.MythicMobsHook4;
+import me.justeli.coins.hook.mythicmobs.MythicMobsHook5;
 import me.justeli.coins.item.BaseCoin;
 import me.justeli.coins.hook.Economies;
 import me.justeli.coins.item.CoinUtil;
@@ -92,17 +94,15 @@ public final class Coins
             Optional<Plugin> mm = Optional.ofNullable(getServer().getPluginManager().getPlugin("MythicMobs"));
             if (mm.isPresent() && mm.get().getDescription().getVersion().startsWith("4."))
             {
-                enableMythicMobs();
+                this.mmHook = new MythicMobsHook4(this);
             }
             else if (mm.isPresent() && mm.get().getDescription().getVersion().startsWith("5."))
             {
-                console(Level.WARNING, "Detected MythicMobs 5.x. MythicMobs has released 5.x a while ago, we are trying to figure out how to add " +
-                        "support for their new version. It's not easy because it's built on another Java version that we do not support. We are " +
-                        "thinking of releasing an extra plugin just for MythicMobs support, but it may take a bit of time. Thanks for your patience.");
+                this.mmHook = new MythicMobsHook5(this);
             }
             else
             {
-                console(Level.WARNING, "Detected MythicMobs, but Coins only supports MythicMobs 4.x.");
+                console(Level.WARNING, "Detected MythicMobs, but the version of MythicMobs you are using is not supported.");
             }
         }
 
@@ -230,9 +230,9 @@ public final class Coins
         manager.registerEvents(new InventoryHandler(this), this);
         manager.registerEvents(new ModificationHandler(this), this);
 
-        if (hasMythicMobs())
+        if (mmHook().isPresent())
         {
-            manager.registerEvents(new MythicMobsHook(this), this);
+            manager.registerEvents(this.mmHook, this);
         }
     }
 
@@ -293,18 +293,12 @@ public final class Coins
         return !this.pluginDisabled;
     }
 
-    private boolean mythicMobsHook = false;
+    private MMHook mmHook;
 
-    public boolean hasMythicMobs ()
+    public Optional<MMHook> mmHook ()
     {
-        return this.mythicMobsHook;
+        return Optional.ofNullable(this.mmHook);
     }
-
-    public void enableMythicMobs ()
-    {
-        this.mythicMobsHook = true;
-    }
-
 
 
     private BaseCoin baseCoin;

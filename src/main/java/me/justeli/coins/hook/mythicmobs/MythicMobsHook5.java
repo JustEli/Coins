@@ -1,28 +1,28 @@
-package me.justeli.coins.hook;
+package me.justeli.coins.hook.mythicmobs;
 
-import io.lumine.xikage.mythicmobs.adapters.bukkit.BukkitItemStack;
-import io.lumine.xikage.mythicmobs.api.bukkit.BukkitAPIHelper;
-import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicDropLoadEvent;
-import io.lumine.xikage.mythicmobs.drops.droppables.ItemDrop;
-import io.lumine.xikage.mythicmobs.io.MythicLineConfig;
+import io.lumine.mythic.api.config.MythicLineConfig;
+import io.lumine.mythic.bukkit.BukkitAPIHelper;
+import io.lumine.mythic.bukkit.adapters.BukkitItemStack;
+import io.lumine.mythic.bukkit.events.MythicDropLoadEvent;
+import io.lumine.mythic.core.drops.droppables.ItemDrop;
 import me.justeli.coins.Coins;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 
-public final class MythicMobsHook
-        implements Listener
+public final class MythicMobsHook5
+        implements MMHook
 {
     private final Coins coins;
 
-    public MythicMobsHook (Coins coins)
+    public MythicMobsHook5 (Coins coins)
     {
         this.coins = coins;
     }
 
     private final static BukkitAPIHelper BUKKIT_API_HELPER = new BukkitAPIHelper();
 
-    public static boolean isMythicMob (Entity entity)
+    @Override
+    public boolean isMythicMob (Entity entity)
     {
         return BUKKIT_API_HELPER.isMythicMob(entity);
     }

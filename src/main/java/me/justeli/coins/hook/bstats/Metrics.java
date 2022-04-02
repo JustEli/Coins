@@ -1,10 +1,11 @@
-package me.justeli.coins.hook;
+package me.justeli.coins.hook.bstats;
 
 import io.papermc.lib.PaperLib;
 import me.justeli.coins.Coins;
 import me.justeli.coins.config.Config;
 import me.justeli.coins.config.Settings;
 import org.bstats.charts.SimplePie;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Locale;
@@ -85,7 +86,7 @@ public final class Metrics
 
             metrics.add("usingSkullTexture", Config.SKULL_TEXTURE != null && !Config.SKULL_TEXTURE.isEmpty());
             metrics.add("usingPaper", PaperLib.isPaper());
-            metrics.add("usingMythicMobs", this.coins.hasMythicMobs());
+            metrics.add("usingMythicMobs", this.coins.mmHook().isPresent());
 
             metrics.add("droppedCoinName", Config.DROPPED_COIN_NAME);
             metrics.add("withdrawnCoinNamesSingular", Config.WITHDRAWN_COIN_NAME_SINGULAR);
@@ -96,6 +97,12 @@ public final class Metrics
             metrics.add("checkForUpdates", Config.CHECK_FOR_UPDATES);
             metrics.add("enchantIncrement", Config.ENCHANT_INCREMENT);
             metrics.add("usingLegacyKeys", Settings.USING_LEGACY_KEYS);
+
+            Plugin mm = this.coins.getServer().getPluginManager().getPlugin("MythicMobs");
+            if (mm != null)
+            {
+                metrics.add("mythicMobsVersion", mm.getDescription().getVersion());
+            }
             metrics.add("economyHook", this.coins.economy().economyName().orElse("None"));
         });
     }
