@@ -1,8 +1,6 @@
 package me.justeli.coins.handler;
 
 import me.justeli.coins.Coins;
-import me.justeli.coins.config.Config;
-import me.justeli.coins.util.Util;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -25,27 +23,16 @@ public final class UnfairMobHandler
     }
 
     @EventHandler
-    public void preventSpawnerCoin (CreatureSpawnEvent event)
+    public void onCreatureSpawn (CreatureSpawnEvent event)
     {
-        if (Config.SPAWNER_DROP)
-            return;
-
-        if (Util.isDisabledHere(event.getEntity().getWorld()))
-            return;
-
-        if (event.getSpawnReason() != SpawnReason.SPAWNER && event.getEntityType() != EntityType.CAVE_SPIDER)
-            return;
-
-        event.getEntity().getPersistentDataContainer().set(this.spawnerMob, PersistentDataType.INTEGER, 1);
-    }
-
-    @EventHandler
-    public void splitPrevent (CreatureSpawnEvent event)
-    {
-        if (event.getSpawnReason() != SpawnReason.SLIME_SPLIT || !Config.PREVENT_SPLITS)
-            return;
-
-        event.getEntity().getPersistentDataContainer().set(this.slimeSplit, PersistentDataType.INTEGER, 1);
+        if (event.getSpawnReason() == SpawnReason.SPAWNER || event.getEntityType() == EntityType.CAVE_SPIDER)
+        {
+            event.getEntity().getPersistentDataContainer().set(this.spawnerMob, PersistentDataType.INTEGER, 1);
+        }
+        else if (event.getSpawnReason() == SpawnReason.SLIME_SPLIT)
+        {
+            event.getEntity().getPersistentDataContainer().set(this.slimeSplit, PersistentDataType.INTEGER, 1);
+        }
     }
 
     public boolean fromSplit (Entity entity)

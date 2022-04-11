@@ -34,7 +34,7 @@ public final class PickupHandler
     private final HashMap<UUID, Long> pickupTimeCache = new HashMap<>();
 
     @EventHandler
-    public void mobPickup (EntityPickupItemEvent event)
+    public void onEntityPickupItem (EntityPickupItemEvent event)
     {
         // handled properly with PickupEvent
         if (event.getEntity() instanceof Player)

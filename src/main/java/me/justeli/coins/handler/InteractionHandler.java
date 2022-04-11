@@ -22,7 +22,7 @@ public final class InteractionHandler
     }
 
     @EventHandler
-    public void coinPlace (PlayerInteractEvent event)
+    public void onPlayerInteract (PlayerInteractEvent event)
     {
         if (event.getAction() == Action.PHYSICAL)
             return;

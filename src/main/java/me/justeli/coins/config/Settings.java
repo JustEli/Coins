@@ -98,11 +98,10 @@ public final class Settings
 
             try
             {
-                boolean legacyChecked = false;
                 if (!config.contains(configKey))
                 {
                     configKey = LEGACY_CONVERTER.convert(configKey);
-                    legacyChecked = true;
+                    USING_LEGACY_KEYS = true;
                 }
 
                 if (configKey == null || !config.contains(configKey))
@@ -121,11 +120,6 @@ public final class Settings
                         ));
                     }
                     continue;
-                }
-
-                if (legacyChecked)
-                {
-                    USING_LEGACY_KEYS = true;
                 }
 
                 Class<?> configClass = field.getType();

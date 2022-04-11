@@ -19,8 +19,11 @@ public final class HopperHandler
     }
 
     @EventHandler (ignoreCancelled = true)
-    public void itemHopper (InventoryPickupItemEvent event)
+    public void onInventoryPickupItem (InventoryPickupItemEvent event)
     {
+        if (!Config.DISABLE_HOPPERS)
+            return;
+
         if (event.getInventory().getType() != InventoryType.HOPPER)
             return;
 
@@ -28,9 +31,6 @@ public final class HopperHandler
         if (!this.coins.getCoinUtil().isDroppedCoin(item))
             return;
 
-        if (Config.DISABLE_HOPPERS)
-        {
-            event.setCancelled(true);
-        }
+        event.setCancelled(true);
     }
 }

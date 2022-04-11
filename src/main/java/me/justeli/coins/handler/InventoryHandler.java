@@ -20,7 +20,7 @@ public final class InventoryHandler
     }
 
     @EventHandler (ignoreCancelled = true)
-    public void coinInventory (InventoryClickEvent event)
+    public void onInventoryClick (InventoryClickEvent event)
     {
         if (Util.isDisabledHere(event.getWhoClicked().getWorld()))
             return;

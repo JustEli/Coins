@@ -18,7 +18,7 @@ public final class PaperEventListener
     }
 
     @EventHandler
-    public void paperPickupEvent (PlayerAttemptPickupItemEvent event)
+    public void onPickupPaper (PlayerAttemptPickupItemEvent event)
     {
         PickupEvent registerEvent = new PickupEvent(event.getPlayer(), event.getItem());
         this.coins.getServer().getPluginManager().callEvent(registerEvent);

@@ -23,7 +23,7 @@ public final class ModificationHandler
     }
 
     @EventHandler
-    public void avoidCrafting (CraftItemEvent event)
+    public void onCraftItem (CraftItemEvent event)
     {
         if (Config.ALLOW_MODIFICATION)
             return;
@@ -38,7 +38,7 @@ public final class ModificationHandler
     }
 
     @EventHandler
-    public void avoidCrafting (PrepareItemCraftEvent event)
+    public void onPrepareItemCraft (PrepareItemCraftEvent event)
     {
         if (Config.ALLOW_MODIFICATION)
             return;
@@ -54,7 +54,7 @@ public final class ModificationHandler
     }
 
     @EventHandler
-    public void avoidAnvil (PrepareAnvilEvent event)
+    public void onPrepareAnvil (PrepareAnvilEvent event)
     {
         if (Config.ALLOW_NAME_CHANGE)
             return;
@@ -66,7 +66,7 @@ public final class ModificationHandler
     }
 
     @EventHandler
-    public void avoidFurnace (FurnaceSmeltEvent event)
+    public void onFurnaceSmelt (FurnaceSmeltEvent event)
     {
         if (Config.ALLOW_MODIFICATION)
             return;
@@ -78,7 +78,7 @@ public final class ModificationHandler
     }
 
     @EventHandler
-    public void avoidFurnace (FurnaceBurnEvent event)
+    public void onFurnaceBurn (FurnaceBurnEvent event)
     {
         if (Config.ALLOW_MODIFICATION)
             return;
