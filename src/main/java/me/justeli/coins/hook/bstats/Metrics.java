@@ -103,7 +103,7 @@ public final class Metrics
             {
                 metrics.add("mythicMobsVersion", mm.getDescription().getVersion());
             }
-            metrics.add("economyHook", this.coins.economy().economyName().orElse("None"));
+            metrics.add("economyHook", this.coins.economy().name().orElse("None"));
         });
     }
 }

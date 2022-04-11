@@ -54,7 +54,7 @@ public final class VaultEconomyHook implements EconomyHook
     }
 
     @Override
-    public Optional<String> economyName ()
+    public Optional<String> name ()
     {
         return Optional.of(VAULT);
     }

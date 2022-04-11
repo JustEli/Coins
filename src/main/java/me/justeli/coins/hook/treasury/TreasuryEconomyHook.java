@@ -102,7 +102,7 @@ public final class TreasuryEconomyHook implements EconomyHook
     }
 
     @Override
-    public Optional<String> economyName ()
+    public Optional<String> name ()
     {
         return Optional.of(TREASURY);
     }

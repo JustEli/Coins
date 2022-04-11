@@ -23,7 +23,7 @@ public final class Economies implements EconomyHook
     private final Set<String> missingPlugins = new LinkedHashSet<>();
     private final Set<String> supportedHooks = new LinkedHashSet<>();
 
-    private EconomyHook hook = null;
+    private EconomyHook economy = null;
 
     public Economies (Plugin plugin)
     {
@@ -39,7 +39,7 @@ public final class Economies implements EconomyHook
                 .map(registration -> new VaultEconomyHook(plugin, registration.getProvider()))
         );
         
-        if (this.hook == null && this.missingPlugins.isEmpty())
+        if (this.economy == null && this.missingPlugins.isEmpty())
         {
             this.missingPlugins.add(String.join(" or ", this.supportedHooks));
         }
@@ -49,13 +49,13 @@ public final class Economies implements EconomyHook
     {
         this.supportedHooks.add(name);
         
-        if (this.hook != null) { return; } // already hooked
+        if (this.economy != null) { return; } // already hooked
         if (!plugin.getServer().getPluginManager().isPluginEnabled(name)) { return; }
         
-        try { this.hook = hooker.get().orElse(null); }
+        try { this.economy = hooker.get().orElse(null); }
         catch (NullPointerException | NoClassDefFoundError ignored) {}
         
-        if (this.hook == null)
+        if (this.economy == null)
         {
             missingPlugins.add("an economy providing plugin for '" + name + "'");
         }
@@ -74,33 +74,33 @@ public final class Economies implements EconomyHook
     @Override
     public void balance (UUID uuid, DoubleConsumer balance)
     {
-        if (hook != null) { hook.balance(uuid, balance); }
+        if (economy != null) { economy.balance(uuid, balance); }
     }
 
     @Override
     public void canAfford (UUID uuid, double amount, Consumer<Boolean> canAfford)
     {
-        if (hook != null) { hook.canAfford(uuid, amount, canAfford); }
+        if (economy != null) { economy.canAfford(uuid, amount, canAfford); }
     }
 
     @Override
     public void withdraw (UUID uuid, double amount, Runnable success)
     {
-        if (hook != null) { hook.withdraw(uuid, amount, success); }
+        if (economy != null) { economy.withdraw(uuid, amount, success); }
     }
 
     @Override
     public void deposit (UUID uuid, double amount, Runnable success)
     {
-        if (hook != null) { hook.deposit(uuid, amount, success); }
+        if (economy != null) { economy.deposit(uuid, amount, success); }
     }
 
     @Override
-    public Optional<String> economyName ()
+    public Optional<String> name ()
     {
-        if (this.hook == null)
+        if (this.economy == null)
             return Optional.empty();
 
-        return this.hook.economyName();
+        return this.economy.name();
     }
 }

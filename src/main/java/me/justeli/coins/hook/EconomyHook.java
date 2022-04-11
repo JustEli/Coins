@@ -16,5 +16,5 @@ public interface EconomyHook
     
     void deposit (UUID uuid, double amount, Runnable success);
 
-    Optional<String> economyName ();
+    Optional<String> name ();
 }
