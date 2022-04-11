@@ -13,10 +13,14 @@ import org.bukkit.entity.Golem;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Snowman;
 import org.bukkit.entity.Wolf;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.projectiles.ProjectileSource;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -208,5 +212,43 @@ public final class Util
         }
 
         return pages;
+    }
+
+    public static Optional<Player> getRootDamage (LivingEntity dead)
+    {
+        if (dead.getKiller() != null)
+        {
+            return Optional.of(dead.getKiller());
+        }
+
+        EntityDamageEvent damageCause = dead.getLastDamageCause();
+        if (damageCause instanceof EntityDamageByEntityEvent)
+        {
+            return getRootDamage((EntityDamageByEntityEvent) damageCause);
+        }
+
+        return Optional.empty();
+    }
+
+    public static Optional<Player> getRootDamage (EntityDamageByEntityEvent damageEvent)
+    {
+        Entity attacker = damageEvent.getDamager();
+        if (attacker instanceof Player)
+        {
+            return Optional.of((Player) attacker);
+        }
+
+        if (!(attacker instanceof Projectile))
+        {
+            return Optional.empty();
+        }
+
+        ProjectileSource shooter = ((Projectile) attacker).getShooter();
+        if (shooter instanceof Player)
+        {
+            return Optional.of((Player) shooter);
+        }
+
+        return Optional.empty();
     }
 }

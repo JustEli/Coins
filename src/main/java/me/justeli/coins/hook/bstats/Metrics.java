@@ -76,7 +76,7 @@ public final class Metrics
             metrics.add("enableWithdraw", Config.ENABLE_WITHDRAW);
             metrics.add("maxWithdrawAmount", Config.MAX_WITHDRAW_AMOUNT);
             metrics.add("minePercentage", Config.MINE_PERCENTAGE * 100 + "%");
-            metrics.add("onlyExperienceBlocks", Config.ONLY_EXPERIENCE_BLOCKS);
+            metrics.add("hostile-drop", Config.HOSTILE_DROP);
             metrics.add("loseOnDeath", Config.LOSE_ON_DEATH);
             metrics.add("moneyTaken", (Config.MONEY_TAKEN_FROM + Config.MONEY_TAKEN_TO) / 2);
             metrics.add("takePercentage", Config.TAKE_PERCENTAGE);

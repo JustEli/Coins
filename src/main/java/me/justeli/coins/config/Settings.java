@@ -8,10 +8,12 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EntityType;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -215,26 +217,66 @@ public final class Settings
         {
             Config.ALLOW_NAME_CHANGE = false;
         }
+
+        Config.RAW_BLOCK_DROPS.putAll(Config.LEGACY_RAW_BLOCK_MULTIPLIER);
+
+        Config.BLOCK_DROPS.clear();
+        Config.RAW_BLOCK_DROPS.forEach((k, v) ->
+        {
+            Material material = getMaterial(k, "block-drops");
+            if (material != null)
+            {
+                Config.BLOCK_DROPS.put(material, v);
+            }
+        });
+
+        Config.MOB_MULTIPLIER.clear();
+        Config.RAW_MOB_MULTIPLIER.forEach((k, v) ->
+        {
+            EntityType entityType = getEntityType(k, "mob-multiplier");
+            if (entityType != null)
+            {
+                Config.MOB_MULTIPLIER.put(entityType, v);
+            }
+        });
+    }
+
+    @Nullable
+    private Material getMaterial (String name, String configKey)
+    {
+        Material material = Material.matchMaterial(name.replace(" ", "_").toUpperCase(Locale.ROOT).replace("COIN", "SUNFLOWER"));
+
+        if (material == null)
+        {
+            warning("The material '" + name + "' in the config at `" + configKey + "` does not exist. Please use a " +
+                    "material from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html");
+
+            return null;
+        }
+
+        return material;
+    }
+
+    @Nullable
+    private EntityType getEntityType (String name, String configKey)
+    {
+        try
+        {
+            return EntityType.valueOf(name.replace(" ", "_").toUpperCase(Locale.ROOT));
+        }
+        catch (IllegalArgumentException exception)
+        {
+            warning("The mob name '" + name + "' in the config at `" + configKey + "` does not exist. Please use a " +
+                    "name from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html");
+
+            return null;
+        }
     }
 
     private Material coinItem ()
     {
-        String material = Config.RAW_COIN_ITEM
-                .replace(" ", "_")
-                .toUpperCase(Locale.ROOT)
-                .replace("COIN", "SUNFLOWER");
-
-        Material coin = Material.matchMaterial(material);
-
-        if (coin == null)
-        {
-            warning("The material '" + Config.RAW_COIN_ITEM + "' in the config at `coin-item` does not exist. Please use a " +
-                    "material from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html");
-
-            return Material.SUNFLOWER;
-        }
-
-        return coin;
+        Material coin = getMaterial(Config.RAW_COIN_ITEM, "coin-item");
+        return coin == null? Material.SUNFLOWER : coin;
     }
 
     private Sound soundName ()

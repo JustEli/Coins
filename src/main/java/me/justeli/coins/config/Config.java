@@ -15,6 +15,7 @@ public class Config
     @ConfigEntry ("stack-coins") public static Boolean STACK_COINS = false;
     @ConfigEntry ("spawner-drop") public static Boolean SPAWNER_DROP = false;
     @ConfigEntry ("passive-drop") public static Boolean PASSIVE_DROP = false;
+    @ConfigEntry ("hostile-drop") public static Boolean HOSTILE_DROP = true;
     @ConfigEntry ("pickup-sound") public static Boolean PICKUP_SOUND = true;
     @ConfigEntry ("lose-on-death") public static Boolean LOSE_ON_DEATH = true;
     @ConfigEntry ("player-drop") public static Boolean PLAYER_DROP = true;
@@ -24,7 +25,6 @@ public class Config
     @ConfigEntry ("prevent-splits") public static Boolean PREVENT_SPLITS = true;
     @ConfigEntry ("take-percentage") public static Boolean TAKE_PERCENTAGE = false;
     @ConfigEntry ("drop-on-death") public static Boolean DROP_ON_DEATH = false;
-    @ConfigEntry ("only-experience-blocks") public static Boolean ONLY_EXPERIENCE_BLOCKS = true;
     @ConfigEntry ("disable-hoppers") public static Boolean DISABLE_HOPPERS = false;
     @ConfigEntry ("drop-with-any-death") public static Boolean DROP_WITH_ANY_DEATH = false;
     @ConfigEntry ("enchanted-coin") public static Boolean ENCHANTED_COIN = false;
@@ -44,6 +44,12 @@ public class Config
     @ConfigEntry ("sound-name") protected static String RAW_SOUND_NAME = "ITEM_ARMOR_EQUIP_GOLD";
     @ConfigEntry ("currency-symbol") public static String CURRENCY_SYMBOL = "$";
     @ConfigEntry ("skull-texture") public static String SKULL_TEXTURE = "";
+
+    // todo
+    // @ConfigEntry("preferred-economy-hook") public static String PREFERRED_ECONOMY_HOOK = "Vault";
+    // # If you have multiple economy handlers installed, which one should get priority?
+    // #  This plugin supports either 'Vault' or 'Treasury'.
+    // preferred-economy-hook: 'Vault'
 
     @ConfigEntry (value = "dropped-coin-name", motivation = "This is a replacement, previous key was 'nameOfCoin', which will be unsupported in a future " +
             "version.") protected static String RAW_DROPPED_COIN_NAME = "&6Coin";
@@ -76,7 +82,10 @@ public class Config
     @ConfigEntry ("disabled-worlds") public static Set<String> DISABLED_WORLDS = new HashSet<>();
 
     @ConfigEntry ("mob-multiplier") protected static Map<String, Integer> RAW_MOB_MULTIPLIER = new HashMap<>();
-    @ConfigEntry ("block-multiplier") protected static Map<String, Integer> RAW_BLOCK_MULTIPLIER = new HashMap<>();
+    @ConfigEntry ("block-drops") protected static Map<String, Integer> RAW_BLOCK_DROPS = new HashMap<>();
+
+    @Deprecated @ConfigEntry (value = "block-multiplier", required = false)
+    protected static Map<String, Integer> LEGACY_RAW_BLOCK_MULTIPLIER = new HashMap<>();
 
     public static String DROPPED_COIN_NAME;
     public static String WITHDRAWN_COIN_NAME_SINGULAR;
@@ -86,17 +95,10 @@ public class Config
     public static Material COIN_ITEM;
     public static Sound SOUND_NAME;
 
+    public static Map<Material, Integer> BLOCK_DROPS = new HashMap<>();
+    public static Map<EntityType, Integer> MOB_MULTIPLIER = new HashMap<>();
+
     @Deprecated protected static final String LEGACY_PREFIX = "&e{amount} &r";
-
-    public static int mobMultiplier (EntityType type)
-    {
-        return RAW_MOB_MULTIPLIER.computeIfAbsent(type.toString(), empty -> 1);
-    }
-
-    public static int blockMultiplier (Material material)
-    {
-        return RAW_BLOCK_MULTIPLIER.computeIfAbsent(material.toString(), empty -> 1);
-    }
 
     private Config () {}
 }

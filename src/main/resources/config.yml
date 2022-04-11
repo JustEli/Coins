@@ -125,6 +125,11 @@ enchant-increment: 0.05
 #  Coin Mob Drops    #
 #  #  #  #  #  #  #  #
 
+# Should hostile and passive mobs drop coins? Hostile mobs drop coins by default,
+#  and passive mobs don't.
+hostile-drop: true
+passive-drop: false
+
 # The minimum percentage of damage a player needs to deal to a mob to drop coins.
 #  This can be useful for one-hit mob grinders that damage mobs from fall damage,
 #  for example. Value from 0.00 to 1.00: 0.00 meaning 0%, 1.00 meaning 100%.
@@ -147,23 +152,22 @@ drop-chance: 0.90
 #  permission 'coins.spawner'.
 spawner-drop: false
 
-# Should passive mobs also drop coins? Passive mobs don't drop a coin by default.
-passive-drop: false
-
 # Also drop coins when the mob is NOT killed by a player? So the mob has a natural
 #  death, excluding de-spawns. That means that any death cause will have the mob
 #  drop coins, not just by player kills!
 drop-with-any-death: false
 
-# You can add multipliers for specific mobs here. By default, mobs drop one coin.
-#  Ender Dragon is added by default, so when an Ender Dragon is killed, 50 coins
-#  drop. Set a mob type to 0 (i.e. 'bat': 0) to disable coins for that specific
-#  type. If you want to have no mob multipliers, you can set 'mob-multiplier: {}'
+# You can add multipliers for specific mobs here. By default, mobs that are enabled
+#  to drop coins drop one coin. Ender Dragon is added by default, so when an Ender
+#  Dragon is killed, 20 coins drop. Set a mob type to 0 (i.e. 'bat': 0) to disable
+#  coins for that specific type. If you want to have no mob multipliers, you can set
+#  'mob-multiplier: {}'. You can also add mobs here that don't drop coins in the
+#  first place, but want them to drop coins anyway. For example if 'passive-drop' is
+#  false, but you still want cows and sheep to drop coins, add them down here.
 # Mobs: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/EntityType.html
 mob-multiplier:
-  'ender dragon': 50
-  'wither': 20
-  'player': 3
+  'ender dragon': 20
+  'wither': 10
 
 # Prevent slimes and magma cubes spawned by splits from dropping coins. I've noticed
 #  that players can easily get many coins in slime chunks when keeping this to false.
@@ -186,21 +190,35 @@ prevent-alts: true
 #  Coin Block Drops  #
 #  #  #  #  #  #  #  #
 
-# Drop coins for mined blocks. What's the chance per mined block? Should coins only
-#  drop by the given chance for blocks that drop experience, like lapis, spawners?
-mine-percentage: 0.30
-only-experience-blocks: true
-
-# You can add multipliers for specific blocks here. By default, blocks drop one
-#  coin. Keep in mind that this is only for blocks that drop experience if
-#  'only-experience-blocks' is true. Set a block type to 0 (i.e. 'coal ore': 0) to
-#  disable coins for that specific type. If you want to have no block multipliers,
-#  you can set 'block-multiplier: {}'
+# Drop coins for mined blocks. This setting only works when the block drops a
+#  different item than the block itself. For example a Diamond Ore drops Diamond
+#  without Silk Touch. So it doesn't work when using Silk Touch. That is because
+#  the player would be able to place the block again, and get coins once again.
+#  The number behind the block name below is the multiplier for coin drops.
 # Materials: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
-block-multiplier:
-  'emerald ore': 2
+block-drops:
   'diamond ore': 2
-  'spawner': 5
+  'deepslate diamond ore': 3
+  'spawner': 5 # You may need to remove this if you have SilkSpawners.
+  'emerald ore': 2
+  'deepslate emerald ore': 2
+  'gold ore': 1
+  'deepslate gold ore': 1
+  'nether gold ore': 1
+  'iron ore': 1
+  'deepslate iron ore': 1
+  'lapis ore': 1
+  'deepslate lapis ore': 1
+  'copper ore': 1
+  'deepslate copper ore': 1
+  'nether quartz ore': 1
+  'coal ore': 1
+  'deepslate coal ore': 1
+  'redstone ore': 1
+  'deepslate redstone ore': 1
+
+# What's the chance per mined block? Set to 0 to disable dropping coins for blocks.
+mine-percentage: 0.30
 
 #  #  #  #  #  #
 #  Withdraw    #

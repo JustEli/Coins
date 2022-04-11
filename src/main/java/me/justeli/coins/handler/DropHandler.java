@@ -7,27 +7,28 @@ import me.justeli.coins.util.Permission;
 import me.justeli.coins.util.SubTitle;
 import me.justeli.coins.util.Util;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.projectiles.ProjectileSource;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.net.InetSocketAddress;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.SplittableRandom;
 
 public final class DropHandler
@@ -61,171 +62,150 @@ public final class DropHandler
         if (this.coins.mmHook().isPresent() && Config.DISABLE_MYTHIC_MOB_HANDLING && this.coins.mmHook().get().isMythicMob(dead))
             return;
 
-        EntityDamageEvent damageCause = dead.getLastDamageCause();
+        if (Config.LOSE_ON_DEATH && dead instanceof Player)
+        {
+            loseOnDeathHandler((Player) dead);
+        }
 
-        if (dead.getKiller() != null)
+        if (Config.DROP_WITH_ANY_DEATH)
         {
-            entityDeath(event.getEntity(), event.getEntity().getKiller());
+            mobChecker(dead, null);
+            return;
         }
-        else if (damageCause instanceof EntityDamageByEntityEvent)
-        {
-            entityDeath(dead, resolvePlayerShooterOrNull((EntityDamageByEntityEvent) damageCause));
-        }
-        else
-        {
-            entityDeath(dead, null);
-        }
+
+        AttributeInstance maxHealth = dead.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        if (maxHealth == null)
+            return;
+
+        if (Config.PERCENTAGE_PLAYER_HIT > 0 && getPlayerDamage(dead) / maxHealth.getValue() < Config.PERCENTAGE_PLAYER_HIT)
+            return;
+
+        Optional<Player> attacker = Util.getRootDamage(dead);
+        if (!attacker.isPresent())
+            return;
+
+        mobChecker(dead, attacker.get());
     }
 
-    public void entityDeath (LivingEntity entity, Player killer)
+    private void loseOnDeathHandler (@NotNull Player dead)
     {
-        if (Config.LIMIT_FOR_LOCATION >= 1)
+        double random = Util.getRandomTakeAmount();
+        this.coins.economy().balance(dead.getUniqueId(), balance ->
         {
-            Location location = entity.getLocation().getBlock().getLocation();
-            long previousTime = this.locationLastTimeCache.computeIfAbsent(location, empty -> 0L);
-
-            if (previousTime > System.currentTimeMillis() - 3600000 * Config.LOCATION_LIMIT_HOURS)
-            {
-                // within the past hour
-                int killAmount = this.locationAmountCache.computeIfAbsent(location, empty -> 0);
-
-                this.locationAmountCache.put(location, killAmount + 1);
-                this.locationLastTimeCache.put(location, System.currentTimeMillis());
-
-                if (killAmount >= Config.LIMIT_FOR_LOCATION)
-                {
-                    return;
-                }
-            }
-            else
-            {
-                this.locationAmountCache.put(location, 1);
-                this.locationLastTimeCache.put(location, System.currentTimeMillis());
-            }
-        }
-
-        if (!Config.DROP_WITH_ANY_DEATH && killer != null)
-        {
-            AttributeInstance maxHealth = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-            double hitSetting = Config.PERCENTAGE_PLAYER_HIT;
-
-            if (hitSetting > 0 && maxHealth != null && getPlayerDamage(entity) / maxHealth.getValue() < hitSetting)
+            if (balance <= 0)
                 return;
-        }
 
-        if (killer != null)
-        {
-            if (Util.isHostile(entity) || (Util.isPassive(entity) && Config.PASSIVE_DROP))
+            double take = Util.round(
+                    Config.TAKE_PERCENTAGE
+                            ? (random / 100) * balance
+                            : random
+            );
+
+            if (take <= 0)
+                return;
+
+            this.coins.economy().withdraw(dead.getUniqueId(), take, () ->
             {
-                dropMobCoin(entity, killer);
-            }
-            else if (entity instanceof Player && Config.PLAYER_DROP)
-            {
-                this.coins.economy().balance(entity.getUniqueId(), balance ->
+                SubTitle.of(Util.formatAmountAndCurrency(Config.DEATH_MESSAGE, take)).send(dead);
+
+                if (Config.DROP_ON_DEATH && dead.getLocation().getWorld() != null)
                 {
-                    if (balance > 0)
-                    {
-                        dropMobCoin(entity, killer);
-                    }
-                });
-            }
-        }
-        else if (Config.DROP_WITH_ANY_DEATH)
-        {
-            dropMobCoin(entity, null);
-        }
-
-        if (entity instanceof Player && Config.LOSE_ON_DEATH)
-        {
-            Player player = (Player) entity;
-
-            double random = Util.getRandomTakeAmount();
-
-            this.coins.economy().balance(player.getUniqueId(), balance ->
-            {
-                if (balance <= 0)
-                    return;
-
-                double take = Util.round(
-                        Config.TAKE_PERCENTAGE
-                                ? (random / 100) * balance
-                                : random
-                );
-
-                if (take > 0)
-                {
-                    this.coins.economy().withdraw(player.getUniqueId(), take, () ->
-                    {
-                        SubTitle.of(Util.formatAmountAndCurrency(Config.DEATH_MESSAGE, take)).send(player);
-
-                        if (Config.DROP_ON_DEATH && player.getLocation().getWorld() != null)
-                        {
-                            player.getWorld().dropItem(
-                                    player.getLocation(),
-                                    this.coins.getCreateCoin().other().data(CoinUtil.COINS_WORTH, take).build()
-                            );
-                        }
-                    });
+                    dead.getWorld().dropItem(
+                            dead.getLocation(),
+                            this.coins.getCreateCoin().other().data(CoinUtil.COINS_WORTH, take).build()
+                    );
                 }
             });
-        }
+        });
     }
 
-    // Bow & Trident Section
-
-    @Nullable
-    public Projectile resolveProjectileOrNull (EntityDamageByEntityEvent event)
+    private void mobChecker (@NotNull Entity dead, @Nullable Player attacker)
     {
-        Entity damager = event.getDamager();
-        return (damager instanceof Projectile)? (Projectile) damager : null;
-    }
+        if (Config.PREVENT_SPLITS && this.coins.getUnfairMobHandler().fromSplit(dead))
+            return;
 
-    @Nullable
-    public Player resolvePlayerShooterOrNull (EntityDamageByEntityEvent event)
-    {
-        Projectile projectile = resolveProjectileOrNull(event);
-        if (projectile == null)
-            return null;
+        if ((!Config.SPAWNER_DROP && this.coins.getUnfairMobHandler().fromSpawner(dead))
+                || (attacker != null && attacker.hasPermission(Permission.SPAWNER)))
+            return;
 
-        ProjectileSource shooter = projectile.getShooter();
-        return (shooter instanceof Player) ? (Player) shooter : null;
-    }
-
-    // End of Bow & Trident Section
-
-    private void dropMobCoin (Entity victim, @Nullable Player killer)
-    {
-        if (killer != null && victim instanceof Player && Config.PREVENT_ALTS)
+        if (Config.MOB_MULTIPLIER.containsKey(dead.getType()) && !(dead instanceof Player))
         {
-            Player player = (Player) victim;
-            if (killer.getAddress().getAddress().getHostAddress().equals(player.getAddress().getAddress().getHostAddress()))
+            mobHandler(dead, attacker);
+            return;
+        }
+
+        if (!Config.HOSTILE_DROP && Util.isHostile(dead))
+            return;
+
+        if (!Config.PASSIVE_DROP && Util.isPassive(dead))
+            return;
+
+        if (!Config.PLAYER_DROP && dead instanceof Player)
+            return;
+
+        if (dead instanceof Player)
+        {
+            this.coins.economy().balance(dead.getUniqueId(), balance -> { if (balance > 0) mobHandler(dead, attacker); });
+            return;
+        }
+
+        mobHandler(dead, attacker);
+    }
+
+    private void mobHandler (@NotNull Entity dead, @Nullable Player attacker)
+    {
+        if (Config.PREVENT_ALTS && attacker != null && dead instanceof Player)
+        {
+            Player victim = (Player) dead;
+
+            InetSocketAddress address1 = attacker.getAddress();
+            InetSocketAddress address2 = victim.getAddress();
+
+            if (address1 != null && address2 != null && address1.getAddress().getHostAddress().equals(address2.getAddress().getHostAddress()))
                 return;
         }
 
-        if (this.coins.getUnfairMobHandler().fromSplit(victim) && Config.PREVENT_SPLITS)
+        if (RANDOM.nextDouble() > Config.DROP_CHANCE)
             return;
 
-        if (this.coins.getUnfairMobHandler().fromSpawner(victim) && !hasSpawnerPermission(killer))
+        if (!isLocationAvailableAndSet(dead))
             return;
 
-        if (RANDOM.nextDouble() <= Config.DROP_CHANCE)
-        {
-            final int amount = Config.mobMultiplier(victim.getType());
-            dropCoin(amount, killer, victim.getLocation(), true);
-        }
+        drop(
+                Config.MOB_MULTIPLIER.getOrDefault(dead.getType(), 1),
+                attacker,
+                dead.getLocation(),
+                Enchantment.LOOT_BONUS_MOBS
+        );
     }
 
-    private boolean hasSpawnerPermission (Player player)
+    private boolean isLocationAvailableAndSet (Entity dead)
     {
-        if (player == null)
-            return Config.SPAWNER_DROP;
+        if (Config.LIMIT_FOR_LOCATION < 1)
+            return true;
 
-        return Config.SPAWNER_DROP || player.hasPermission(Permission.SPAWNER);
+        Location location = dead.getLocation().getBlock().getLocation();
+        long previousTime = this.locationLastTimeCache.computeIfAbsent(location, empty -> 0L);
+
+        if (previousTime > System.currentTimeMillis() - 3600000 * Config.LOCATION_LIMIT_HOURS)
+        {
+            // within the past hour
+            int killAmount = this.locationAmountCache.computeIfAbsent(location, empty -> 0);
+
+            this.locationAmountCache.put(location, killAmount + 1);
+            this.locationLastTimeCache.put(location, System.currentTimeMillis());
+
+            return killAmount < Config.LIMIT_FOR_LOCATION;
+        }
+
+        this.locationAmountCache.put(location, 1);
+        this.locationLastTimeCache.put(location, System.currentTimeMillis());
+        return true;
     }
 
     @EventHandler (ignoreCancelled = true,
                    priority = EventPriority.MONITOR)
-    public void onMine (BlockBreakEvent event)
+    public void onBlockBreak (BlockBreakEvent event)
     {
         if (this.coins.isDisabled())
             return;
@@ -233,39 +213,47 @@ public final class DropHandler
         if (Config.MINE_PERCENTAGE == 0)
             return;
 
-        if (!Config.ONLY_EXPERIENCE_BLOCKS)
-        {
-            dropBlockCoin(event.getBlock(), event.getPlayer());
+        if (blockDropsSameItem(event))
             return;
-        }
 
-        if (event.getExpToDrop() > 0)
-        {
-            dropBlockCoin(event.getBlock(), event.getPlayer());
-        }
-    }
+        int multiplier = Config.BLOCK_DROPS.computeIfAbsent(event.getBlock().getType(), empty -> 0);
+        if (multiplier == 0)
+            return;
 
-    private void dropBlockCoin (Block block, Player player)
-    {
         if (RANDOM.nextDouble() <= Config.MINE_PERCENTAGE)
         {
-            final int amount = Config.blockMultiplier(block.getType());
-            this.coins.sync(1, () -> dropCoin(amount, player, block.getLocation().clone().add(0.5, 0.5, 0.5), false));
+            this.coins.sync(1, () -> drop(
+                    multiplier,
+                    event.getPlayer(),
+                    event.getBlock().getLocation().clone().add(0.5, 0.5, 0.5),
+                    Enchantment.LOOT_BONUS_BLOCKS
+            ));
         }
     }
 
-    private void dropCoin (int amount, @Nullable Player player, Location location, boolean mobElseBlock)
+    private boolean blockDropsSameItem (BlockBreakEvent event)
     {
+        Material type = event.getBlock().getType();
+        for (ItemStack item : event.getBlock().getDrops(event.getPlayer().getInventory().getItemInMainHand()))
+        {
+            if (item.getType() == type)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void drop (int amount, @Nullable Player player, @NotNull Location location, @NotNull Enchantment enchantment)
+    {
+        if (location.getWorld() == null)
+            return;
+
         double increment = 1;
 
         if (player != null && Config.ENCHANT_INCREMENT > 0)
         {
-            int lootingLevel = player.getInventory().getItemInMainHand().getEnchantmentLevel(
-                    mobElseBlock
-                            ? Enchantment.LOOT_BONUS_MOBS
-                            : Enchantment.LOOT_BONUS_BLOCKS
-            );
-
+            int lootingLevel = player.getInventory().getItemInMainHand().getEnchantmentLevel(enchantment);
             if (lootingLevel > 0)
             {
                 increment += lootingLevel * Config.ENCHANT_INCREMENT;
@@ -283,9 +271,6 @@ public final class DropHandler
             amount *= Util.getMultiplier(player);
         }
 
-        if (location.getWorld() == null)
-            return;
-
         for (int i = 0; i < amount; i++)
         {
             location.getWorld().dropItem(
@@ -295,15 +280,10 @@ public final class DropHandler
         }
     }
 
-    private double getPlayerDamage (Entity entity)
-    {
-        return entity.getPersistentDataContainer().getOrDefault(this.playerDamage, PersistentDataType.DOUBLE, 0D);
-    }
-
     @EventHandler (priority = EventPriority.LOW)
-    public void registerHits (EntityDamageByEntityEvent event)
+    public void onEntityDamage (EntityDamageByEntityEvent event)
     {
-        if (!(event.getDamager() instanceof Player) && resolvePlayerShooterOrNull(event) == null)
+        if (!Util.getRootDamage(event).isPresent())
             return;
 
         double playerDamage = getPlayerDamage(event.getEntity());
@@ -312,5 +292,10 @@ public final class DropHandler
                 PersistentDataType.DOUBLE,
                 playerDamage + event.getFinalDamage()
         );
+    }
+
+    private double getPlayerDamage (@NotNull Entity entity)
+    {
+        return entity.getPersistentDataContainer().getOrDefault(this.playerDamage, PersistentDataType.DOUBLE, 0D);
     }
 }
