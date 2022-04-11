@@ -124,9 +124,11 @@ public final class DropHandler
         if (Config.PREVENT_SPLITS && this.coins.getUnfairMobHandler().fromSplit(dead))
             return;
 
-        if ((!Config.SPAWNER_DROP && this.coins.getUnfairMobHandler().fromSpawner(dead))
-                || (attacker != null && attacker.hasPermission(Permission.SPAWNER)))
-            return;
+        if (!Config.SPAWNER_DROP && this.coins.getUnfairMobHandler().fromSpawner(dead))
+        {
+            if (attacker == null || !attacker.hasPermission(Permission.SPAWNER))
+                return;
+        }
 
         if (Config.MOB_MULTIPLIER.containsKey(dead.getType()) && !(dead instanceof Player))
         {
