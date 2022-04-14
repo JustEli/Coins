@@ -92,15 +92,18 @@ public final class Coins
         if (getServer().getPluginManager().isPluginEnabled("MythicMobs"))
         {
             Optional<Plugin> mm = Optional.ofNullable(getServer().getPluginManager().getPlugin("MythicMobs"));
-            if (mm.isPresent() && mm.get().getDescription().getVersion().startsWith("4."))
+            try
             {
-                this.mmHook = new MythicMobsHook4(this);
+                if (mm.isPresent() && mm.get().getDescription().getVersion().startsWith("4."))
+                {
+                    this.mmHook = new MythicMobsHook4(this);
+                }
+                else if (mm.isPresent())
+                {
+                    this.mmHook = new MythicMobsHook5(this);
+                }
             }
-            else if (mm.isPresent() && mm.get().getDescription().getVersion().startsWith("5."))
-            {
-                this.mmHook = new MythicMobsHook5(this);
-            }
-            else
+            catch (Exception | NoClassDefFoundError exception)
             {
                 console(Level.WARNING, "Detected MythicMobs, but the version of MythicMobs you are using is not supported.");
             }
