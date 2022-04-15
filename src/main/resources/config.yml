@@ -218,7 +218,7 @@ block-drops:
   'deepslate redstone ore': 1
 
 # What's the chance per mined block? Set to 0 to disable dropping coins for blocks.
-mine-percentage: 0.30
+mine-percentage: 0.20
 
 #  #  #  #  #  #
 #  Withdraw    #

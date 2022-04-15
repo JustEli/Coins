@@ -13,7 +13,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -114,7 +113,7 @@ public final class Settings
                         Object defaultValue = prefixSuffix + field.get(Config.class) + prefixSuffix;
 
                         warning(String.format(
-                                "\nConfig file is missing key called '%s'. Using its default value now (%s)."
+                                "\nConfig file is missing key `%s`. Using its default value now (%s)."
                                         + (configEntry.motivation().isEmpty()? "" : " " + configEntry.motivation())
                                         + " Consider to add this to the config:\n----------------------------------------\n%s: %s" +
                                         "\n----------------------------------------",
@@ -145,6 +144,26 @@ public final class Settings
                         );
                     }
                     configValue = configMap;
+                }
+                else if (configClass == String.class || configClass == Material.class || configClass == Sound.class)
+                {
+                    String value = config.getString(configKey);
+                    if (value == null)
+                    {
+                        throw new NullPointerException();
+                    }
+                    else if (configClass == Material.class)
+                    {
+                        configValue = getMaterial(value, configEntry.value()).orElse(Material.SUNFLOWER);
+                    }
+                    else if (configClass == Sound.class)
+                    {
+                        configValue = getSound(value, configEntry.value()).orElse(Sound.ITEM_ARMOR_EQUIP_GOLD);
+                    }
+                    else
+                    {
+                        configValue = Util.color(value);
+                    }
                 }
                 // can be improved in java 11
                 else if (configClass == Long.class || configClass == Integer.class || configClass == Float.class || configClass == Double.class)
@@ -182,7 +201,7 @@ public final class Settings
                 {
                     Object defaultValue = field.get(Config.class);
                     warning(String.format(
-                            "Config file has wrong value for key called '%s'. Using its default value now (%s).",
+                            "Config file has wrong value at `%s`. Using its default value now (%s).",
                             configEntry.value(),
                             defaultValue
                     ));
@@ -196,53 +215,49 @@ public final class Settings
 
     private void parseRemainingOptions ()
     {
-        Config.DROPPED_COIN_NAME = Util.color(Config.LEGACY_RAW_NAME_OF_COIN == null? Config.RAW_DROPPED_COIN_NAME : Config.LEGACY_RAW_NAME_OF_COIN);
-
-        Config.WITHDRAWN_COIN_NAME_SINGULAR = Util.color(Config.LEGACY_RAW_NAME_OF_COIN == null
-                ? Config.RAW_WITHDRAWN_COIN_NAME_SINGULAR
-                : Config.LEGACY_PREFIX + Config.LEGACY_RAW_NAME_OF_COIN);
-
-        Config.WITHDRAWN_COIN_NAME_PLURAL = Util.color(Config.LEGACY_MULTI_SUFFIX == null && Config.LEGACY_RAW_NAME_OF_COIN == null
-                ? Config.RAW_WITHDRAWN_COIN_NAME_PLURAL
-                : Config.LEGACY_PREFIX + Config.LEGACY_RAW_NAME_OF_COIN + Config.LEGACY_MULTI_SUFFIX);
-
-        Config.LEGACY_WITHDRAWN_COIN_ENDING = Config.LEGACY_MULTI_SUFFIX == null && Config.LEGACY_RAW_NAME_OF_COIN == null
-                ? null
-                : Util.color(Config.LEGACY_RAW_NAME_OF_COIN + Config.LEGACY_MULTI_SUFFIX);
-
-        Config.COIN_ITEM = coinItem();
-        Config.SOUND_NAME = soundName();
+        // start compatibility with older versions
 
         if (Config.DETECT_LEGACY_COINS)
         {
+            if (Config.LEGACY_WITHDRAWN_COIN_ENDING != null)
+            {
+                Config.DROPPED_COIN_NAME = Config.LEGACY_NAME_OF_COIN;
+            }
+
+            if (Config.LEGACY_NAME_OF_COIN != null)
+            {
+                Config.WITHDRAWN_COIN_NAME_SINGULAR = Config.LEGACY_PREFIX + Config.LEGACY_NAME_OF_COIN;
+            }
+
+            if (Config.LEGACY_MULTI_SUFFIX != null && Config.LEGACY_NAME_OF_COIN != null)
+            {
+                Config.WITHDRAWN_COIN_NAME_PLURAL = Config.LEGACY_PREFIX + Config.LEGACY_NAME_OF_COIN + Config.LEGACY_MULTI_SUFFIX;
+                Config.LEGACY_WITHDRAWN_COIN_ENDING = Config.LEGACY_NAME_OF_COIN + Config.LEGACY_MULTI_SUFFIX;
+            }
+
             Config.ALLOW_NAME_CHANGE = false;
         }
 
         Config.RAW_BLOCK_DROPS.putAll(Config.LEGACY_RAW_BLOCK_MULTIPLIER);
 
+        // end compatibility with older versions
+
         Config.BLOCK_DROPS.clear();
         Config.RAW_BLOCK_DROPS.forEach((k, v) ->
         {
-            Material material = getMaterial(k, "block-drops");
-            if (material != null)
-            {
-                Config.BLOCK_DROPS.put(material, v);
-            }
+            Optional<Material> material = getMaterial(k, "block-drops");
+            material.ifPresent(value -> Config.BLOCK_DROPS.put(value, v));
         });
 
         Config.MOB_MULTIPLIER.clear();
         Config.RAW_MOB_MULTIPLIER.forEach((k, v) ->
         {
-            EntityType entityType = getEntityType(k, "mob-multiplier");
-            if (entityType != null)
-            {
-                Config.MOB_MULTIPLIER.put(entityType, v);
-            }
+            Optional<EntityType> entityType = getEntityType(k, "mob-multiplier");
+            entityType.ifPresent(type -> Config.MOB_MULTIPLIER.put(type, v));
         });
     }
 
-    @Nullable
-    private Material getMaterial (String name, String configKey)
+    private Optional<Material> getMaterial (String name, String configKey)
     {
         Material material = Material.matchMaterial(name.replace(" ", "_").toUpperCase(Locale.ROOT).replace("COIN", "SUNFLOWER"));
 
@@ -251,46 +266,39 @@ public final class Settings
             warning("The material '" + name + "' in the config at `" + configKey + "` does not exist. Please use a " +
                     "material from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html");
 
-            return null;
+            return Optional.empty();
         }
 
-        return material;
+        return Optional.of(material);
     }
 
-    @Nullable
-    private EntityType getEntityType (String name, String configKey)
+    private Optional<EntityType> getEntityType (String name, String configKey)
     {
         try
         {
-            return EntityType.valueOf(name.replace(" ", "_").toUpperCase(Locale.ROOT));
+            return Optional.of(EntityType.valueOf(name.replace(" ", "_").toUpperCase(Locale.ROOT)));
         }
         catch (IllegalArgumentException exception)
         {
             warning("The mob name '" + name + "' in the config at `" + configKey + "` does not exist. Please use a " +
                     "name from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html");
 
-            return null;
+            return Optional.empty();
         }
     }
 
-    private Material coinItem ()
-    {
-        Material coin = getMaterial(Config.RAW_COIN_ITEM, "coin-item");
-        return coin == null? Material.SUNFLOWER : coin;
-    }
-
-    private Sound soundName ()
+    private Optional<Sound> getSound (String name, String configKey)
     {
         try
         {
-            return Sound.valueOf(Config.RAW_SOUND_NAME.toUpperCase().replace(" ", "_"));
+            return Optional.of(Sound.valueOf(name.toUpperCase().replace(" ", "_")));
         }
         catch (IllegalArgumentException exception)
         {
-            warning("The sound '" + Config.RAW_SOUND_NAME + "' in the config at `sound-name` does not exist. Please use a " +
+            warning("The sound '" + name + "' in the config at `" + configKey + "` does not exist. Please use a " +
                     "sound from: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html");
 
-            return Sound.ITEM_ARMOR_EQUIP_GOLD;
+            return Optional.empty();
         }
     }
 

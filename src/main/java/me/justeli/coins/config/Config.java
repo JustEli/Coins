@@ -1,5 +1,6 @@
 package me.justeli.coins.config;
 
+import me.justeli.coins.util.Util;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
@@ -38,10 +39,10 @@ public class Config
     @ConfigEntry (value = "check-for-updates", required = false) public static Boolean CHECK_FOR_UPDATES = true;
 
     @ConfigEntry ("language") public static String LANGUAGE = "English";
-    @ConfigEntry ("coin-item") protected static String RAW_COIN_ITEM = "sunflower";
+    @ConfigEntry ("coin-item") public static Material COIN_ITEM = Material.SUNFLOWER;
     @ConfigEntry ("pickup-message") public static String PICKUP_MESSAGE = "&2+ &a{currency}{amount}";
     @ConfigEntry ("death-message") public static String DEATH_MESSAGE = "&4- &c{currency}{amount}";
-    @ConfigEntry ("sound-name") protected static String RAW_SOUND_NAME = "ITEM_ARMOR_EQUIP_GOLD";
+    @ConfigEntry ("sound-name") public static Sound SOUND_NAME = Sound.ITEM_ARMOR_EQUIP_GOLD;
     @ConfigEntry ("currency-symbol") public static String CURRENCY_SYMBOL = "$";
     @ConfigEntry ("skull-texture") public static String SKULL_TEXTURE = "";
 
@@ -52,14 +53,14 @@ public class Config
     // preferred-economy-hook: 'Vault'
 
     @ConfigEntry (value = "dropped-coin-name", motivation = "This is a replacement, previous key was 'nameOfCoin', which will be unsupported in a future " +
-            "version.") protected static String RAW_DROPPED_COIN_NAME = "&6Coin";
+            "version.") public static String DROPPED_COIN_NAME = "&6Coin";
     @ConfigEntry (value = "withdrawn-coin-names.singular", motivation = "This is a replacement, previous key was 'nameOfCoin', which will be unsupported " +
-            "in a future version.") protected static String RAW_WITHDRAWN_COIN_NAME_SINGULAR = "&e{amount} &6Coin";
+            "in a future version.") public static String WITHDRAWN_COIN_NAME_SINGULAR = "&e{amount} &6Coin";
     @ConfigEntry (value = "withdrawn-coin-names.plural", motivation = "This is a replacement, previous key was 'nameOfCoin' and 'multiSuffix', which will" +
-            " be unsupported in a future version.") protected static String RAW_WITHDRAWN_COIN_NAME_PLURAL = "&e{amount} &6Coins";
+            " be unsupported in a future version.") public static String WITHDRAWN_COIN_NAME_PLURAL = "&e{amount} &6Coins";
 
-    @Deprecated @ConfigEntry (value = "name-of-coin", required = false) protected static String LEGACY_RAW_NAME_OF_COIN = null;
-    @Deprecated @ConfigEntry (value = "multi-suffix", required = false) public static String LEGACY_MULTI_SUFFIX = null;
+    @Deprecated @ConfigEntry (value = "name-of-coin", required = false) protected static String LEGACY_NAME_OF_COIN = null;
+    @Deprecated @ConfigEntry (value = "multi-suffix", required = false) protected static String LEGACY_MULTI_SUFFIX = null;
     
     @ConfigEntry ("drop-chance") public static Double DROP_CHANCE = 0.9;
     @ConfigEntry ("max-withdraw-amount") public static Double MAX_WITHDRAW_AMOUNT = 10000.0;
@@ -87,18 +88,12 @@ public class Config
     @Deprecated @ConfigEntry (value = "block-multiplier", required = false)
     protected static Map<String, Integer> LEGACY_RAW_BLOCK_MULTIPLIER = new HashMap<>();
 
-    public static String DROPPED_COIN_NAME;
-    public static String WITHDRAWN_COIN_NAME_SINGULAR;
-    public static String WITHDRAWN_COIN_NAME_PLURAL;
     @Deprecated public static String LEGACY_WITHDRAWN_COIN_ENDING;
-
-    public static Material COIN_ITEM;
-    public static Sound SOUND_NAME;
 
     public static Map<Material, Integer> BLOCK_DROPS = new HashMap<>();
     public static Map<EntityType, Integer> MOB_MULTIPLIER = new HashMap<>();
 
-    @Deprecated protected static final String LEGACY_PREFIX = "&e{amount} &r";
+    @Deprecated protected static final String LEGACY_PREFIX = Util.color("&e{amount} &r");
 
     private Config () {}
 }

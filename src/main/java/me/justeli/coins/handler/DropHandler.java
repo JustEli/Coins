@@ -6,6 +6,7 @@ import me.justeli.coins.item.CoinUtil;
 import me.justeli.coins.util.Permission;
 import me.justeli.coins.util.SubTitle;
 import me.justeli.coins.util.Util;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -215,22 +216,22 @@ public final class DropHandler
         if (Config.MINE_PERCENTAGE == 0)
             return;
 
-        if (blockDropsSameItem(event))
+        if (event.getPlayer().getGameMode() != GameMode.SURVIVAL || blockDropsSameItem(event))
             return;
 
         int multiplier = Config.BLOCK_DROPS.computeIfAbsent(event.getBlock().getType(), empty -> 0);
         if (multiplier == 0)
             return;
 
-        if (RANDOM.nextDouble() <= Config.MINE_PERCENTAGE)
-        {
-            this.coins.sync(1, () -> drop(
-                    multiplier,
-                    event.getPlayer(),
-                    event.getBlock().getLocation().clone().add(0.5, 0.5, 0.5),
-                    Enchantment.LOOT_BONUS_BLOCKS
-            ));
-        }
+        if (RANDOM.nextDouble() > Config.MINE_PERCENTAGE)
+            return;
+
+        this.coins.sync(1, () -> drop(
+                multiplier,
+                event.getPlayer(),
+                event.getBlock().getLocation().clone().add(0.5, 0.5, 0.5),
+                Enchantment.LOOT_BONUS_BLOCKS
+        ));
     }
 
     private boolean blockDropsSameItem (BlockBreakEvent event)

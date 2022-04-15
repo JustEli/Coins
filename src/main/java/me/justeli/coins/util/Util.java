@@ -4,7 +4,6 @@ import io.papermc.lib.PaperLib;
 import me.justeli.coins.config.Config;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Boss;
 import org.bukkit.entity.Entity;
@@ -21,6 +20,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.projectiles.ProjectileSource;
+import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -42,7 +42,7 @@ public final class Util
     private static final HashMap<UUID, Double> PLAYER_MULTIPLIER = new HashMap<>();
     private static final SplittableRandom RANDOM = new SplittableRandom();
 
-    public static String color (String msg)
+    public static String color (@NotNull String msg)
     {
         return ChatColor.translateAlternateColorCodes('&', parseRGB(msg));
     }
@@ -59,7 +59,7 @@ public final class Util
         return text.replaceAll("(\\{currency}|\\{\\$})", Matcher.quoteReplacement(Config.CURRENCY_SYMBOL));
     }
 
-    private static String parseRGB (String msg)
+    private static String parseRGB (@NotNull String msg)
     {
         if (PaperLib.getMinecraftVersion() >= 16)
         {
@@ -142,11 +142,7 @@ public final class Util
         float volume = Config.SOUND_VOLUME;
         float pitch = Config.SOUND_PITCH;
 
-        Sound sound = Config.SOUND_NAME;
-        if (sound == null)
-            return;
-
-        player.playSound(player.getEyeLocation(), sound, volume == 0? 0.3f : volume, pitch == 0? 0.3f : pitch);
+        player.playSound(player.getEyeLocation(), Config.SOUND_NAME, volume == 0? 0.3f : volume, pitch == 0? 0.3f : pitch);
     }
 
     public static boolean isDisabledHere (World world)
