@@ -73,7 +73,7 @@ public final class CoinUtil
         return name(item).map(name -> name.endsWith(Config.LEGACY_WITHDRAWN_COIN_ENDING)).orElse(false);
     }
 
-    private static final Pattern VALUE_PATTERN = Pattern.compile("[0-9.]+");
+    private static final Pattern VALUE_PATTERN = Pattern.compile("[\\d.]+");
 
     public double getValue (ItemStack item)
     {

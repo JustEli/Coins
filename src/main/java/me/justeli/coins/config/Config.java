@@ -83,7 +83,9 @@ public class Config
     @ConfigEntry ("disabled-worlds") public static Set<String> DISABLED_WORLDS = new HashSet<>();
 
     @ConfigEntry ("mob-multiplier") protected static Map<String, Integer> RAW_MOB_MULTIPLIER = new HashMap<>();
-    @ConfigEntry ("block-drops") protected static Map<String, Integer> RAW_BLOCK_DROPS = new HashMap<>();
+
+    @ConfigEntry (value = "block-drops", motivation = "New config key that replaces 'block-multiplier'.")
+    protected static Map<String, Integer> RAW_BLOCK_DROPS = new HashMap<>();
 
     @Deprecated @ConfigEntry (value = "block-multiplier", required = false)
     protected static Map<String, Integer> LEGACY_RAW_BLOCK_MULTIPLIER = new HashMap<>();

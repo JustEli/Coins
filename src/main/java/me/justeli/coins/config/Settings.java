@@ -21,6 +21,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -391,7 +392,7 @@ public final class Settings
         if (!file.isPresent())
             return Optional.empty();
 
-        try (InputStream fileStream = new FileInputStream(file.get()))
+        try (InputStream fileStream = Files.newInputStream(file.get().toPath()))
         {
             return Optional.ofNullable(jsonStream(fileStream));
         }

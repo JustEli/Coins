@@ -21,6 +21,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -38,7 +39,7 @@ import java.util.regex.Pattern;
 /** Created by Eli on 6 jan. 2020. */
 public final class Util
 {
-    private static final Pattern HEX_PATTERN = Pattern.compile("(?<!\\\\)(&#[a-fA-F0-9]{6})");
+    private static final Pattern HEX_PATTERN = Pattern.compile("(?<!\\\\)(&#[a-fA-F\\d]{6})");
     private static final HashMap<UUID, Double> PLAYER_MULTIPLIER = new HashMap<>();
     private static final SplittableRandom RANDOM = new SplittableRandom();
 
@@ -145,8 +146,11 @@ public final class Util
         player.playSound(player.getEyeLocation(), Config.SOUND_NAME, volume == 0? 0.3f : volume, pitch == 0? 0.3f : pitch);
     }
 
-    public static boolean isDisabledHere (World world)
+    public static boolean isDisabledHere (@Nullable World world)
     {
+        if (world == null)
+            return true;
+
         return Config.DISABLED_WORLDS.contains(world.getName());
     }
 

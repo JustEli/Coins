@@ -1,7 +1,6 @@
 package me.justeli.coins.hook.treasury;
 
 import me.justeli.coins.hook.EconomyHook;
-import me.justeli.coins.hook.treasury.EconomySubscribers;
 import me.lokka30.treasury.api.economy.EconomyProvider;
 import me.lokka30.treasury.api.economy.account.PlayerAccount;
 import me.lokka30.treasury.api.economy.transaction.EconomyTransactionInitiator;

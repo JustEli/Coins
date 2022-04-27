@@ -35,7 +35,7 @@ public final class VersionChecker
             JsonParser jsonParser = new JsonParser();
             try (
                     InputStream inputStream = (InputStream) request.getContent();
-                    InputStreamReader reader = new InputStreamReader(inputStream);
+                    InputStreamReader reader = new InputStreamReader(inputStream)
             )
             {
                 JsonElement root = jsonParser.parse(reader);
