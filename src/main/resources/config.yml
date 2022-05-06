@@ -247,6 +247,11 @@ detect-legacy-coins: false
 #  drops for Mythic Mobs handled by this plugin, under here.
 disable-mythic-mob-handling: false
 
+
+# LevelledMobs :: If the LevelledMobs plugin is installed you can utilize the following
+# multiplier so higher level mobs give higher rewards
+levelledmobs-level-multiplier: 0.0
+
 #  #  #  #  #  #  #
 #  Player Death   #
 #  #  #  #  #  #  #

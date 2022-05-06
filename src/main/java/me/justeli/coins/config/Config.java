@@ -30,6 +30,8 @@ public class Config
     @ConfigEntry ("drop-with-any-death") public static Boolean DROP_WITH_ANY_DEATH = false;
     @ConfigEntry ("enchanted-coin") public static Boolean ENCHANTED_COIN = false;
     @ConfigEntry ("disable-mythic-mob-handling") public static Boolean DISABLE_MYTHIC_MOB_HANDLING = false;
+
+    @ConfigEntry("levelledmobs-level-multiplier") public static Double LEVELLEDMOBS_LEVEL_MULTIPLIER = 0.0;
     @ConfigEntry (value = "detect-legacy-coins", motivation = "It is recommended that you add this option to the Coins config as soon as you can, " +
             "AND SET IT TO FALSE. Please note: Keep this option to true if you have withdrawn coins laying around in the server from before Coins " +
             "version 1.11. Also leave the keys 'name-of-coin' and 'multi-suffix' untouched, if you set 'detect-legacy-coins' to true! Legacy withdrawn " +

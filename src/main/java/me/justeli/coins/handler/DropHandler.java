@@ -2,6 +2,7 @@ package me.justeli.coins.handler;
 
 import me.justeli.coins.Coins;
 import me.justeli.coins.config.Config;
+import me.justeli.coins.hook.levelledmobs.LevelledMobsHandler;
 import me.justeli.coins.item.CoinUtil;
 import me.justeli.coins.util.Permission;
 import me.justeli.coins.util.SubTitle;
@@ -38,16 +39,20 @@ public final class DropHandler
     private final Coins coins;
     private final NamespacedKey playerDamage;
 
+    private final LevelledMobsHandler levelledMobsHandler;
+
     public DropHandler (Coins coins)
     {
         this.coins = coins;
         this.playerDamage = new NamespacedKey(coins, "coins-player-damage");
+        this.levelledMobsHandler = new LevelledMobsHandler();
     }
 
     private final HashMap<Location, Integer> locationAmountCache = new HashMap<>();
     private final HashMap<Location, Long> locationLastTimeCache = new HashMap<>();
 
     private static final SplittableRandom RANDOM = new SplittableRandom();
+    private LivingEntity deadMob;
 
     @EventHandler (priority = EventPriority.HIGH)
     public void onEntityDeath (EntityDeathEvent event)
@@ -174,12 +179,17 @@ public final class DropHandler
         if (!isLocationAvailableAndSet(dead))
             return;
 
+        if (dead instanceof LivingEntity)
+            this.deadMob = (LivingEntity) dead;
+
         drop(
                 Config.MOB_MULTIPLIER.getOrDefault(dead.getType(), 1),
                 attacker,
                 dead.getLocation(),
                 Enchantment.LOOT_BONUS_MOBS
         );
+
+        this.deadMob = null;
     }
 
     private boolean isLocationAvailableAndSet (Entity dead)
@@ -274,6 +284,10 @@ public final class DropHandler
             amount *= Util.getMultiplier(player);
         }
 
+        double lmMultiplier = getLevelledMobsMultipliedAmount(increment);
+        if (lmMultiplier > 0.0)
+            increment = lmMultiplier;
+
         for (int i = 0; i < amount; i++)
         {
             location.getWorld().dropItem(
@@ -281,6 +295,18 @@ public final class DropHandler
                     this.coins.getCreateCoin().dropped(increment)
             );
         }
+    }
+
+    private double getLevelledMobsMultipliedAmount(double increment){
+        if (this.deadMob == null || !this.levelledMobsHandler.getIsInstalled())
+            return 0.0;
+
+        if (Config.LEVELLEDMOBS_LEVEL_MULTIPLIER == 0.0) return 0.0;
+
+        int mobLevel = this.levelledMobsHandler.getMobLevel(this.deadMob);
+        if (mobLevel <= 1) return 0.0;
+
+        return increment + Config.LEVELLEDMOBS_LEVEL_MULTIPLIER * (double) mobLevel;
     }
 
     @EventHandler (priority = EventPriority.LOW)
