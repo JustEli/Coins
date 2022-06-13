@@ -13,7 +13,7 @@ ij_visual_guides = 160
 
 ij_java_block_brace_style = next_line
 ij_java_class_brace_style = next_line
-ij_java_lambda_brace_style = next_line_if_wrapped
+ij_java_lambda_brace_style = next_line
 ij_java_method_brace_style = next_line
 ij_java_catch_on_new_line = true
 ij_java_else_on_new_line = true
