@@ -46,7 +46,8 @@ public final class Coins
         extends JavaPlugin
 {
     // TODO
-    // - nothing
+    // - you do the command "/withdraw 1 64" and then try to drop only one of the coins, 63 coins of the stack will be consumed
+    // - do not pick up coins if max-balance-amount is exceeded (in Essentials)
 
     private static final ExecutorService ASYNC_THREAD = Executors.newSingleThreadExecutor();
 
