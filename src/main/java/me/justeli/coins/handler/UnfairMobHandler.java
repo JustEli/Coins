@@ -8,6 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.entity.EntityTransformEvent;
 import org.bukkit.persistence.PersistentDataType;
 
 public final class UnfairMobHandler
@@ -32,6 +33,18 @@ public final class UnfairMobHandler
         else if (event.getSpawnReason() == SpawnReason.SLIME_SPLIT)
         {
             event.getEntity().getPersistentDataContainer().set(this.slimeSplit, PersistentDataType.INTEGER, 1);
+        }
+    }
+
+    @EventHandler
+    public void onEntityTransformEvent (EntityTransformEvent event)
+    {
+        if (fromSpawner(event.getEntity()))
+        {
+            for (Entity entity : event.getTransformedEntities())
+            {
+                entity.getPersistentDataContainer().set(this.spawnerMob, PersistentDataType.INTEGER, 1);
+            }
         }
     }
 

@@ -43,20 +43,23 @@ import java.util.logging.Level;
 
 /** by Eli on 12/13/2016. **/
 public final class Coins
-        extends JavaPlugin
+    extends JavaPlugin
 {
     // TODO
-    // - you do the command "/withdraw 1 64" and then try to drop only one of the coins, 63 coins of the stack will be consumed
-    // - do not pick up coins if max-balance-amount is exceeded (in Essentials)
-    // - fix: zombies from spawners that are converted to drowneds aren't seen as from spawner anymore
+    //  - fix:   you do the command "/withdraw 1 64" and then try to drop only one of the coins, 63 coins of the stack will be consumed
+    //  - fix:   do not pick up coins if max-balance-amount is exceeded (in Essentials)
+    //  - fix:   can u implement that the coins multiplier not require reload for it to work
+    //  - fix:   /ah dupe
+    //  - fix:   armor stands drop coins
+    //  - idea:  allow adding text to title, subtitle, action bar, for anything (pickup, death)
 
     private static final ExecutorService ASYNC_THREAD = Executors.newSingleThreadExecutor();
 
-    private static final String UNSUPPORTED_VERSION = "Coins only supports Minecraft version 1.14 and higher. For 1.8.8 to 1.13.2 support, you can " +
-            "use Coins version 1.10.8.";
+    private static final String UNSUPPORTED_VERSION =
+        "Coins only supports Minecraft version 1.14 and higher. For 1.8.8 to 1.13.2 support, you can use Coins version 1.10.8 (without support).";
     private static final String USING_BUKKIT = "You seem to be using Bukkit, but the plugin Coins requires at least Spigot! " +
-            "This prevents the plugin from showing the amount of money players pick up. Please use Spigot or Paper. Moving from Bukkit to " +
-            "Spigot will NOT cause any problems with other plugins, since Spigot only adds more features to Bukkit.";
+        "This prevents the plugin from showing the amount of money players pick up. Please use Spigot or Paper. Moving from Bukkit to " +
+        "Spigot will NOT cause any problems with other plugins, since Spigot only adds more features to Bukkit.";
     private static final String LACKING_ECONOMY = "There is no proper economy installed. Please install %s.";
 
     @Override
