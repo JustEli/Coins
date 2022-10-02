@@ -14,7 +14,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -45,18 +44,19 @@ public final class Settings
         this.fallbackLanguage = retrieveFallbackLanguage();
     }
 
-    private static final String[] LANGUAGES = new String[]{
-            "english",
-            "dutch",
-            "spanish",
-            "german",
-            "french",
-            "swedish",
-            "chinese",
-            "hungarian",
-            "italian",
-            "russian",
-            "turkish"
+    private static final String[] LANGUAGES = new String[]
+    {
+        "english",
+        "dutch",
+        "spanish",      // spigot::robi 2017/4
+        "swedish",      // 2017/4
+        "german",       // 2017/5
+        "chinese",      // github::chenxuuu 2017/9-2022/6
+        "hungarian",    // github::montlikadani 2017/12
+        "french",       // spigot::mvez73 2019/8
+        "italian",      // spigot::Peppe73 2020/10
+        "russian",      // discord::932023237313962054(BeastMark) 2022/3
+        "turkish"       // discord::710585615841886260(Purpely) 2022/8
     };
 
     public void reloadLanguage ()
