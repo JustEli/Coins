@@ -27,7 +27,7 @@
 
     "DISABLED_REASONS" :  "&4Coins şu nedenle devre dışı bırakıldı(s):",
     "CURRENTLY_INSTALLED" :  "&eŞu anki Plugin Versionu: &f{0}",
-    "LATEST_RELEASE" :  "&6Coins&ein en son yayınlanan sürümü &f{0}&e olup, &f{1}&e tarihinde yayınlandı, ve &f'{2}'&e olarak tanımlandı. Eklentinin bu sürümünü yüklerseniz daha yüksek verim alacağınızı düşünüyoruz. &eİndirmek için: &9{3}",
+    "LATEST_RELEASE" :  "&6Coins&e in en son yayınlanan sürümü &f{0}&e olup, &f{1}&e tarihinde yayınlandı, ve &f'{2}'&e olarak tanımlandı. Eklentinin bu sürümünü yüklerseniz daha yüksek verim alacağınızı düşünüyoruz. &eİndirmek için: &9{3}",
     "UP_TO_DATE" :  "&a{0} sürümüyle gün.",
     "LATEST_RETRIEVE_FAIL" :  "&cPluginin bu sürümden sonraki sürüm(son sürüm) bulunmadı.",
 

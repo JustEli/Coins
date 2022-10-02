@@ -49,7 +49,7 @@ public final class Settings
         "english",
         "dutch",
         "spanish",      // spigot::robi 2017/4
-        "swedish",      // 2017/4
+        "swedish",      // 2017/4, minecraft::k4rlus 2022/10
         "german",       // 2017/5
         "chinese",      // github::chenxuuu 2017/9-2022/6
         "hungarian",    // github::montlikadani 2017/12
