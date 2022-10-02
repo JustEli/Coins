@@ -55,7 +55,8 @@ public final class Settings
             "chinese",
             "hungarian",
             "italian",
-            "russian"
+            "russian",
+            "turkish"
     };
 
     public void reloadLanguage ()
