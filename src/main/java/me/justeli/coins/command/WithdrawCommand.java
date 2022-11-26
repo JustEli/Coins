@@ -100,9 +100,9 @@ public final class WithdrawCommand
                         player.getInventory().addItem(coin);
 
                         player.sendMessage(Message.WITHDRAW_COINS.replace(Util.doubleToString(total)));
-                        if (!Config.DEATH_MESSAGE.isEmpty())
+                        if (!Config.WITHDRAW_MESSAGE.isEmpty())
                         {
-                            new ActionBar(Config.DEATH_MESSAGE, total).send(player);
+                            Util.send(Config.WITHDRAW_MESSAGE_POSITION, player, Config.WITHDRAW_MESSAGE, total);
                         }
                     });
                 }

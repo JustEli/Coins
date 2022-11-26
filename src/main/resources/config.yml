@@ -23,10 +23,11 @@ check-for-updates: true
 language: 'English'
 currency-symbol: '$'
 
-# This message is sent as action bar (bottom of a player's screen), telling the
-#  player how much money they have picked up. The variable '{currency}' will be
-#  replaced by the configured value at 'currency-symbol'.
+# This message is sent as action bar (bottom of a player's screen) by default,
+#  telling the player how much money they have picked up. The variable '{currency}'
+#  will be replaced by the configured value at 'currency-symbol'.
 pickup-message: '&2+ &a{currency}{amount}'
+pickup-message-position: 'actionbar' # other options: 'subtitle', 'title', 'chat'
 
 # How many decimals should currency from this plugin have? Set to 0 for rounded
 #  money. Setting this to 1 will do, for example: $2.3 $5.8 $8.0. Setting to 2 will
@@ -237,6 +238,10 @@ max-withdraw-amount: 10000.00
 #  setting to false. If true, legacy withdrawn coins will still work.
 detect-legacy-coins: false
 
+# Tell the player how much money they have withdrawn.
+withdraw-message: '&4- &c{currency}{amount}'
+withdraw-message-position: 'actionbar' # other options: 'subtitle', 'title', 'chat'
+
 #  #  #  #  #
 #  Hooks    #
 #  #  #  #  #
@@ -268,5 +273,6 @@ take-percentage: false
 # And should the money be dropped, or just disappear? Disappears by default.
 drop-on-death: false
 
-# The format of the message in the middle of their screen.
+# The format of the message in (the middle of, by default) their screen.
 death-message: '&4- &c{currency}{amount}'
+death-message-position: 'subtitle' # other options: 'actionbar', 'title', 'chat'

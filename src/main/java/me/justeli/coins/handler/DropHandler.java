@@ -107,7 +107,7 @@ public final class DropHandler
 
             this.coins.economy().withdraw(dead.getUniqueId(), take, () ->
             {
-                SubTitle.of(Util.formatAmountAndCurrency(Config.DEATH_MESSAGE, take)).send(dead);
+                Util.send(Config.DEATH_MESSAGE_POSITION, dead, Config.DEATH_MESSAGE, take);
 
                 if (Config.DROP_ON_DEATH && dead.getLocation().getWorld() != null)
                 {

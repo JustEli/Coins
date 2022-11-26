@@ -115,11 +115,11 @@ public final class Settings
                         Object defaultValue = prefixSuffix + field.get(Config.class) + prefixSuffix;
 
                         warning(String.format(
-                                "\nConfig file is missing key `%s`. Using its default value now (%s)."
-                                        + (configEntry.motivation().isEmpty()? "" : " " + configEntry.motivation())
-                                        + " Consider to add this to the config:\n----------------------------------------\n%s: %s" +
-                                        "\n----------------------------------------",
-                                configEntry.value(), defaultValue, configEntry.value().replace(".", ":\n  "), defaultValue
+                            "\nConfig file is missing key `%s`. Using its default value now (%s)."
+                                    + (configEntry.motivation().isEmpty()? "" : " " + configEntry.motivation())
+                                    + " Consider to add this to the config:\n----------------------------------------\n%s: %s" +
+                                    "\n----------------------------------------",
+                            configEntry.value(), defaultValue, configEntry.value().replace(".", ":\n  "), defaultValue
                         ));
                     }
                     continue;
@@ -141,13 +141,13 @@ public final class Settings
                     for (Map.Entry<String, Object> mapLoop : map.entrySet())
                     {
                         configMap.put(
-                                mapLoop.getKey().toUpperCase(Locale.ROOT).replace(" ", "_"),
-                                Util.parseInt(mapLoop.getValue().toString()).orElse(1)
+                            mapLoop.getKey().toUpperCase(Locale.ROOT).replace(" ", "_"),
+                            Util.parseInt(mapLoop.getValue().toString()).orElse(1)
                         );
                     }
                     configValue = configMap;
                 }
-                else if (configClass == String.class || configClass == Material.class || configClass == Sound.class)
+                else if (configClass == String.class || configClass == Material.class || configClass == Sound.class || configClass == MessagePosition.class)
                 {
                     String value = config.getString(configKey);
                     if (value == null)
@@ -161,6 +161,12 @@ public final class Settings
                     else if (configClass == Sound.class)
                     {
                         configValue = getSound(value, configEntry.value()).orElse(Sound.ITEM_ARMOR_EQUIP_GOLD);
+                    }
+                    else if (configClass == MessagePosition.class)
+                    {
+                        Optional<MessagePosition> position = getMessagePosition(value, configEntry.value());
+                        if (position.isPresent()) configValue = position.get();
+                        else continue;
                     }
                     else
                     {
@@ -203,9 +209,9 @@ public final class Settings
                 {
                     Object defaultValue = field.get(Config.class);
                     warning(String.format(
-                            "Config file has wrong value at `%s`. Using its default value now (%s).",
-                            configEntry.value(),
-                            defaultValue
+                        "Config file has wrong value at `%s`. Using its default value now (%s).",
+                        configEntry.value(),
+                        defaultValue
                     ));
                 }
                 catch (IllegalAccessException ignored) {}
@@ -272,6 +278,20 @@ public final class Settings
         }
 
         return Optional.of(material);
+    }
+
+    private Optional<MessagePosition> getMessagePosition (String name, String configKey)
+    {
+        try
+        {
+            return Optional.of(MessagePosition.valueOf(name.replace(" ", "_").toUpperCase(Locale.ROOT)));
+        }
+        catch (IllegalArgumentException exception)
+        {
+            warning("Message position '" + name + "' in the config at `" + configKey
+                + "` is invalid. Use either 'actionbar', 'title', 'subtitle', or 'chat'.");
+            return Optional.empty();
+        }
     }
 
     private Optional<EntityType> getEntityType (String name, String configKey)

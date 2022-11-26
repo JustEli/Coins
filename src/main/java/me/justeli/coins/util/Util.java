@@ -2,6 +2,7 @@ package me.justeli.coins.util;
 
 import io.papermc.lib.PaperLib;
 import me.justeli.coins.config.Config;
+import me.justeli.coins.config.MessagePosition;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -250,5 +251,24 @@ public final class Util
         }
 
         return Optional.empty();
+    }
+
+    public static void send (MessagePosition position, Player player, String message, double amount)
+    {
+        switch (position)
+        {
+            case ACTIONBAR:
+                new ActionBar(message, amount).send(player);
+                break;
+            case TITLE:
+                player.sendTitle(Util.color(Util.formatAmountAndCurrency(message, amount)), ChatColor.RESET.toString(), 10, 100, 20);
+                break;
+            case SUBTITLE:
+                SubTitle.of(Util.formatAmountAndCurrency(message, amount)).send(player);
+                break;
+            case CHAT:
+                player.sendMessage(Util.color(Util.formatAmountAndCurrency(message, amount)));
+                break;
+        }
     }
 }

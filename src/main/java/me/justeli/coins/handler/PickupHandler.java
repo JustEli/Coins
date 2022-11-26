@@ -1,6 +1,7 @@
 package me.justeli.coins.handler;
 
 import me.justeli.coins.Coins;
+import me.justeli.coins.config.MessagePosition;
 import me.justeli.coins.event.PickupEvent;
 import me.justeli.coins.util.ActionBar;
 import me.justeli.coins.config.Config;
@@ -134,7 +135,7 @@ public final class PickupHandler
             final double displayAmount = this.pickupAmountCache.computeIfAbsent(uniqueId, empty -> 0D);
             if (!Config.PICKUP_MESSAGE.isEmpty())
             {
-                new ActionBar(Config.PICKUP_MESSAGE, displayAmount).send(player);
+                Util.send(Config.PICKUP_MESSAGE_POSITION, player, Config.PICKUP_MESSAGE, displayAmount);
             }
 
             this.pickupTimeCache.put(uniqueId, System.currentTimeMillis());

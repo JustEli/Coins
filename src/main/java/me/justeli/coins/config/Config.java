@@ -40,8 +40,16 @@ public class Config
 
     @ConfigEntry ("language") public static String LANGUAGE = "English";
     @ConfigEntry ("coin-item") public static Material COIN_ITEM = Material.SUNFLOWER;
+
     @ConfigEntry ("pickup-message") public static String PICKUP_MESSAGE = "&2+ &a{currency}{amount}";
+    @ConfigEntry ("pickup-message-position") public static MessagePosition PICKUP_MESSAGE_POSITION = MessagePosition.ACTIONBAR;
+
+    @ConfigEntry ("withdraw-message") public static String WITHDRAW_MESSAGE = "&4- &c{currency}{amount}";
+    @ConfigEntry ("withdraw-message-position") public static MessagePosition WITHDRAW_MESSAGE_POSITION = MessagePosition.ACTIONBAR;
+
     @ConfigEntry ("death-message") public static String DEATH_MESSAGE = "&4- &c{currency}{amount}";
+    @ConfigEntry ("death-message-position") public static MessagePosition DEATH_MESSAGE_POSITION = MessagePosition.SUBTITLE;
+
     @ConfigEntry ("sound-name") public static Sound SOUND_NAME = Sound.ITEM_ARMOR_EQUIP_GOLD;
     @ConfigEntry ("currency-symbol") public static String CURRENCY_SYMBOL = "$";
     @ConfigEntry ("skull-texture") public static String SKULL_TEXTURE = "";
