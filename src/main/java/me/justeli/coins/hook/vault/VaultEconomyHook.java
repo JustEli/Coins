@@ -2,6 +2,7 @@ package me.justeli.coins.hook.vault;
 
 import me.justeli.coins.hook.EconomyHook;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Optional;
@@ -26,19 +27,28 @@ public final class VaultEconomyHook implements EconomyHook
     @Override
     public void balance (UUID uuid, DoubleConsumer balance)
     {
-        balance.accept(economy.getBalance(plugin.getServer().getOfflinePlayer(uuid)));
+        OfflinePlayer player = plugin.getServer().getOfflinePlayer(uuid);
+        if (player.getName() == null) return;
+
+        balance.accept(economy.getBalance(player));
     }
     
     @Override
     public void canAfford (UUID uuid, double amount, Consumer<Boolean> canAfford)
     {
-        canAfford.accept(economy.has(plugin.getServer().getOfflinePlayer(uuid), amount));
+        OfflinePlayer player = plugin.getServer().getOfflinePlayer(uuid);
+        if (player.getName() == null) return;
+
+        canAfford.accept(economy.has(player, amount));
     }
     
     @Override
     public void withdraw (UUID uuid, double amount, Runnable success)
     {
-        if (economy.withdrawPlayer(plugin.getServer().getOfflinePlayer(uuid), amount).transactionSuccess())
+        OfflinePlayer player = plugin.getServer().getOfflinePlayer(uuid);
+        if (player.getName() == null) return;
+
+        if (economy.withdrawPlayer(player, amount).transactionSuccess())
         {
             success.run();
         }
@@ -47,7 +57,10 @@ public final class VaultEconomyHook implements EconomyHook
     @Override
     public void deposit (UUID uuid, double amount, Runnable success)
     {
-        if (economy.depositPlayer(plugin.getServer().getOfflinePlayer(uuid), amount).transactionSuccess())
+        OfflinePlayer player = plugin.getServer().getOfflinePlayer(uuid);
+        if (player.getName() == null) return;
+
+        if (economy.depositPlayer(player, amount).transactionSuccess())
         {
             success.run();
         }
