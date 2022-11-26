@@ -35,6 +35,12 @@ pickup-message-position: 'actionbar' # other options: 'subtitle', 'title', 'chat
 #  'drop-each-coin' is set to true.
 money-decimals: 2
 
+# The symbols to use for separating digits (in thousands). The default values
+#  (dot, and comma) format numbers, for example, like 1,000.6 or 2,100.90 (depending
+#  on your setting `money-decimals`. The group separator can be empty if preferred.
+digit-decimal-separator: '.'
+digit-group-separator: ','
+
 #  #  #  #  #  #  #  #
 #  Coin Properties   #
 #  #  #  #  #  #  #  #

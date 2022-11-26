@@ -21,6 +21,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -263,6 +265,18 @@ public final class Settings
             Optional<EntityType> entityType = getEntityType(k, "mob-multiplier");
             entityType.ifPresent(type -> Config.MOB_MULTIPLIER.put(type, v));
         });
+
+        DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols(Locale.US);
+        if (Config.DIGIT_DECIMAL_SEPARATOR.length() == 1) formatSymbols.setDecimalSeparator(Config.DIGIT_DECIMAL_SEPARATOR.charAt(0));
+        if (Config.DIGIT_GROUP_SEPARATOR.length() == 1) formatSymbols.setGroupingSeparator(Config.DIGIT_GROUP_SEPARATOR.charAt(0));
+
+        String decimals = Config.MONEY_DECIMALS == 0? "#" : Util.repeat("0", Config.MONEY_DECIMALS);
+        String groupSeparator = Config.DIGIT_GROUP_SEPARATOR.isEmpty()? "" : ",";
+
+        Config.DECIMAL_FORMATTER = new DecimalFormat(
+            "#" + groupSeparator + "##0." + decimals,
+            formatSymbols
+        );
     }
 
     private Optional<Material> getMaterial (String name, String configKey)

@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -53,6 +54,8 @@ public class Config
     @ConfigEntry ("sound-name") public static Sound SOUND_NAME = Sound.ITEM_ARMOR_EQUIP_GOLD;
     @ConfigEntry ("currency-symbol") public static String CURRENCY_SYMBOL = "$";
     @ConfigEntry ("skull-texture") public static String SKULL_TEXTURE = "";
+    @ConfigEntry ("digit-decimal-separator") public static String DIGIT_DECIMAL_SEPARATOR = ".";
+    @ConfigEntry ("digit-group-separator") public static String DIGIT_GROUP_SEPARATOR = ",";
 
     // todo
     // @ConfigEntry("preferred-economy-hook") public static String PREFERRED_ECONOMY_HOOK = "Vault";
@@ -104,6 +107,8 @@ public class Config
     public static Map<EntityType, Integer> MOB_MULTIPLIER = new HashMap<>();
 
     @Deprecated protected static final String LEGACY_PREFIX = Util.color("&e{amount} &r");
+
+    public static DecimalFormat DECIMAL_FORMATTER = new DecimalFormat();
 
     private Config () {}
 }

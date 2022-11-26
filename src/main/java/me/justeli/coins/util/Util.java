@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -178,7 +179,14 @@ public final class Util
 
     public static String doubleToString (double input)
     {
-        return String.format("%." + Config.MONEY_DECIMALS + "f", round(input));
+        if (Config.DETECT_LEGACY_COINS)
+        {
+            return String.format("%." + Config.MONEY_DECIMALS + "f", round(input));
+        }
+        else
+        {
+            return Config.DECIMAL_FORMATTER.format(round(input));
+        }
     }
 
     public static Optional<Integer> parseInt (String arg)
@@ -270,5 +278,17 @@ public final class Util
                 player.sendMessage(Util.color(Util.formatAmountAndCurrency(message, amount)));
                 break;
         }
+    }
+
+    public static String repeat (String message, int times)
+    {
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < times; i++)
+        {
+            builder.append(message);
+        }
+
+        return builder.toString();
     }
 }
