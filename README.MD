@@ -9,12 +9,3 @@
 ![](https://img.shields.io/github/last-commit/JustEli/Coins/master?style=flat-square)
 ![](https://img.shields.io/github/issues-raw/JustEli/Coins?style=flat-square)
 ![](https://img.shields.io/github/issues-closed-raw/JustEli/Coins?style=flat-square)
-
-# Coins
-Configurable lightweight coins for killing and mining, with a withdraw system and perfect for drop parties.
-- Official Spigot page: https://www.spigotmc.org/resources/coins.33382/
-- Donate to the developer: https://paypal.me/justeli
-- See it live: join the developer's server at `survival.rocks`.
-
-
-## Coins API
