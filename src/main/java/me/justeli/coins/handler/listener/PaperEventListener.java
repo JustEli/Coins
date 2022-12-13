@@ -6,9 +6,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 
-/** Created by Eli on September 13, 2020. */
+/* Eli @ September 13, 2020 (creation) */
 public final class PaperEventListener
-        implements Listener
+    implements Listener
 {
     private final Coins coins;
 

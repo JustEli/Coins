@@ -1,6 +1,6 @@
 package me.justeli.coins.config;
 
-/* Eli @ November 26, 2022 */
+/* Eli @ November 26, 2022 (creation) */
 public enum MessagePosition
 {
     ACTIONBAR,

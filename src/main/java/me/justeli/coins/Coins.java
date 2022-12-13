@@ -41,7 +41,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 
-/** by Eli on 12/13/2016. **/
+/* Eli @ December 13, 2016 (creation) */
 public final class Coins
     extends JavaPlugin
 {
@@ -171,10 +171,10 @@ public final class Coins
         if (Config.DETECT_LEGACY_COINS)
         {
             console(Level.WARNING, "Coins has been configured to detected legacy withdrawn coins, which are coins withdrawn before Coins version " +
-                    "1.11. It is recommended to tell your players to deposit all their legacy withdrawn coins, as support for legacy withdrawn " +
-                    "coins by this plugin will be dropped early 2023. If you do not wish to detect legacy withdrawn coins, you can set " +
-                    "`detect-legacy-coins` to false in the config, which is safer, and prevents possible exploits (that may occur if plugins are " +
-                    "installed that allow items to be renamed in color).");
+                "1.11. It is recommended to tell your players to deposit all their legacy withdrawn coins, as support for legacy withdrawn " +
+                "coins by this plugin will be dropped early 2023. If you do not wish to detect legacy withdrawn coins, you can set " +
+                "`detect-legacy-coins` to false in the config, which is safer, and prevents possible exploits (that may occur if plugins are " +
+                "installed that allow items to be renamed in color).");
         }
     }
 
@@ -195,7 +195,7 @@ public final class Coins
 
     private void disablePlugin (String reason)
     {
-        disabledReasons.add(reason);
+        this.disabledReasons.add(reason);
     }
 
     private void versionChecker ()
@@ -215,7 +215,7 @@ public final class Coins
             line(Level.WARNING);
             console(Level.WARNING, "  Detected an outdated version of Coins (" + currentVersion + " is installed).");
             console(Level.WARNING, "  The latest version is " + this.latestVersion.tag() + ", released on "
-                    + Util.DATE_FORMAT.format(new Date(this.latestVersion.time())) + ".");
+                + Util.DATE_FORMAT.format(new Date(this.latestVersion.time())) + ".");
             console(Level.WARNING, "  Download: " + getDescription().getWebsite());
             line(Level.WARNING);
         }

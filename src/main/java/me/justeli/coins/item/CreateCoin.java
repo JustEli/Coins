@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.SplittableRandom;
 
-/** by Eli on January 30, 2022 **/
+/* Eli @ January 30, 2022 (creation) */
 public final class CreateCoin
 {
     private final Coins coins;
@@ -22,8 +22,8 @@ public final class CreateCoin
     public ItemStack withdrawn (double worth)
     {
         String name = Util.formatAmountAndCurrency(worth == 1
-                ? Config.WITHDRAWN_COIN_NAME_SINGULAR
-                : Config.WITHDRAWN_COIN_NAME_PLURAL, worth);
+            ? Config.WITHDRAWN_COIN_NAME_SINGULAR
+            : Config.WITHDRAWN_COIN_NAME_PLURAL, worth);
 
         return this.coins.getBaseCoin().withdrawn().data(CoinUtil.COINS_WORTH, worth).name(name).build();
     }

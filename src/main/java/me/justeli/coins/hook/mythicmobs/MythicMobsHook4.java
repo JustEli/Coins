@@ -10,7 +10,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 
 public final class MythicMobsHook4
-        implements MMHook
+    implements MMHook
 {
     private final Coins coins;
 

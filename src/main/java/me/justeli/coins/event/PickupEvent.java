@@ -7,10 +7,10 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-/** Created by Eli on September 13, 2020. */
+/* Eli @ September 13, 2020 (creation) */
 public final class PickupEvent
-        extends Event
-        implements Cancellable
+    extends Event
+    implements Cancellable
 {
     private final Player player;
     private final Item item;
@@ -44,7 +44,7 @@ public final class PickupEvent
     @Override
     public void setCancelled (boolean cancel)
     {
-        cancelled = cancel;
+        this.cancelled = cancel;
     }
 
     // -- HandlerList --

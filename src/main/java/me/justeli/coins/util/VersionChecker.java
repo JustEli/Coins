@@ -11,7 +11,7 @@ import java.net.URLConnection;
 import java.time.Instant;
 import java.util.Optional;
 
-/** by Eli on February 04, 2022 **/
+/* Eli @ February 04, 2022 (creation) */
 public final class VersionChecker
 {
     private Version latestVersion;
@@ -33,18 +33,16 @@ public final class VersionChecker
             request.connect();
 
             JsonParser jsonParser = new JsonParser();
-            try (
-                    InputStream inputStream = (InputStream) request.getContent();
-                    InputStreamReader reader = new InputStreamReader(inputStream)
-            )
+            try (InputStream inputStream = (InputStream) request.getContent();
+                 InputStreamReader reader = new InputStreamReader(inputStream))
             {
                 JsonElement root = jsonParser.parse(reader);
                 JsonObject jsonObject = root.getAsJsonObject();
                 this.latestVersion = new Version(
-                        jsonObject.get("tag_name").getAsString(),
-                        jsonObject.get("prerelease").getAsBoolean(),
-                        jsonObject.get("name").getAsString(),
-                        jsonObject.get("published_at").getAsString()
+                    jsonObject.get("tag_name").getAsString(),
+                    jsonObject.get("prerelease").getAsBoolean(),
+                    jsonObject.get("name").getAsString(),
+                    jsonObject.get("published_at").getAsString()
                 );
             }
         }
@@ -90,8 +88,8 @@ public final class VersionChecker
         public boolean equals (Object version)
         {
             return this.tag == null || !(version instanceof Version)
-                    ? super.equals(version)
-                    : this.tag.equals(((Version) version).tag);
+                ? super.equals(version)
+                : this.tag.equals(((Version) version).tag);
         }
     }
 }

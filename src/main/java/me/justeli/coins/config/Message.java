@@ -2,7 +2,7 @@ package me.justeli.coins.config;
 
 import java.util.HashMap;
 
-/** Created by Eli on 4/24/2017. */
+/* Eli @ April 24, 2017 (creation) */
 public enum Message
 {
     NO_PERMISSION,

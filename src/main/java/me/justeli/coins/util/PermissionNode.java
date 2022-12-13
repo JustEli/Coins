@@ -1,7 +1,7 @@
 package me.justeli.coins.util;
 
-/** by Eli on February 10, 2022 **/
-public final class Permission
+/* Eli @ February 10, 2022 (creation) */
+public final class PermissionNode
 {
     public static final String COMMAND_RELOAD = "coins.command.reload";
     public static final String COMMAND_SETTINGS = "coins.command.settings";

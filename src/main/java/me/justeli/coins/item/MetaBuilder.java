@@ -11,9 +11,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.logging.Level;
 
-/** by Eli on January 30, 2022 **/
+/* Eli @ January 30, 2022 (creation) */
 public final class MetaBuilder
-        implements Cloneable
+    implements Cloneable
 {
     private final Coins coins;
 
@@ -36,8 +36,8 @@ public final class MetaBuilder
     public MetaBuilder data (String key, Integer value)
     {
         this.itemMeta.getPersistentDataContainer().set(
-                new NamespacedKey(this.coins, key),
-                PersistentDataType.INTEGER, value
+            new NamespacedKey(this.coins, key),
+            PersistentDataType.INTEGER, value
         );
         return this;
     }
@@ -45,8 +45,8 @@ public final class MetaBuilder
     public MetaBuilder data (String key, Double value)
     {
         this.itemMeta.getPersistentDataContainer().set(
-                new NamespacedKey(this.coins, key),
-                PersistentDataType.DOUBLE, value
+            new NamespacedKey(this.coins, key),
+            PersistentDataType.DOUBLE, value
         );
         return this;
     }
@@ -57,7 +57,7 @@ public final class MetaBuilder
             return Optional.empty();
 
         return Optional.ofNullable(this.itemMeta.getPersistentDataContainer().get(
-                new NamespacedKey(this.coins, key), type
+            new NamespacedKey(this.coins, key), type
         ));
     }
 

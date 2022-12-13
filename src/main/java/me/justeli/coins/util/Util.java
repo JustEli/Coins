@@ -26,7 +26,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +37,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/** Created by Eli on 6 jan. 2020. */
+/* Eli @ January 6, 2020 (creation) */
 public final class Util
 {
     private static final Pattern HEX_PATTERN = Pattern.compile("(?<!\\\\)(&#[a-fA-F\\d]{6})");
@@ -93,9 +92,9 @@ public final class Util
             for (PermissionAttachmentInfo permissionInfo : player.getEffectivePermissions())
             {
                 String permission = permissionInfo.getPermission();
-                if (permission.startsWith(Permission.MULTIPLIER_PREFIX))
+                if (permission.startsWith(PermissionNode.MULTIPLIER_PREFIX))
                 {
-                    permissions.add(Permission.multiplierFromPermission(permission));
+                    permissions.add(PermissionNode.multiplierFromPermission(permission));
                 }
             }
             PLAYER_MULTIPLIER.put(player.getUniqueId(), permissions.size() == 0? 1D : Collections.max(permissions));
@@ -106,18 +105,18 @@ public final class Util
     public static boolean isHostile (Entity entity)
     {
         return entity instanceof Monster
-                || entity instanceof Flying
-                || entity instanceof Slime
-                || (entity instanceof Golem && !(entity instanceof Snowman))
-                || (entity instanceof Wolf && ((Wolf) entity).isAngry())
-                || entity instanceof Boss;
+            || entity instanceof Flying
+            || entity instanceof Slime
+            || (entity instanceof Golem && !(entity instanceof Snowman))
+            || (entity instanceof Wolf && ((Wolf) entity).isAngry())
+            || entity instanceof Boss;
     }
 
     public static boolean isPassive (Entity entity)
     {
         return !isHostile(entity)
-                && !(entity instanceof Player)
-                && entity instanceof LivingEntity;
+            && !(entity instanceof Player)
+            && entity instanceof LivingEntity;
     }
 
     public static Player getOnlinePlayer (String incomplete)

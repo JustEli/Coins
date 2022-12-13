@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/** Created by Eli on July 09, 2021. */
+/* Eli @ July 09, 2021 (creation) */
 @Retention (RetentionPolicy.RUNTIME)
 @Target (ElementType.FIELD)
 public @interface ConfigEntry

@@ -12,7 +12,7 @@ import org.bukkit.event.entity.EntityTransformEvent;
 import org.bukkit.persistence.PersistentDataType;
 
 public final class UnfairMobHandler
-        implements Listener
+    implements Listener
 {
     private final NamespacedKey slimeSplit;
     private final NamespacedKey spawnerMob;

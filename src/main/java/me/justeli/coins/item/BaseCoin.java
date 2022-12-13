@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-/** by Eli on January 30, 2022 **/
+/* Eli @ January 30, 2022 (creation) **/
 public final class BaseCoin
 {
     private final MetaBuilder withdrawnCoin;

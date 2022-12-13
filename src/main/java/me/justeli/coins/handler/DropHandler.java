@@ -3,8 +3,7 @@ package me.justeli.coins.handler;
 import me.justeli.coins.Coins;
 import me.justeli.coins.config.Config;
 import me.justeli.coins.item.CoinUtil;
-import me.justeli.coins.util.Permission;
-import me.justeli.coins.util.SubTitle;
+import me.justeli.coins.util.PermissionNode;
 import me.justeli.coins.util.Util;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -33,7 +32,7 @@ import java.util.Optional;
 import java.util.SplittableRandom;
 
 public final class DropHandler
-        implements Listener
+    implements Listener
 {
     private final Coins coins;
     private final NamespacedKey playerDamage;
@@ -97,9 +96,9 @@ public final class DropHandler
                 return;
 
             double take = Util.round(
-                    Config.TAKE_PERCENTAGE
-                            ? (random / 100) * balance
-                            : random
+                Config.TAKE_PERCENTAGE
+                    ? (random / 100) * balance
+                    : random
             );
 
             if (take <= 0)
@@ -112,8 +111,8 @@ public final class DropHandler
                 if (Config.DROP_ON_DEATH && dead.getLocation().getWorld() != null)
                 {
                     dead.getWorld().dropItem(
-                            dead.getLocation(),
-                            this.coins.getCreateCoin().other().data(CoinUtil.COINS_WORTH, take).build()
+                        dead.getLocation(),
+                        this.coins.getCreateCoin().other().data(CoinUtil.COINS_WORTH, take).build()
                     );
                 }
             });
@@ -127,7 +126,7 @@ public final class DropHandler
 
         if (!Config.SPAWNER_DROP && this.coins.getUnfairMobHandler().fromSpawner(dead))
         {
-            if (attacker == null || !attacker.hasPermission(Permission.SPAWNER))
+            if (attacker == null || !attacker.hasPermission(PermissionNode.SPAWNER))
                 return;
         }
 
@@ -175,10 +174,10 @@ public final class DropHandler
             return;
 
         drop(
-                Config.MOB_MULTIPLIER.getOrDefault(dead.getType(), 1),
-                attacker,
-                dead.getLocation(),
-                Enchantment.LOOT_BONUS_MOBS
+            Config.MOB_MULTIPLIER.getOrDefault(dead.getType(), 1),
+            attacker,
+            dead.getLocation(),
+            Enchantment.LOOT_BONUS_MOBS
         );
     }
 
@@ -227,24 +226,19 @@ public final class DropHandler
             return;
 
         this.coins.sync(1, () -> drop(
-                multiplier,
-                event.getPlayer(),
-                event.getBlock().getLocation().clone().add(0.5, 0.5, 0.5),
-                Enchantment.LOOT_BONUS_BLOCKS
+            multiplier,
+            event.getPlayer(),
+            event.getBlock().getLocation().clone().add(0.5, 0.5, 0.5),
+            Enchantment.LOOT_BONUS_BLOCKS
         ));
     }
 
     private boolean blockDropsSameItem (BlockBreakEvent event)
     {
         Material type = event.getBlock().getType();
-        for (ItemStack item : event.getBlock().getDrops(event.getPlayer().getInventory().getItemInMainHand()))
-        {
-            if (item.getType() == type)
-            {
-                return true;
-            }
-        }
-        return false;
+        return event.getBlock().getDrops(event.getPlayer().getInventory().getItemInMainHand())
+            .stream()
+            .anyMatch(item -> item.getType() == type);
     }
 
     private void drop (int amount, @Nullable Player player, @NotNull Location location, @NotNull Enchantment enchantment)
@@ -277,8 +271,8 @@ public final class DropHandler
         for (int i = 0; i < amount; i++)
         {
             location.getWorld().dropItem(
-                    location,
-                    this.coins.getCreateCoin().dropped(increment)
+                location,
+                this.coins.getCreateCoin().dropped(increment)
             );
         }
     }
@@ -291,9 +285,9 @@ public final class DropHandler
 
         double playerDamage = getPlayerDamage(event.getEntity());
         event.getEntity().getPersistentDataContainer().set(
-                this.playerDamage,
-                PersistentDataType.DOUBLE,
-                playerDamage + event.getFinalDamage()
+            this.playerDamage,
+            PersistentDataType.DOUBLE,
+            playerDamage + event.getFinalDamage()
         );
     }
 

@@ -5,7 +5,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
 
-/** by Rezz on February 02, 2022 **/
+/* Rezz @ February 02, 2022 (creation) */
 public interface EconomyHook
 {
     void balance (UUID uuid, DoubleConsumer balance);

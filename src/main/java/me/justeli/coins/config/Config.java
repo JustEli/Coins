@@ -11,7 +11,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-/** Created by Eli on 12/14/2016. Rewritten by Eli on July 9, 2021. */
+/* Eli @ December 14, 2016 (creation) */
+/* Eli @ July 9, 2021 (rewrite) */
 public class Config
 {
     @ConfigEntry ("stack-coins") public static Boolean STACK_COINS = false;
@@ -32,9 +33,9 @@ public class Config
     @ConfigEntry ("enchanted-coin") public static Boolean ENCHANTED_COIN = false;
     @ConfigEntry ("disable-mythic-mob-handling") public static Boolean DISABLE_MYTHIC_MOB_HANDLING = false;
     @ConfigEntry (value = "detect-legacy-coins", motivation = "It is recommended that you add this option to the Coins config as soon as you can, " +
-            "AND SET IT TO FALSE. Please note: Keep this option to true if you have withdrawn coins laying around in the server from before Coins " +
-            "version 1.11. Also leave the keys 'name-of-coin' and 'multi-suffix' untouched, if you set 'detect-legacy-coins' to true! Legacy withdrawn " +
-            "coins still depend on those two keys!") public static Boolean DETECT_LEGACY_COINS = true; // false in default config
+        "AND SET IT TO FALSE. Please note: Keep this option to true if you have withdrawn coins laying around in the server from before Coins " +
+        "version 1.11. Also leave the keys 'name-of-coin' and 'multi-suffix' untouched, if you set 'detect-legacy-coins' to true! Legacy withdrawn " +
+        "coins still depend on those two keys!") public static Boolean DETECT_LEGACY_COINS = true; // false in default config
     @ConfigEntry ("allow-name-change") public static Boolean ALLOW_NAME_CHANGE = false;
     @ConfigEntry ("allow-modification") public static Boolean ALLOW_MODIFICATION = false;
     @ConfigEntry (value = "check-for-updates", required = false) public static Boolean CHECK_FOR_UPDATES = true;
@@ -64,11 +65,11 @@ public class Config
     // preferred-economy-hook: 'Vault'
 
     @ConfigEntry (value = "dropped-coin-name", motivation = "This is a replacement, previous key was 'nameOfCoin', which will be unsupported in a future " +
-            "version.") public static String DROPPED_COIN_NAME = "&6Coin";
+        "version.") public static String DROPPED_COIN_NAME = "&6Coin";
     @ConfigEntry (value = "withdrawn-coin-names.singular", motivation = "This is a replacement, previous key was 'nameOfCoin', which will be unsupported " +
-            "in a future version.") public static String WITHDRAWN_COIN_NAME_SINGULAR = "&e{amount} &6Coin";
+        "in a future version.") public static String WITHDRAWN_COIN_NAME_SINGULAR = "&e{amount} &6Coin";
     @ConfigEntry (value = "withdrawn-coin-names.plural", motivation = "This is a replacement, previous key was 'nameOfCoin' and 'multiSuffix', which will" +
-            " be unsupported in a future version.") public static String WITHDRAWN_COIN_NAME_PLURAL = "&e{amount} &6Coins";
+        " be unsupported in a future version.") public static String WITHDRAWN_COIN_NAME_PLURAL = "&e{amount} &6Coins";
 
     @Deprecated @ConfigEntry (value = "name-of-coin", required = false) protected static String LEGACY_NAME_OF_COIN = null;
     @Deprecated @ConfigEntry (value = "multi-suffix", required = false) protected static String LEGACY_MULTI_SUFFIX = null;

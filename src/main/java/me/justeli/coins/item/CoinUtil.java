@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/** by Eli on January 30, 2022 **/
+/* Eli @ January 30, 2022 (creation) */
 public final class CoinUtil
 {
     private final Coins coins;

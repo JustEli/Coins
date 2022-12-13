@@ -16,8 +16,9 @@ import java.util.function.DoubleConsumer;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
-/** by Eli on February 01, 2022 **/
-public final class Economies implements EconomyHook
+/* Eli @ February 01, 2022 (creation) */
+public final class Economies
+    implements EconomyHook
 {
     private final Plugin plugin;
     private final Set<String> missingPlugins = new LinkedHashSet<>();

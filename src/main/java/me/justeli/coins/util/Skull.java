@@ -10,7 +10,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.UUID;
 
-/** Created by Eli on 6 jan. 2020. */
+/* Eli @ January 6, 2020 (creation) */
 public final class Skull
 {
     private static final HashMap<String, ItemStack> COIN = new HashMap<>();

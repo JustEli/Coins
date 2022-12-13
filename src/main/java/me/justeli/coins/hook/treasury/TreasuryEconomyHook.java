@@ -11,18 +11,19 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
 
-/** by Rezz on February 02, 2022 **/
-public final class TreasuryEconomyHook implements EconomyHook
+/* Rezz @ February 02, 2022 (creation) */
+public final class TreasuryEconomyHook
+    implements EconomyHook
 {
     public static final String TREASURY = "Treasury";
-    
+
     private final EconomyProvider economy;
-    
+
     public TreasuryEconomyHook (EconomyProvider economy)
     {
         this.economy = economy;
     }
-    
+
     @Override
     public void balance (UUID uuid, DoubleConsumer balance)
     {
@@ -40,7 +41,7 @@ public final class TreasuryEconomyHook implements EconomyHook
                 .silentFailure()
         );
     }
-    
+
     @Override
     public void canAfford (UUID uuid, double amount, Consumer<Boolean> canAfford)
     {
@@ -59,7 +60,7 @@ public final class TreasuryEconomyHook implements EconomyHook
                 .silentFailure()
         );
     }
-    
+
     @Override
     public void withdraw (UUID uuid, double amount, Runnable success)
     {
@@ -79,7 +80,7 @@ public final class TreasuryEconomyHook implements EconomyHook
                 .silentFailure()
         );
     }
-    
+
     @Override
     public void deposit (UUID uuid, double amount, Runnable success)
     {

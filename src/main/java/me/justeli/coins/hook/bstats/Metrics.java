@@ -11,7 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-/** Created by Eli on July 09, 2021. */
+/* Eli @ July 09, 2021 (creation) */
 public final class Metrics
 {
     private final Coins coins;

@@ -1,7 +1,7 @@
 package me.justeli.coins.handler;
 
 import me.justeli.coins.Coins;
-import me.justeli.coins.util.Permission;
+import me.justeli.coins.util.PermissionNode;
 import me.justeli.coins.util.Util;
 import org.bukkit.block.Container;
 import org.bukkit.entity.Player;
@@ -10,9 +10,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-/** Created by Eli on 2/4/2017. */
+/* Eli @ February 4, 2017 (creation) */
 public final class InteractionHandler
-        implements Listener
+    implements Listener
 {
     private final Coins coins;
 
@@ -33,7 +33,7 @@ public final class InteractionHandler
         Player player = event.getPlayer();
 
         // because of .setAmount(0) AND Container, players have to drop coin instead
-        if (!player.hasPermission(Permission.WITHDRAW))
+        if (!player.hasPermission(PermissionNode.WITHDRAW))
         {
             event.setCancelled(true);
             return;

@@ -11,9 +11,9 @@ import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
 
-/** by Eli on January 30, 2022 **/
+/* Eli @ January 30, 2022 (creation) */
 public final class ModificationHandler
-        implements Listener
+    implements Listener
 {
     private final Coins coins;
 

@@ -1,11 +1,9 @@
 package me.justeli.coins.handler;
 
 import me.justeli.coins.Coins;
-import me.justeli.coins.config.MessagePosition;
 import me.justeli.coins.event.PickupEvent;
-import me.justeli.coins.util.ActionBar;
 import me.justeli.coins.config.Config;
-import me.justeli.coins.util.Permission;
+import me.justeli.coins.util.PermissionNode;
 import me.justeli.coins.util.Util;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -21,7 +19,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public final class PickupHandler
-        implements Listener
+    implements Listener
 {
     private final Coins coins;
 
@@ -61,7 +59,7 @@ public final class PickupHandler
         Player player = event.getPlayer();
         event.setCancelled(true);
 
-        if (!player.hasPermission(Permission.DISABLE) || player.isOp() || player.hasPermission("*"))
+        if (!player.hasPermission(PermissionNode.DISABLE) || player.isOp() || player.hasPermission("*"))
         {
             double amount = this.coins.getCoinUtil().getValue(item.getItemStack());
             giveCoin(item, player, amount);

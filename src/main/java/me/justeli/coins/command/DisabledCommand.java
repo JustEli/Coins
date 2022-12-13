@@ -12,9 +12,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
-/** by Eli on August 02, 2021 **/
+/* Eli @ August 2, 2021 (creation) */
 public final class DisabledCommand
-        implements CommandExecutor
+    implements CommandExecutor
 {
     private final Coins coins;
     private final Set<PluginCommand> commands = new HashSet<>();

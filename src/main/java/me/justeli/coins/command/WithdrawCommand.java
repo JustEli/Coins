@@ -3,8 +3,7 @@ package me.justeli.coins.command;
 import me.justeli.coins.Coins;
 import me.justeli.coins.config.Config;
 import me.justeli.coins.config.Message;
-import me.justeli.coins.util.ActionBar;
-import me.justeli.coins.util.Permission;
+import me.justeli.coins.util.PermissionNode;
 import me.justeli.coins.util.Util;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,9 +17,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Created by Eli on 26 dec 2018. */
+/* Eli @ December 26, 2018 (creation) */
 public final class WithdrawCommand
-        implements CommandExecutor, TabCompleter
+    implements CommandExecutor, TabCompleter
 {
     private final Coins coins;
     private final PluginCommand command;
@@ -51,7 +50,7 @@ public final class WithdrawCommand
             return false;
         }
 
-        if (!sender.hasPermission(Permission.WITHDRAW) || !(sender instanceof Player))
+        if (!sender.hasPermission(PermissionNode.WITHDRAW) || !(sender instanceof Player))
         {
             noPerm(sender);
             return true;

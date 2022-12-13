@@ -8,9 +8,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-/** Created by Eli on 2 mei 2019. */
+/* Eli @ May 2, 2019 (creation) */
 public final class InventoryHandler
-        implements Listener
+    implements Listener
 {
     private final Coins coins;
 
