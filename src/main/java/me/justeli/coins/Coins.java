@@ -13,6 +13,7 @@ import me.justeli.coins.handler.listener.BukkitEventListener;
 import me.justeli.coins.handler.PickupHandler;
 import me.justeli.coins.handler.DropHandler;
 import me.justeli.coins.handler.listener.PaperEventListener;
+import me.justeli.coins.hook.levelledmobs.LevelledMobsHandler;
 import me.justeli.coins.hook.mythicmobs.MMHook;
 import me.justeli.coins.hook.bstats.Metrics;
 import me.justeli.coins.config.Config;
@@ -113,6 +114,8 @@ public final class Coins
                 console(Level.WARNING, "Detected MythicMobs, but the version of MythicMobs you are using is not supported.");
             }
         }
+
+        this.levelledMobsHandler = new LevelledMobsHandler();
 
         if (this.disabledReasons.size() == 0)
         {
@@ -302,6 +305,10 @@ public final class Coins
     }
 
     private MMHook mmHook;
+
+    private LevelledMobsHandler levelledMobsHandler;
+
+    public LevelledMobsHandler getLevelledMobsHandler(){ return this.levelledMobsHandler; }
 
     public Optional<MMHook> mmHook ()
     {

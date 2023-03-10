@@ -59,6 +59,8 @@ public final class DropHandler
         if (Util.isDisabledHere(dead.getWorld()))
             return;
 
+        coins.getLevelledMobsHandler().lastKilledMob = dead;
+
         if (this.coins.mmHook().isPresent() && Config.DISABLE_MYTHIC_MOB_HANDLING && this.coins.mmHook().get().isMythicMob(dead))
             return;
 
@@ -267,6 +269,10 @@ public final class DropHandler
         {
             amount *= Util.getMultiplier(player);
         }
+
+        double lmMultiplier = coins.getLevelledMobsHandler().getLevelledMobsMultipliedAmount(increment);
+        if (lmMultiplier > 0.0)
+            increment = lmMultiplier;
 
         for (int i = 0; i < amount; i++)
         {
