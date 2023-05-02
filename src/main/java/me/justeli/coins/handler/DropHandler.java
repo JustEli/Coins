@@ -208,7 +208,7 @@ public final class DropHandler
                    priority = EventPriority.MONITOR)
     public void onBlockBreak (BlockBreakEvent event)
     {
-        if (this.coins.isDisabled())
+        if (this.coins.isDisabled() || Util.isDisabledHere(event.getBlock().getWorld()))
             return;
 
         if (Config.MINE_PERCENTAGE == 0)
