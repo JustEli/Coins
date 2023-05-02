@@ -178,7 +178,7 @@ public final class Settings
                 // can be improved in java 11
                 else if (configClass == Long.class || configClass == Integer.class || configClass == Float.class || configClass == Double.class)
                 {
-                    Double value = new Double(config.get(configKey, "0").toString());
+                    Double value = Double.parseDouble(config.get(configKey, "0").toString());
 
                     if (configClass == Long.class)
                     {
@@ -225,33 +225,6 @@ public final class Settings
 
     private void parseRemainingOptions ()
     {
-        // beginning of compatibility for older versions
-
-        if (Config.DETECT_LEGACY_COINS)
-        {
-            if (Config.LEGACY_WITHDRAWN_COIN_ENDING != null)
-            {
-                Config.DROPPED_COIN_NAME = Config.LEGACY_NAME_OF_COIN;
-            }
-
-            if (Config.LEGACY_NAME_OF_COIN != null)
-            {
-                Config.WITHDRAWN_COIN_NAME_SINGULAR = Config.LEGACY_PREFIX + Config.LEGACY_NAME_OF_COIN;
-            }
-
-            if (Config.LEGACY_MULTI_SUFFIX != null && Config.LEGACY_NAME_OF_COIN != null)
-            {
-                Config.WITHDRAWN_COIN_NAME_PLURAL = Config.LEGACY_PREFIX + Config.LEGACY_NAME_OF_COIN + Config.LEGACY_MULTI_SUFFIX;
-                Config.LEGACY_WITHDRAWN_COIN_ENDING = Config.LEGACY_NAME_OF_COIN + Config.LEGACY_MULTI_SUFFIX;
-            }
-
-            Config.ALLOW_NAME_CHANGE = false;
-        }
-
-        Config.RAW_BLOCK_DROPS.putAll(Config.LEGACY_RAW_BLOCK_MULTIPLIER);
-
-        // end of compatibility for older versions
-
         Config.BLOCK_DROPS.clear();
         Config.RAW_BLOCK_DROPS.forEach((k, v) ->
         {

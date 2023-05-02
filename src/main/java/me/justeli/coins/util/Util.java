@@ -178,14 +178,7 @@ public final class Util
 
     public static String doubleToString (double input)
     {
-        if (Config.DETECT_LEGACY_COINS)
-        {
-            return String.format("%." + Config.MONEY_DECIMALS + "f", round(input));
-        }
-        else
-        {
-            return Config.DECIMAL_FORMATTER.format(round(input));
-        }
+        return Config.DECIMAL_FORMATTER.format(round(input));
     }
 
     public static Optional<Integer> parseInt (String arg)

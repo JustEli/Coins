@@ -42,13 +42,7 @@ public final class CoinUtil
         if (item == null)
             return false;
 
-        if (this.coins.meta(item).data(COINS_TYPE, PersistentDataType.INTEGER).isPresent())
-            return true;
-
-        if (!Config.DETECT_LEGACY_COINS)
-            return false;
-
-        return isWithdrawnCoin(item);
+        return this.coins.meta(item).data(COINS_TYPE, PersistentDataType.INTEGER).isPresent();
     }
 
     public boolean isDroppedCoin (ItemStack item)
@@ -64,16 +58,8 @@ public final class CoinUtil
         if (item == null)
             return false;
 
-        if (this.coins.meta(item).data(COINS_TYPE, PersistentDataType.INTEGER).orElse(0) == TYPE_WITHDRAWN)
-            return true;
-
-        if (!Config.DETECT_LEGACY_COINS || Config.LEGACY_WITHDRAWN_COIN_ENDING == null)
-            return false;
-
-        return name(item).map(name -> name.endsWith(Config.LEGACY_WITHDRAWN_COIN_ENDING)).orElse(false);
+        return this.coins.meta(item).data(COINS_TYPE, PersistentDataType.INTEGER).orElse(0) == TYPE_WITHDRAWN;
     }
-
-    private static final Pattern VALUE_PATTERN = Pattern.compile("[\\d.]+");
 
     public double getValue (ItemStack item)
     {
@@ -81,39 +67,12 @@ public final class CoinUtil
             return 0;
 
         Optional<Double> worth = this.coins.meta(item).data(COINS_WORTH, PersistentDataType.DOUBLE);
+        return worth.map(value -> value * item.getAmount()).orElse(0.0);
 
-        if (worth.isPresent())
-            return worth.get() * item.getAmount();
-
-        if (!Config.DETECT_LEGACY_COINS)
-            return 0;
-
-        Optional<String> name = name(item);
-        if (!name.isPresent())
-            return 0;
-
-        Matcher matcher = VALUE_PATTERN.matcher(ChatColor.stripColor(name.get()));
-        if (matcher.find())
-        {
-            try { return NumberFormat.getInstance().parse(matcher.group(0)).doubleValue() * item.getAmount(); }
-            catch (ParseException exception) { return 0; }
-        }
-        else
-        {
-            return 0;
-        }
     }
 
     public double getIncrement (ItemStack item)
     {
         return this.coins.meta(item).data(COINS_INCREMENT, PersistentDataType.DOUBLE).orElse(1D);
-    }
-
-    private static Optional<String> name (ItemStack item)
-    {
-        if (item == null || item.getItemMeta() == null || !item.getItemMeta().hasDisplayName())
-            return Optional.empty();
-
-        return Optional.of(item.getItemMeta().getDisplayName());
     }
 }

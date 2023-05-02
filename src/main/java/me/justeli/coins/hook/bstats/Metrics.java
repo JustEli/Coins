@@ -91,7 +91,7 @@ public final class Metrics
             metrics.add("droppedCoinName", Config.DROPPED_COIN_NAME);
             metrics.add("withdrawnCoinNamesSingular", Config.WITHDRAWN_COIN_NAME_SINGULAR);
             metrics.add("withdrawnCoinNamesPlural", Config.WITHDRAWN_COIN_NAME_PLURAL);
-            metrics.add("detectLegacyCoins", Config.DETECT_LEGACY_COINS);
+            metrics.add("detectLegacyCoins", false);
             metrics.add("allowNameChange", Config.ALLOW_NAME_CHANGE);
             metrics.add("allowModification", Config.ALLOW_MODIFICATION);
             metrics.add("checkForUpdates", Config.CHECK_FOR_UPDATES);

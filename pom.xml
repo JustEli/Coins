@@ -6,7 +6,7 @@
 
     <groupId>me.justeli.coins</groupId>
     <artifactId>Coins</artifactId>
-    <version>1.13.1</version>
+    <version>1.13.2</version>
     <name>Coins</name>
     <description>Coins is a plugin that allows players to collect coins for killing mobs and mining precious blocks. It also comes with the ability to withdraw balance into physical coins.</description>
     <url>https://www.spigotmc.org/resources/coins.33382/</url>
@@ -41,10 +41,6 @@
                         <relocation>
                             <pattern>io.papermc</pattern>
                             <shadedPattern>me.justeli.coins.shaded.io.papermc</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.bstats</pattern>
-                            <shadedPattern>me.justeli.coins.shaded.org.bstats</shadedPattern>
                         </relocation>
                     </relocations>
                     <filters>
@@ -81,11 +77,11 @@
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
-            <id>mojang</id>
+            <id>mojang-repo</id>
             <url>https://libraries.minecraft.net/</url>
         </repository>
         <repository>
-            <id>jitpack.io</id>
+            <id>jitpack-repo</id>
             <url>https://jitpack.io</url>
         </repository>
         <repository>
@@ -93,7 +89,7 @@
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
         <repository>
-            <id>nexus</id>
+            <id>lumine-repo</id>
             <url>https://mvn.lumine.io/repository/maven-public/</url>
         </repository>
     </repositories>
@@ -102,13 +98,13 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.14-R0.1-SNAPSHOT</version>
+            <version>1.17-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.destroystokyo.paper</groupId>
+            <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.14-R0.1-SNAPSHOT</version>
+            <version>1.17-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

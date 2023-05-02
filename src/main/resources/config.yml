@@ -113,9 +113,8 @@ sound-volume: 0.50
 #  disabledWorlds: [plots, creative]
 disabled-worlds: []
 
-# Allow players to change the name of coins. Only works if 'detect-legacy-coins' is
-#  set to false. Changing the names of non-legacy coins does not make it lose its
-#  value.
+# Allow players to change the name of coins. Changing the names of coins does not
+#  make it lose its value.
 allow-name-change: false
 
 # Allow players to use coins in a bench (i.e. crafting, smelting). Coin will lose
@@ -237,12 +236,6 @@ mine-percentage: 0.20
 #  balance again. This can also be done by right-clicking the coin.
 enable-withdraw: true
 max-withdraw-amount: 10000.00
-
-# Withdrawn coins in older versions of the plugin are handled in a fundamentally
-#  different way, which could cause possible exploits, when specific plugins are
-#  installed. Having this option set to false prevents that. Always leave this
-#  setting to false. If true, legacy withdrawn coins will still work.
-detect-legacy-coins: false
 
 # Tell the player how much money they have withdrawn.
 withdraw-message: '&4- &c{currency}{amount}'

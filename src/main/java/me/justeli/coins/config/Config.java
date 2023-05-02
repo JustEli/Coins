@@ -1,6 +1,5 @@
 package me.justeli.coins.config;
 
-import me.justeli.coins.util.Util;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
@@ -15,6 +14,12 @@ import java.util.Set;
 /* Eli @ July 9, 2021 (rewrite) */
 public class Config
 {
+    // todo
+    // @ConfigEntry("preferred-economy-hook") public static String PREFERRED_ECONOMY_HOOK = "Vault";
+    // # If you have multiple economy handlers installed, which one should get priority?
+    // #  This plugin supports either 'Vault' or 'Treasury'.
+    // preferred-economy-hook: 'Vault'
+
     @ConfigEntry ("stack-coins") public static Boolean STACK_COINS = false;
     @ConfigEntry ("spawner-drop") public static Boolean SPAWNER_DROP = false;
     @ConfigEntry ("passive-drop") public static Boolean PASSIVE_DROP = false;
@@ -32,10 +37,6 @@ public class Config
     @ConfigEntry ("drop-with-any-death") public static Boolean DROP_WITH_ANY_DEATH = false;
     @ConfigEntry ("enchanted-coin") public static Boolean ENCHANTED_COIN = false;
     @ConfigEntry ("disable-mythic-mob-handling") public static Boolean DISABLE_MYTHIC_MOB_HANDLING = false;
-    @ConfigEntry (value = "detect-legacy-coins", motivation = "It is recommended that you add this option to the Coins config as soon as you can, " +
-        "AND SET IT TO FALSE. Please note: Keep this option to true if you have withdrawn coins laying around in the server from before Coins " +
-        "version 1.11. Also leave the keys 'name-of-coin' and 'multi-suffix' untouched, if you set 'detect-legacy-coins' to true! Legacy withdrawn " +
-        "coins still depend on those two keys!") public static Boolean DETECT_LEGACY_COINS = true; // false in default config
     @ConfigEntry ("allow-name-change") public static Boolean ALLOW_NAME_CHANGE = false;
     @ConfigEntry ("allow-modification") public static Boolean ALLOW_MODIFICATION = false;
     @ConfigEntry (value = "check-for-updates", required = false) public static Boolean CHECK_FOR_UPDATES = true;
@@ -57,23 +58,10 @@ public class Config
     @ConfigEntry ("skull-texture") public static String SKULL_TEXTURE = "";
     @ConfigEntry ("digit-decimal-separator") public static String DIGIT_DECIMAL_SEPARATOR = ".";
     @ConfigEntry ("digit-group-separator") public static String DIGIT_GROUP_SEPARATOR = ",";
+    @ConfigEntry ("dropped-coin-name") public static String DROPPED_COIN_NAME = "&6Coin";
+    @ConfigEntry ("withdrawn-coin-names.singular") public static String WITHDRAWN_COIN_NAME_SINGULAR = "&e{amount} &6Coin";
+    @ConfigEntry ("withdrawn-coin-names.plural") public static String WITHDRAWN_COIN_NAME_PLURAL = "&e{amount} &6Coins";
 
-    // todo
-    // @ConfigEntry("preferred-economy-hook") public static String PREFERRED_ECONOMY_HOOK = "Vault";
-    // # If you have multiple economy handlers installed, which one should get priority?
-    // #  This plugin supports either 'Vault' or 'Treasury'.
-    // preferred-economy-hook: 'Vault'
-
-    @ConfigEntry (value = "dropped-coin-name", motivation = "This is a replacement, previous key was 'nameOfCoin', which will be unsupported in a future " +
-        "version.") public static String DROPPED_COIN_NAME = "&6Coin";
-    @ConfigEntry (value = "withdrawn-coin-names.singular", motivation = "This is a replacement, previous key was 'nameOfCoin', which will be unsupported " +
-        "in a future version.") public static String WITHDRAWN_COIN_NAME_SINGULAR = "&e{amount} &6Coin";
-    @ConfigEntry (value = "withdrawn-coin-names.plural", motivation = "This is a replacement, previous key was 'nameOfCoin' and 'multiSuffix', which will" +
-        " be unsupported in a future version.") public static String WITHDRAWN_COIN_NAME_PLURAL = "&e{amount} &6Coins";
-
-    @Deprecated @ConfigEntry (value = "name-of-coin", required = false) protected static String LEGACY_NAME_OF_COIN = null;
-    @Deprecated @ConfigEntry (value = "multi-suffix", required = false) protected static String LEGACY_MULTI_SUFFIX = null;
-    
     @ConfigEntry ("drop-chance") public static Double DROP_CHANCE = 0.9;
     @ConfigEntry ("max-withdraw-amount") public static Double MAX_WITHDRAW_AMOUNT = 10000.0;
     @ConfigEntry ("money-amount.from") public static Double MONEY_AMOUNT_FROM = 3.0;
@@ -93,23 +81,13 @@ public class Config
     @ConfigEntry ("custom-model-data") public static Integer CUSTOM_MODEL_DATA = 0;
     
     @ConfigEntry ("disabled-worlds") public static Set<String> DISABLED_WORLDS = new HashSet<>();
-
     @ConfigEntry ("mob-multiplier") protected static Map<String, Integer> RAW_MOB_MULTIPLIER = new HashMap<>();
-
-    @ConfigEntry (value = "block-drops", motivation = "New config key that replaces 'block-multiplier'.")
-    protected static Map<String, Integer> RAW_BLOCK_DROPS = new HashMap<>();
-
-    @Deprecated @ConfigEntry (value = "block-multiplier", required = false)
-    protected static Map<String, Integer> LEGACY_RAW_BLOCK_MULTIPLIER = new HashMap<>();
-
-    @Deprecated public static String LEGACY_WITHDRAWN_COIN_ENDING;
+    @ConfigEntry ("block-drops") protected static Map<String, Integer> RAW_BLOCK_DROPS = new HashMap<>();
 
     public static Map<Material, Integer> BLOCK_DROPS = new HashMap<>();
     public static Map<EntityType, Integer> MOB_MULTIPLIER = new HashMap<>();
-
-    @Deprecated protected static final String LEGACY_PREFIX = Util.color("&e{amount} &r");
-
     public static DecimalFormat DECIMAL_FORMATTER = new DecimalFormat();
 
-    private Config () {}
+    private Config ()
+    {}
 }
