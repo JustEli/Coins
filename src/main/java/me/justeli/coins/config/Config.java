@@ -14,12 +14,6 @@ import java.util.Set;
 /* Eli @ July 9, 2021 (rewrite) */
 public class Config
 {
-    // todo
-    // @ConfigEntry("preferred-economy-hook") public static String PREFERRED_ECONOMY_HOOK = "Vault";
-    // # If you have multiple economy handlers installed, which one should get priority?
-    // #  This plugin supports either 'Vault' or 'Treasury'.
-    // preferred-economy-hook: 'Vault'
-
     @ConfigEntry ("stack-coins") public static Boolean STACK_COINS = false;
     @ConfigEntry ("spawner-drop") public static Boolean SPAWNER_DROP = false;
     @ConfigEntry ("passive-drop") public static Boolean PASSIVE_DROP = false;
