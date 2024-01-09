@@ -1,9 +1,6 @@
 package me.justeli.coins.hook;
 
-import me.justeli.coins.hook.treasury.TreasuryEconomyHook;
 import me.justeli.coins.hook.vault.VaultEconomyHook;
-import me.lokka30.treasury.api.common.service.ServiceRegistry;
-import me.lokka30.treasury.api.economy.EconomyProvider;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.Plugin;
 
@@ -29,11 +26,6 @@ public final class Economies
     public Economies (Plugin plugin)
     {
         this.plugin = plugin;
-        
-        hookIfInstalled(TreasuryEconomyHook.TREASURY, () ->
-            ServiceRegistry.INSTANCE.serviceFor(EconomyProvider.class)
-                .map(service -> new TreasuryEconomyHook(service.get()))
-        );
         
         hookIfInstalled(VaultEconomyHook.VAULT, () ->
             Optional.ofNullable(plugin.getServer().getServicesManager().getRegistration(Economy.class))
