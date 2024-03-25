@@ -1,16 +1,10 @@
 package me.justeli.coins.item;
 
 import me.justeli.coins.Coins;
-import me.justeli.coins.config.Config;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /* Eli @ January 30, 2022 (creation) */
 public final class CoinUtil

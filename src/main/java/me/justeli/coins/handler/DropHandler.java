@@ -23,8 +23,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Optional;
@@ -258,13 +258,13 @@ public final class DropHandler
 
         if (Config.DROP_EACH_COIN)
         {
-            amount *= (Util.getRandomMoneyAmount() + 0.5) * increment;
+            amount *= (int) ((Util.getRandomMoneyAmount() + 0.5) * increment);
             increment = 1;
         }
 
         if (player != null)
         {
-            amount *= Util.getMultiplier(player);
+            amount *= (int) Util.getMultiplier(player);
         }
 
         for (int i = 0; i < amount; i++)

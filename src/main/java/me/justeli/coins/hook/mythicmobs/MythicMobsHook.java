@@ -1,20 +1,21 @@
 package me.justeli.coins.hook.mythicmobs;
 
-import io.lumine.xikage.mythicmobs.adapters.bukkit.BukkitItemStack;
-import io.lumine.xikage.mythicmobs.api.bukkit.BukkitAPIHelper;
-import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicDropLoadEvent;
-import io.lumine.xikage.mythicmobs.drops.droppables.ItemDrop;
-import io.lumine.xikage.mythicmobs.io.MythicLineConfig;
+import io.lumine.mythic.api.config.MythicLineConfig;
+import io.lumine.mythic.bukkit.BukkitAPIHelper;
+import io.lumine.mythic.bukkit.adapters.BukkitItemStack;
+import io.lumine.mythic.bukkit.events.MythicDropLoadEvent;
+import io.lumine.mythic.core.drops.droppables.VanillaItemDrop;
 import me.justeli.coins.Coins;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 
-public final class MythicMobsHook4
+// works for MythicMobs 5.6 and up
+public final class MythicMobsHook
     implements MMHook
 {
     private final Coins coins;
 
-    public MythicMobsHook4 (Coins coins)
+    public MythicMobsHook (Coins coins)
     {
         this.coins = coins;
     }
@@ -36,7 +37,7 @@ public final class MythicMobsHook4
             MythicLineConfig config = event.getConfig();
             BukkitItemStack coin = new BukkitItemStack(this.coins.getCreateCoin().dropped());
 
-            ItemDrop drop = new ItemDrop(line, config, coin);
+            VanillaItemDrop drop = new VanillaItemDrop(line, config, coin);
             event.register(drop);
         }
     }

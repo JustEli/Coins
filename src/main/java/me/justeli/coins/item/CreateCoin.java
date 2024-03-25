@@ -41,8 +41,7 @@ public final class CreateCoin
 
     public ItemStack dropped ()
     {
-        MetaBuilder coin = rawDropped();
-        return coin.build();
+        return rawDropped().build();
     }
 
     public ItemStack dropped (double increment)

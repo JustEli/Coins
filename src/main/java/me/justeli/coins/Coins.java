@@ -17,8 +17,7 @@ import me.justeli.coins.hook.mythicmobs.MMHook;
 import me.justeli.coins.hook.bstats.Metrics;
 import me.justeli.coins.config.Config;
 import me.justeli.coins.config.Settings;
-import me.justeli.coins.hook.mythicmobs.MythicMobsHook4;
-import me.justeli.coins.hook.mythicmobs.MythicMobsHook5;
+import me.justeli.coins.hook.mythicmobs.MythicMobsHook;
 import me.justeli.coins.item.BaseCoin;
 import me.justeli.coins.hook.Economies;
 import me.justeli.coins.item.CoinUtil;
@@ -105,22 +104,19 @@ public final class Coins
             Optional<Plugin> mm = Optional.ofNullable(getServer().getPluginManager().getPlugin("MythicMobs"));
             try
             {
-                if (mm.isPresent() && mm.get().getDescription().getVersion().startsWith("4."))
+                if (mm.isPresent())
                 {
-                    this.mmHook = new MythicMobsHook4(this);
-                }
-                else if (mm.isPresent())
-                {
-                    this.mmHook = new MythicMobsHook5(this);
+                    this.mmHook = new MythicMobsHook(this);
                 }
             }
-            catch (Exception | NoClassDefFoundError exception)
+            catch (Exception | NoClassDefFoundError | InstantiationError exception)
             {
-                console(Level.WARNING, "Detected MythicMobs, but the version of MythicMobs you are using is not supported.");
+                console(Level.WARNING, "Detected MythicMobs, but the version of MythicMobs you are using is not " +
+                    "supported. If this is a newer version, please contact support of Coins: https://discord.gg/fVwCETj");
             }
         }
 
-        if (this.disabledReasons.size() == 0)
+        if (this.disabledReasons.isEmpty())
         {
             this.settings = new Settings(this);
             reload();
@@ -151,7 +147,7 @@ public final class Coins
 
     public void reload ()
     {
-        if (this.disabledReasons.size() != 0)
+        if (!this.disabledReasons.isEmpty())
         {
             line(Level.SEVERE);
             console(Level.SEVERE, "Plugin 'Coins' is disabled, until issues are fixed and the server is rebooted (see start-up log of Coins).");
