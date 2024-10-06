@@ -25,7 +25,7 @@ public final class InventoryHandler
         if (Util.isDisabledHere(event.getWhoClicked().getWorld()))
             return;
 
-        if (!(event.getWhoClicked() instanceof Player))
+        if (!(event.getWhoClicked() instanceof Player player))
             return;
 
         if (!this.coins.getCoinUtil().isDroppedCoin(event.getCurrentItem()))
@@ -33,7 +33,6 @@ public final class InventoryHandler
 
         event.setCancelled(true);
 
-        Player player = (Player) event.getWhoClicked();
         ItemStack item = event.getCurrentItem();
 
         this.coins.getPickupHandler().giveRandomMoney(item, player);

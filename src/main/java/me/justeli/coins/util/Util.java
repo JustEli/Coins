@@ -189,7 +189,7 @@ public final class Util
 
     public static Optional<Double> parseDouble (String arg)
     {
-        try { return Optional.of(Util.round(new Double(arg))); }
+        try { return Optional.of(Util.round(Double.parseDouble(arg))); }
         catch (NumberFormatException exception) { return Optional.empty(); }
     }
 
@@ -270,17 +270,5 @@ public final class Util
                 player.sendMessage(Util.color(Util.formatAmountAndCurrency(message, amount)));
                 break;
         }
-    }
-
-    public static String repeat (String message, int times)
-    {
-        StringBuilder builder = new StringBuilder();
-
-        for (int i = 0; i < times; i++)
-        {
-            builder.append(message);
-        }
-
-        return builder.toString();
     }
 }

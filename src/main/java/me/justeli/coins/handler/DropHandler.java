@@ -80,7 +80,7 @@ public final class DropHandler
             return;
 
         Optional<Player> attacker = Util.getRootDamage(dead);
-        if (!attacker.isPresent())
+        if (attacker.isEmpty())
             return;
 
         mobChecker(dead, attacker.get());
@@ -155,10 +155,8 @@ public final class DropHandler
 
     private void mobHandler (@NotNull Entity dead, @Nullable Player attacker)
     {
-        if (Config.PREVENT_ALTS && attacker != null && dead instanceof Player)
+        if (Config.PREVENT_ALTS && attacker != null && dead instanceof Player victim)
         {
-            Player victim = (Player) dead;
-
             InetSocketAddress address1 = attacker.getAddress();
             InetSocketAddress address2 = victim.getAddress();
 
@@ -279,7 +277,7 @@ public final class DropHandler
     @EventHandler (priority = EventPriority.LOW)
     public void onEntityDamage (EntityDamageByEntityEvent event)
     {
-        if (!Util.getRootDamage(event).isPresent())
+        if (Util.getRootDamage(event).isEmpty())
             return;
 
         double playerDamage = getPlayerDamage(event.getEntity());

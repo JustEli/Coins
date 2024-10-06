@@ -22,17 +22,19 @@ public final class BaseCoin
         ItemStack baseCoin = texture == null || texture.isEmpty()? new ItemStack(Config.COIN_ITEM) : Skull.of(texture);
         ItemMeta baseCoinMeta = baseCoin.getItemMeta();
 
-        if (Config.CUSTOM_MODEL_DATA > 0)
-        {
-            baseCoinMeta.setCustomModelData(Config.CUSTOM_MODEL_DATA);
-        }
-        if (Config.ENCHANTED_COIN)
-        {
-            baseCoinMeta.addEnchant(Enchantment.DURABILITY, 1, true);
-            baseCoinMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        }
+        if (baseCoinMeta != null) {
+            if (Config.CUSTOM_MODEL_DATA > 0)
+            {
+                baseCoinMeta.setCustomModelData(Config.CUSTOM_MODEL_DATA);
+            }
+            if (Config.ENCHANTED_COIN)
+            {
+                baseCoinMeta.addEnchant(Enchantment.DURABILITY, 1, true);
+                baseCoinMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            }
 
-        baseCoin.setItemMeta(baseCoinMeta);
+            baseCoin.setItemMeta(baseCoinMeta);
+        }
 
         this.withdrawnCoin = coins.meta(baseCoin.clone()).data(CoinUtil.COINS_TYPE, CoinUtil.TYPE_WITHDRAWN);
         MetaBuilder droppedCoinItem = coins.meta(baseCoin.clone()).name(Config.DROPPED_COIN_NAME).data(CoinUtil.COINS_TYPE, CoinUtil.TYPE_DROPPED);

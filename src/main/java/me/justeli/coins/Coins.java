@@ -54,16 +54,16 @@ public final class Coins
 
     private static final ExecutorService ASYNC_THREAD = Executors.newSingleThreadExecutor();
 
-    private static final String UNSUPPORTED_VERSION =
-        "Coins only supports Minecraft version 1.17 and higher." +
-            "\n  Using Minecraft version 1.8.8 to 1.13.2? Use Coins version 1.10.8." +
-            "\n  Using 1.14 to 1.16? Use Coins version 1.13.1. All without support!";
+    private static final String UNSUPPORTED_VERSION = """
+        Coins only supports Minecraft version 1.17 and higher.
+        Using Minecraft version 1.8.8 to 1.13.2? Use Coins version 1.10.8.
+        Using 1.14 to 1.16? Use Coins version 1.13.1. All without support!""";
 
-    private static final String USING_BUKKIT =
-        "You seem to be using Bukkit, but the plugin Coins " +
-            "requires at least Spigot! Please use Spigot or Paper. Moving from Bukkit to " +
-            "Spigot will NOT cause any problems with other plugins, since Spigot only adds " +
-            "more features to Bukkit.";
+    private static final String USING_BUKKIT = """
+        You seem to be using Bukkit, but the plugin Coins \
+        requires at least Spigot! Please use Spigot or Paper. Moving from Bukkit to \
+        Spigot will NOT cause any problems with other plugins, since Spigot only adds \
+        more features to Bukkit.""";
 
     private static final String LACKING_ECONOMY = "There is no proper economy installed. Please install %s.";
 
@@ -197,7 +197,7 @@ public final class Coins
             return;
 
         VersionChecker checker = new VersionChecker("JustEli/Coins");
-        if (!checker.latestVersion().isPresent())
+        if (checker.latestVersion().isEmpty())
             return;
 
         this.latestVersion = checker.latestVersion().get();

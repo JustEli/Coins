@@ -243,7 +243,7 @@ public final class Settings
         if (Config.DIGIT_DECIMAL_SEPARATOR.length() == 1) formatSymbols.setDecimalSeparator(Config.DIGIT_DECIMAL_SEPARATOR.charAt(0));
         if (Config.DIGIT_GROUP_SEPARATOR.length() == 1) formatSymbols.setGroupingSeparator(Config.DIGIT_GROUP_SEPARATOR.charAt(0));
 
-        String decimals = Config.MONEY_DECIMALS == 0? "#" : Util.repeat("0", Config.MONEY_DECIMALS);
+        String decimals = Config.MONEY_DECIMALS == 0? "#" : "0".repeat(Config.MONEY_DECIMALS);
         String groupSeparator = Config.DIGIT_GROUP_SEPARATOR.isEmpty()? "" : ",";
 
         Config.DECIMAL_FORMATTER = new DecimalFormat(
@@ -380,7 +380,7 @@ public final class Settings
             }
         }
 
-        if (missingKeys.size() > 0)
+        if (!missingKeys.isEmpty())
         {
             warning("Language file '" + language + "' is missing the message(s) '" + String.join("', '", missingKeys) +
                 "'. Using the default value(s) now, which are in English. You can find the up-to-date default configured messages at:" +
@@ -397,7 +397,7 @@ public final class Settings
     private Optional<JSONObject> retrieveLanguageJson (String language)
     {
         Optional<File> file = retrieveLanguageFile(language);
-        if (!file.isPresent())
+        if (file.isEmpty())
             return Optional.empty();
 
         try (InputStream fileStream = Files.newInputStream(file.get().toPath()))
