@@ -85,7 +85,7 @@ public final class Settings
         return YamlConfiguration.loadConfiguration(config);
     }
 
-    public static boolean USING_LEGACY_KEYS; // from before version 1.12
+    public static boolean USING_LEGACY_KEYS = false; // from before version 1.12
     private static final Converter<String, String> LEGACY_CONVERTER = CaseFormat.LOWER_HYPHEN.converterTo(CaseFormat.LOWER_CAMEL);
 
     public void parseConfig ()
@@ -105,8 +105,14 @@ public final class Settings
             {
                 if (!config.contains(configKey))
                 {
-                    configKey = LEGACY_CONVERTER.convert(configKey);
-                    USING_LEGACY_KEYS = true;
+                    String validKey = configKey;
+                    configKey = LEGACY_CONVERTER.convert(validKey); // convert to old style
+                    if (configKey != null && config.contains(configKey) && !USING_LEGACY_KEYS)
+                    {
+                        warning("You are using the old format of config keys ('" + configKey + "' instead of '" + validKey +"')." +
+                                " Please update your config, as support for this will be dropped in the future.");
+                        USING_LEGACY_KEYS = true;
+                    }
                 }
 
                 if (configKey == null || !config.contains(configKey))

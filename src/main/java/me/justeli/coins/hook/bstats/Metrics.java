@@ -96,7 +96,7 @@ public final class Metrics
             metrics.add("allowModification", Config.ALLOW_MODIFICATION);
             metrics.add("checkForUpdates", Config.CHECK_FOR_UPDATES);
             metrics.add("enchantIncrement", Config.ENCHANT_INCREMENT);
-            metrics.add("usingLegacyKeys", Settings.USING_LEGACY_KEYS);
+            metrics.add("usingLegacyKeysNew", Settings.USING_LEGACY_KEYS);
 
             Plugin mm = this.coins.getServer().getPluginManager().getPlugin("MythicMobs");
             if (mm != null)
