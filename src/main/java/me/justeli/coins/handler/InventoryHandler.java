@@ -38,16 +38,17 @@ public final class InventoryHandler implements Listener {
             return;
         }
 
-        event.setCancelled(true);
-
         double value = coins.getCoinMeta().getValue(event.getCurrentItem());
-        if (value > 0 && !coins.getCoinMeta().isWithdrawnCoin(event.getCurrentItem())) { // don't deposit withdrawn coins
+        if (value > 0 && !coins.getCoinMeta().isWithdrawnCoin(event.getCurrentItem())) {
+            // ignoring withdrawn coins
+            event.setCancelled(true);
             coins.getPickupHandler().depositMoney(player, value);
+            event.getCurrentItem().setAmount(0);
         }
         else if (coins.getCoinMeta().isDroppedCoin(event.getCurrentItem())) {
+            event.setCancelled(true);
             coins.getPickupHandler().depositRandomMoney(event.getCurrentItem(), player);
+            event.getCurrentItem().setAmount(0);
         }
-
-        event.getCurrentItem().setAmount(0);
     }
 }
